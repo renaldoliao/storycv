@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StoryCV – Tell your story, get a resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<script src="/lib/jspdf.umd.min.js"></script>
+<style>
+  /* ====== Easy-to-change settings ====== */
+  :root{
+    --accent:#1E5B4C; --accent-dark:#123C32; --accent-soft:#E6EFEB; --accent-ink:#1E4A3E;
+    --ground:#F4F3EF; --surface:#FFFFFF; --line:#E2E0D9; --ink:#17171A; --muted:#5E5E66;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif}
+  button{font:inherit;cursor:pointer}
+  header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
+  .logo{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center}
+  .btn{min-height:44px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid #D6D3CA;background:var(--surface);color:var(--ink)}
+  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-dark)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .banner{background:#FFF4D6;color:#5C4400;font-size:13px;padding:8px 24px;text-align:center;display:none}
+  main{max-width:1360px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
+  .chat{flex:999 1 520px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
+  .chat-head{padding:18px 22px 14px;border-bottom:1px solid #EEECE6}
+  .chat-head h1{margin:0 0 4px;font-size:21px}
+  .chat-head p{margin:0 0 12px;color:var(--muted);font-size:15px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff}
+  .chip.done{background:var(--accent-soft);color:var(--accent-ink);border-color:#C4DBD2}
+  .scroll{height:min(560px,60vh);overflow-y:auto;padding:20px 22px;background:#FBFAF8;display:flex;flex-direction:column;gap:12px}
+  .msg{max-width:82%;padding:12px 14px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+  .bot{display:flex;gap:10px;align-items:flex-end;max-width:86%}
+  .avatar{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .bot .msg{max-width:none;background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px}
+  .user{align-self:flex-end;background:var(--accent);color:#fff;border-radius:14px 14px 4px 14px}
+  .typing{color:var(--muted);font-style:italic}
+  .composer{border-top:1px solid #EEECE6;padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;gap:10px;align-items:flex-end}
+  textarea{flex:1;min-width:0;font:inherit;font-size:15px;padding:12px 14px;min-height:48px;max-height:160px;resize:none;border:1px solid #D6D3CA;border-radius:12px;outline-color:var(--accent)}
+  .send{flex:none;width:48px;height:48px;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center}
+  .create-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+  .create-row label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid #D6D3CA;background:#fff}
+  aside{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:12px}
+  .aside-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .aside-head h2{margin:0;font-size:16px}
+  .paper-wrap{position:relative}
+  .paper{background:#fff;border:1px solid var(--line);border-radius:6px;padding:36px;font-family:'Source Serif 4',Georgia,serif;color:#1D1D20;min-height:420px}
+  .paper.locked{filter:blur(5px);user-select:none;pointer-events:none}
+  .lock{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:24px}
+  .lock-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;max-width:320px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+  .lock-card h3{margin:0 0 6px;font-size:18px}
+  .lock-card p{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .r-name{font-size:26px;font-weight:700}
+  .r-head{font-size:15px;color:#45454C;margin-top:2px}
+  .r-contact{font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:var(--muted);margin-top:4px}
+  .r-sec{margin-top:20px;font-family:'Hanken Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);border-bottom:1px solid var(--line);padding-bottom:4px}
+  .r-item{margin-top:10px}
+  .r-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .r-role{font-weight:700;font-size:15px}
+  .r-date{font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:var(--muted)}
+  .r-org{font-style:italic;font-size:14px;color:#45454C}
+  .paper ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
+  .paper p{font-size:14px;line-height:1.55;margin:8px 0 0}
+  .empty{color:var(--muted);font-family:'Hanken Grotesk',sans-serif;font-size:14px;text-align:center;padding-top:150px}
+  .note{margin:0;font-size:13px;color:var(--muted)}
+  .error{color:#A3261B;font-size:13px}
+  /* Payment popup */
+  .modal-bg{position:fixed;inset:0;background:rgba(20,20,25,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+  .modal{background:#fff;border-radius:16px;padding:24px;max-width:380px;width:100%}
+  .modal h3{margin:0 0 4px}
+  .price{font-size:30px;font-weight:700;margin:12px 0}
+  .test-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;background:#FFF4D6;color:#5C4400;padding:4px 8px;border-radius:6px}
+  .modal-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    StoryCV
+  </div>
+  <button class="btn" id="restart">Start over</button>
+</header>
+<div class="banner" id="demoBanner">Demo mode: the AI isn't connected yet, so answers are scripted. Add your AI key to turn it on.</div>
+
+<main>
+  <section class="chat">
+    <div class="chat-head">
+      <h1>Tell me your story</h1>
+      <p>Answer like you're talking to a friend. I'll turn it into resume lines.</p>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="scroll" id="scroll" aria-live="polite"></div>
+    <form class="composer" id="form">
+      <div class="row">
+        <label for="input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Your answer</label>
+        <textarea id="input" rows="1" placeholder="Type your answer… (Enter to send)"></textarea>
+        <button class="send" type="submit" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button>
+      </div>
+      <div class="create-row">
+        <label>Resume language
+          <select id="lang"><option>English</option><option>Bahasa Indonesia</option></select>
+        </label>
+        <button class="btn btn-primary" type="button" id="create" disabled>Create my resume</button>
+      </div>
+      <div class="error" id="error"></div>
+    </form>
+  </section>
+
+  <aside>
+    <div class="aside-head">
+      <h2>Your resume</h2>
+      <button class="btn" id="download" disabled>Download PDF</button>
+    </div>
+    <div class="paper-wrap">
+      <div class="paper" id="paper"><div class="empty">Your resume will appear here after you tap “Create my resume”.</div></div>
+      <div class="lock" id="lock">
+        <div class="lock-card">
+          <h3>Your resume is ready</h3>
+          <p>Unlock it to see the full version and download it as a PDF.</p>
+          <button class="btn btn-primary" id="unlock" style="width:100%">Unlock for <span class="priceText"></span></button>
+        </div>
+      </div>
+    </div>
+    <p class="note">Simple one-column layout so hiring software (ATS) can read every line.</p>
+  </aside>
+</main>
+
+<div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+  <div class="modal">
+    <span class="test-tag">TEST MODE</span>
+    <h3 id="payTitle" style="margin-top:10px">Download your resume</h3>
+    <div class="price priceText"></div>
+    <p class="note">Payment isn't connected yet. Tap below to pretend the payment went through.</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="fakePay">Simulate successful payment</button>
+      <button class="btn" id="cancelPay">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== Easy-to-change settings ====== */
+const PRICE_IDR = 50000;
+
+const AREAS = [
+  ["experience","Experience"],["achievements","Achievements"],["education","Education"],
+  ["hard_skills","Hard skills"],["soft_skills","Soft skills"],["contact","Contact"]
+];
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const priceLabel = "IDR " + PRICE_IDR.toLocaleString("id-ID");
+document.querySelectorAll(".priceText").forEach((el) => el.textContent = priceLabel);
+
+let state = load() || fresh();
+function fresh(){ return { messages: [], covered: {}, ready: false, resume: null, paid: false }; }
+function save(){ try{ localStorage.setItem("storycv", JSON.stringify(state)); }catch(e){} }
+function load(){ try{ return JSON.parse(localStorage.getItem("storycv")); }catch(e){ return null; } }
+
+async function post(url, body){
+  const res = await fetch(url, { method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+  if (data.demo) $("demoBanner").style.display = "block";
+  return data;
+}
+
+/* ---------- Chat ---------- */
+function renderChips(){
+  $("chips").innerHTML = AREAS.map(([k,label]) =>
+    `<span class="chip ${state.covered[k] ? "done":""}">${state.covered[k] ? "✓ ":""}${label}</span>`).join("");
+}
+function renderChat(typing){
+  const html = state.messages.map((m) => m.role === "assistant"
+    ? `<div class="bot"><div class="avatar">K</div><div class="msg">${esc(m.content)}</div></div>`
+    : `<div class="msg user">${esc(m.content)}</div>`).join("");
+  $("scroll").innerHTML = html + (typing ? `<div class="bot"><div class="avatar">K</div><div class="msg typing">Kira is typing…</div></div>` : "");
+  $("scroll").scrollTop = $("scroll").scrollHeight;
+  const userCount = state.messages.filter((m) => m.role === "user").length;
+  $("create").disabled = !(state.ready || userCount >= 4);
+  renderChips();
+}
+
+async function askBot(){
+  $("error").textContent = "";
+  renderChat(true);
+  try{
+    const data = await post("/api/chat", { messages: state.messages });
+    state.messages.push({ role:"assistant", content: data.reply });
+    state.covered = data.covered || {};
+    state.ready = !!data.ready;
+    save();
+  }catch(e){ $("error").textContent = e.message; }
+  renderChat(false);
+}
+
+$("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = $("input").value.trim();
+  if (!text) return;
+  state.messages.push({ role:"user", content:text });
+  $("input").value = ""; $("input").style.height = "";
+  save(); askBot();
+});
+$("input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("form").requestSubmit(); }
+});
+$("input").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; });
+
+/* ---------- Resume ---------- */
+$("create").addEventListener("click", async () => {
+  $("error").textContent = "";
+  $("create").disabled = true; $("create").textContent = "Writing your resume…";
+  try{
+    const data = await post("/api/resume", { messages: state.messages, language: $("lang").value });
+    state.resume = data.resume; state.paid = false; save();
+    renderResume();
+  }catch(e){ $("error").textContent = e.message; }
+  $("create").textContent = "Create my resume"; $("create").disabled = false;
+});
+
+const list = (a) => (Array.isArray(a) ? a.filter(Boolean) : []);
+function renderResume(){
+  const r = state.resume;
+  if (!r){ $("paper").innerHTML = `<div class="empty">Your resume will appear here after you tap “Create my resume”.</div>`; $("lock").style.display="none"; $("paper").classList.remove("locked"); $("download").disabled = true; return; }
+  const c = r.contact || {};
+  const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).map(esc).join(" · ");
+  let h = `<div class="r-name">${esc(r.name || "[Your name]")}</div>`;
+  if (r.headline) h += `<div class="r-head">${esc(r.headline)}</div>`;
+  if (contact) h += `<div class="r-contact">${contact}</div>`;
+  if (r.summary) h += `<div class="r-sec">Summary</div><p>${esc(r.summary)}</p>`;
+  if (list(r.experience).length){
+    h += `<div class="r-sec">Experience</div>`;
+    r.experience.forEach((j) => {
+      const dates = [j.start, j.end].filter(Boolean).join(" – ");
+      h += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc(dates)}</span></div>
+            <div class="r-org">${esc([j.company, j.location].filter(Boolean).join(", "))}</div>
+            <ul>${list(j.bullets).map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>`;
+    });
+  }
+  if (list(r.education).length){
+    h += `<div class="r-sec">Education</div>`;
+    r.education.forEach((ed) => {
+      h += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div>
+            <div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`;
+    });
+  }
+  const skills = [["Hard skills", r.hard_skills], ["Soft skills", r.soft_skills], ["Certifications", r.certifications], ["Languages", r.languages]]
+    .filter(([,v]) => list(v).length);
+  if (skills.length){
+    h += `<div class="r-sec">Skills</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
+  }
+  $("paper").innerHTML = h;
+  $("paper").classList.toggle("locked", !state.paid);
+  $("lock").style.display = state.paid ? "none" : "flex";
+  $("download").disabled = !state.paid;
+  $("download").classList.toggle("btn-primary", state.paid);
+}
+
+/* ---------- Payment (TEST MODE) ----------
+   Later: replace startPayment() with Midtrans Snap / Xendit.
+   Their popup calls back on success -> then run onPaid().
+   For real money, the server must confirm the payment before giving the PDF. */
+function startPayment(){ $("modal").style.display = "flex"; $("fakePay").focus(); }
+function onPaid(){ state.paid = true; save(); $("modal").style.display = "none"; renderResume(); }
+$("unlock").addEventListener("click", startPayment);
+$("fakePay").addEventListener("click", onPaid);
+$("cancelPay").addEventListener("click", () => $("modal").style.display = "none");
+
+/* ---------- PDF (real text, so ATS software can read it) ---------- */
+$("download").addEventListener("click", () => {
+  const r = state.resume; if (!r || !state.paid) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:"pt", format:"a4" });
+  const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
+  let y = M;
+  const need = (h) => { if (y + h > H - M){ doc.addPage(); y = M; } };
+  const text = (str, size, style, gap, indent) => {
+    doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
+    const lines = doc.splitTextToSize(String(str), W - (indent||0));
+    lines.forEach((ln) => { need(size*1.35); doc.text(ln, M + (indent||0), y); y += size*1.35; });
+    y += gap || 0;
+  };
+  const section = (title) => {
+    y += 8; need(30);
+    doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(30,74,62);
+    doc.text(title.toUpperCase(), M, y); y += 5;
+    doc.setDrawColor(200); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20);
+  };
+  const leftRight = (left, right, size) => {
+    need(size*1.4);
+    doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(left||""), M, y);
+    if (right){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(right), M+W, y, { align:"right" }); }
+    y += size*1.35;
+  };
+  doc.setTextColor(20);
+  text(r.name || "Your Name", 20, "bold", 2);
+  if (r.headline) text(r.headline, 12, "normal", 2);
+  const c = r.contact || {};
+  const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).join("  |  ");
+  if (contact) text(contact, 9.5, "normal", 4);
+  if (r.summary){ section("Summary"); text(r.summary, 10.5, "normal"); }
+  if (list(r.experience).length){
+    section("Experience");
+    r.experience.forEach((j) => {
+      leftRight(j.role, [j.start, j.end].filter(Boolean).join(" - "), 11);
+      const org = [j.company, j.location].filter(Boolean).join(", ");
+      if (org) text(org, 10.5, "italic");
+      list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
+      y += 6;
+    });
+  }
+  if (list(r.education).length){
+    section("Education");
+    r.education.forEach((ed) => { leftRight(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; });
+  }
+  const skills = [["Hard skills", r.hard_skills], ["Soft skills", r.soft_skills], ["Certifications", r.certifications], ["Languages", r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length){ section("Skills"); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
+  const file = (r.name || "resume").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "_") + "_Resume.pdf";
+  doc.save(file);
+});
+
+/* ---------- Start over ---------- */
+$("restart").addEventListener("click", () => {
+  if (state.messages.length > 1 && !confirm("Start over? Your current chat and resume will be cleared.")) return;
+  state = fresh(); save(); renderResume(); askBot();
+});
+
+/* ---------- Boot ---------- */
+renderChat(false); renderResume();
+if (!state.messages.length) askBot();
+</script>
+</body>
+</html>
