@@ -1,6 +1,6 @@
 # StoryCV
 
-People chat with a friendly bot ("Kira") about their work life. The AI turns that chat into an ATS-friendly resume. They pay to unlock and download it as a PDF. Payment is in **test mode** for now.
+People pick a career buddy (Kira the Cat, Kopi the Owl or Tobi the Dino). Each buddy has its own way of talking and its own color theme for the whole site, fill in their basic details, then chat with that buddy about their work life. The AI turns that chat into an ATS-friendly resume. They pay to unlock and download it as a PDF. Payment is in **test mode** for now.
 
 ## What's inside
 
@@ -10,6 +10,7 @@ People chat with a friendly bot ("Kira") about their work life. The AI turns tha
 | `api/chat.js` | Talks to the AI during the chat. |
 | `api/resume.js` | Asks the AI to write the final resume from the chat. |
 | `api/_shared.js` | Settings shared by both, including the safety limits on chat length. |
+| `api/_buddies.js` | Each buddy's personality, which the AI plays during the chat. |
 | `lib/jspdf.umd.min.js` | A free tool that creates the PDF file. |
 
 ## Put it online (Vercel)
@@ -30,8 +31,9 @@ Optional: to use the cheaper AI model, add `STORYCV_MODEL` with the value `claud
 
 ## Easy changes
 
-- **Price:** in `index.html`, find `PRICE_IDR = 50000`.
-- **Colors:** in `index.html`, find `--accent` near the top.
+- **Price:** in `index.html`, find `PRICE_IDR`.
+- **Buddies' names, colors, fonts, drawings:** in `index.html`, find `const BUDDIES` and `const DRAW`.
+- **Buddies' personalities and how they ask questions:** `api/_buddies.js`.
 - **What the bot asks and how it talks:** the text block at the top of `api/chat.js`.
 - **How the resume is written:** the text block in `api/resume.js`.
 

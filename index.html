@@ -2,281 +2,468 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StoryCV – Tell your story, get a resume</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StoryCV · Tell your story, get your CV</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&display=swap">
 <script src="/lib/jspdf.umd.min.js"></script>
 <style>
-  /* ====== Easy-to-change settings ====== */
+  /* Theme colors. They change when the user picks a buddy (see BUDDIES below). */
   :root{
-    --accent:#1E5B4C; --accent-dark:#123C32; --accent-soft:#E6EFEB; --accent-ink:#1E4A3E;
-    --ground:#F4F3EF; --surface:#FFFFFF; --line:#E2E0D9; --ink:#17171A; --muted:#5E5E66;
+    --accent:#3F5EF0; --accent-dark:#2C46C4; --soft:#EEF2FF; --bg:#EAF2FF; --body:#FFD84D;
+    --ink:#1F2340; --muted:#4A4F70; --line:#E3E6F3; --white:#fff; --note-bg:#FFF3C4; --note-ink:#5A4300;
   }
   *{box-sizing:border-box}
-  body{margin:0;background:var(--ground);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif}
-  button{font:inherit;cursor:pointer}
-  header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;background:var(--surface);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
-  .logo{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center}
-  .btn{min-height:44px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;border:1px solid #D6D3CA;background:var(--surface);color:var(--ink)}
-  .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .btn-primary:hover{background:var(--accent-dark)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .banner{background:#FFF4D6;color:#5C4400;font-size:13px;padding:8px 24px;text-align:center;display:none}
-  main{max-width:1360px;margin:0 auto;padding:24px;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start}
-  .chat{flex:999 1 520px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;overflow:hidden}
-  .chat-head{padding:18px 22px 14px;border-bottom:1px solid #EEECE6}
-  .chat-head h1{margin:0 0 4px;font-size:21px}
-  .chat-head p{margin:0 0 12px;color:var(--muted);font-size:15px}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;transition:background .4s}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .app{max-width:520px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;background:var(--white);box-shadow:0 0 40px rgba(31,35,64,.08)}
+  .screen{display:none;flex:1;flex-direction:column;min-height:0;overflow-y:auto}
+  #s-chat{overflow:hidden}
+  .screen.on{display:flex}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px}
+  .brand{font-family:var(--head,inherit);font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px}
+  .link{background:none;border:none;color:var(--accent);font-weight:800;font-size:14px;padding:10px 4px;min-height:44px}
+  .pill{background:var(--soft);color:var(--accent);border:none;border-radius:999px;padding:10px 14px;font-weight:800;font-size:14px;min-height:44px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border:var(--btn-bd,0 solid transparent);border-radius:var(--btn,28px);box-shadow:var(--btn-sh,none);background:var(--accent);color:#fff;font-size:17px;font-weight:800;transition:transform .1s,background .2s}
+  .btn:hover{background:var(--accent-dark)} .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:var(--soft);color:var(--accent)}
+  .pad{padding:8px 22px 24px}
+  h1{font-family:var(--head,inherit);font-size:30px;line-height:1.15;font-weight:900;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:16px;line-height:1.5;margin:8px 0 0}
+  .banner{display:none;background:#FFF4D6;color:#5C4400;font-size:13px;font-weight:700;text-align:center;padding:8px 16px}
+  .error{color:#B3261E;font-size:14px;font-weight:700;min-height:0}
+  .error:empty{display:none}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* 1. Pick a buddy */
+  .buddies{display:flex;flex-direction:column;gap:14px;margin:22px 0}
+  .buddy{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:16px;border-radius:24px;border:3px solid var(--line);background:#fff;color:var(--ink);transition:border-color .2s,transform .15s}
+  .buddy:hover{transform:translateY(-2px)}
+  .buddy[aria-pressed="true"]{border-color:var(--b-accent);background:var(--b-soft)}
+  .buddy .art{flex:none;width:84px;height:84px;border-radius:22px;background:var(--b-soft);display:flex;align-items:center;justify-content:center}
+  .buddy[aria-pressed="true"] .art{background:#fff}
+  .buddy .name{font-size:21px;font-weight:900}
+  .buddy .tag{font-size:14px;color:var(--muted);font-weight:700;margin-top:1px}
+  .traits{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .traits span{font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;background:#fff;color:var(--b-accent);border:1.5px solid var(--b-accent)}
+  .theme-line{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:800;color:var(--muted)}
+  .theme-line i{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .say{margin-top:8px;font-size:14px;font-style:italic;color:var(--muted)}
+
+  /* 2. Profile */
+  .hello{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+  .hello .bubble{background:var(--soft);border-radius:20px 20px 20px 6px;padding:12px 14px;font-size:15px;font-weight:700;line-height:1.4}
+  form.fields{display:flex;flex-direction:column;gap:14px}
+  .field label{display:block;font-size:14px;font-weight:800;margin-bottom:6px}
+  .field label small{font-weight:600;color:var(--muted)}
+  .field input,.field select{width:100%;height:52px;border-radius:16px;border:2px solid var(--line);background:#F7F8FC;padding:0 16px;font-size:16px;color:var(--ink);outline:none}
+  .field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+  .row2{display:flex;gap:12px} .row2 .field{flex:1;min-width:0}
+  .more{font-size:14px;font-weight:800;color:var(--muted);margin-top:4px}
+
+  /* 3. Chat */
+  .chat-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
+  .chat-head .who{flex:1;min-width:0}
+  .chat-head .who b{font-family:var(--head,inherit);font-size:17px;font-weight:900}
+  .dots{display:flex;gap:5px;margin-top:6px}
+  .dots span{width:22px;height:7px;border-radius:4px;background:var(--line);transition:background .3s}
+  .dots span.on{background:var(--accent)}
+  .msgs{flex:1;min-height:0;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+  .m{max-width:82%;padding:13px 16px;font-size:16px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:pop .25s ease-out}
+  .m.bot{align-self:flex-start;background:#fff;border-radius:var(--bub);border:var(--bd);box-shadow:var(--sh)}
+  .m.me{align-self:flex-end;background:var(--accent);color:#fff;border-radius:var(--me);border:var(--bd)}
+  .note{align-self:flex-start;display:flex;gap:8px;align-items:flex-start;background:var(--note-bg);color:var(--note-ink);border-radius:16px;padding:10px 14px;font-size:14px;line-height:1.4;max-width:88%;animation:pop .3s ease-out}
+  .note b{display:block;font-size:12px;letter-spacing:.04em}
+  .typing{align-self:flex-start;background:#fff;border-radius:22px;padding:14px 18px;display:flex;gap:5px}
+  .typing i{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.4;animation:blink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes blink{50%{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#fff}
-  .chip.done{background:var(--accent-soft);color:var(--accent-ink);border-color:#C4DBD2}
-  .scroll{height:min(560px,60vh);overflow-y:auto;padding:20px 22px;background:#FBFAF8;display:flex;flex-direction:column;gap:12px}
-  .msg{max-width:82%;padding:12px 14px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
-  .bot{display:flex;gap:10px;align-items:flex-end;max-width:86%}
-  .avatar{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
-  .bot .msg{max-width:none;background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px}
-  .user{align-self:flex-end;background:var(--accent);color:#fff;border-radius:14px 14px 4px 14px}
-  .typing{color:var(--muted);font-style:italic}
-  .composer{border-top:1px solid #EEECE6;padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px}
-  .row{display:flex;gap:10px;align-items:flex-end}
-  textarea{flex:1;min-width:0;font:inherit;font-size:15px;padding:12px 14px;min-height:48px;max-height:160px;resize:none;border:1px solid #D6D3CA;border-radius:12px;outline-color:var(--accent)}
-  .send{flex:none;width:48px;height:48px;border-radius:12px;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center}
-  .create-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-  .create-row label{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
-  select{font:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid #D6D3CA;background:#fff}
-  aside{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:12px}
-  .aside-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-  .aside-head h2{margin:0;font-size:16px}
-  .paper-wrap{position:relative}
-  .paper{background:#fff;border:1px solid var(--line);border-radius:6px;padding:36px;font-family:'Source Serif 4',Georgia,serif;color:#1D1D20;min-height:420px}
-  .paper.locked{filter:blur(5px);user-select:none;pointer-events:none}
-  .lock{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:24px}
-  .lock-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;max-width:320px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08)}
-  .lock-card h3{margin:0 0 6px;font-size:18px}
-  .lock-card p{margin:0 0 14px;color:var(--muted);font-size:14px}
-  .r-name{font-size:26px;font-weight:700}
-  .r-head{font-size:15px;color:#45454C;margin-top:2px}
-  .r-contact{font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:var(--muted);margin-top:4px}
-  .r-sec{margin-top:20px;font-family:'Hanken Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);border-bottom:1px solid var(--line);padding-bottom:4px}
+  .chips button{border:none;background:#fff;color:var(--accent);font-weight:800;font-size:15px;padding:10px 16px;border-radius:var(--chip);border:var(--bd);min-height:44px;box-shadow:0 2px 6px rgba(31,35,64,.08)}
+  .ready{display:none;margin:0 16px 10px;background:var(--soft);border-radius:20px;padding:12px;align-items:center;gap:12px}
+  .ready.on{display:flex}
+  .ready span{flex:1;font-weight:800;font-size:14px}
+  .ready .btn{width:auto;min-height:48px;padding:0 18px;font-size:15px}
+  .composer{display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+  .composer textarea{flex:1;min-width:0;min-height:52px;max-height:140px;resize:none;border:none;border-radius:26px;background:#F1F3FB;padding:15px 20px;font-size:16px;line-height:1.35;color:var(--ink);outline-color:var(--accent);font-family:inherit}
+  .send{flex:none;width:52px;height:52px;border-radius:50%;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center}
+
+  /* 4. Resume */
+  .done-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
+  .done-head h1{font-size:26px}
+  .paper-wrap{position:relative;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 4px 18px rgba(31,35,64,.1);border:1px solid var(--line)}
+  .paper{padding:26px 22px;font-family:'Source Serif 4',Georgia,serif;color:#1D1D20;min-height:320px}
+  .locked .blurme{filter:blur(5px);user-select:none;pointer-events:none}
+  .fade{display:none;position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 85%)}
+  .locked .fade{display:block}
+  .r-name{font-size:24px;font-weight:700}
+  .r-head{font-size:15px;color:#45454C}
+  .r-contact{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);margin-top:4px}
+  .r-sec{margin-top:18px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
   .r-item{margin-top:10px}
-  .r-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .r-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
   .r-role{font-weight:700;font-size:15px}
-  .r-date{font-family:'Hanken Grotesk',sans-serif;font-size:12px;color:var(--muted)}
+  .r-date{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted)}
   .r-org{font-style:italic;font-size:14px;color:#45454C}
   .paper ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
   .paper p{font-size:14px;line-height:1.55;margin:8px 0 0}
-  .empty{color:var(--muted);font-family:'Hanken Grotesk',sans-serif;font-size:14px;text-align:center;padding-top:150px}
-  .note{margin:0;font-size:13px;color:var(--muted)}
-  .error{color:#A3261B;font-size:13px}
+  .price-row{display:flex;justify-content:space-between;align-items:baseline;margin:18px 4px 12px}
+  .price-row b{font-size:24px;font-weight:900}
+  .small{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
+  .actions{display:flex;flex-direction:column;gap:10px}
+
   /* Payment popup */
-  .modal-bg{position:fixed;inset:0;background:rgba(20,20,25,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
-  .modal{background:#fff;border-radius:16px;padding:24px;max-width:380px;width:100%}
-  .modal h3{margin:0 0 4px}
-  .price{font-size:30px;font-weight:700;margin:12px 0}
-  .test-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;background:#FFF4D6;color:#5C4400;padding:4px 8px;border-radius:6px}
-  .modal-actions{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+  .modal-bg{position:fixed;inset:0;background:rgba(20,22,40,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+  .modal-bg.on{display:flex}
+  .modal{background:#fff;width:100%;max-width:520px;border-radius:28px 28px 0 0;padding:24px 22px calc(26px + env(safe-area-inset-bottom));animation:pop .25s ease-out}
+  .tag-test{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.08em;background:#FFF4D6;color:#5C4400;padding:4px 8px;border-radius:6px}
+  .modal h2{margin:10px 0 2px;font-size:22px;font-weight:900}
+  .modal .big{font-size:32px;font-weight:900;margin:8px 0}
 </style>
 </head>
 <body>
+<div class="app">
+  <div class="banner" id="demoBanner">Demo mode: the AI isn't connected yet, so answers are scripted.</div>
 
-<header>
-  <div class="brand">
-    <div class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    StoryCV
-  </div>
-  <button class="btn" id="restart">Start over</button>
-</header>
-<div class="banner" id="demoBanner">Demo mode: the AI isn't connected yet, so answers are scripted. Add your AI key to turn it on.</div>
-
-<main>
-  <section class="chat">
-    <div class="chat-head">
-      <h1>Tell me your story</h1>
-      <p>Answer like you're talking to a friend. I'll turn it into resume lines.</p>
-      <div class="chips" id="chips"></div>
+  <!-- 1. PICK A BUDDY -->
+  <section class="screen" id="s-pick" aria-labelledby="pickTitle">
+    <div class="top"><div class="brand">storycv</div></div>
+    <div class="pad" style="flex:1;display:flex;flex-direction:column">
+      <h1 id="pickTitle">Pick your career buddy</h1>
+      <p class="sub">They'll chat with you, dig out your best stories and write your CV.</p>
+      <div class="buddies" id="buddyList"></div>
+      <div style="flex:1"></div>
+      <button class="btn" id="pickNext">Continue</button>
     </div>
-    <div class="scroll" id="scroll" aria-live="polite"></div>
-    <form class="composer" id="form">
-      <div class="row">
-        <label for="input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Your answer</label>
-        <textarea id="input" rows="1" placeholder="Type your answer… (Enter to send)"></textarea>
-        <button class="send" type="submit" aria-label="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></button>
-      </div>
-      <div class="create-row">
-        <label>Resume language
-          <select id="lang"><option>English</option><option>Bahasa Indonesia</option></select>
-        </label>
-        <button class="btn btn-primary" type="button" id="create" disabled>Create my resume</button>
-      </div>
-      <div class="error" id="error"></div>
+  </section>
+
+  <!-- 2. PROFILE -->
+  <section class="screen" id="s-profile" aria-labelledby="profTitle">
+    <div class="top"><button class="link" data-go="pick">← Change buddy</button></div>
+    <div class="pad">
+      <div class="hello"><span id="profMascot"></span><div class="bubble" id="profHello"></div></div>
+      <h1 id="profTitle" class="sr">Your details</h1>
+      <form class="fields" id="profileForm" novalidate>
+        <div class="field"><label for="f-name">Full name</label><input id="f-name" autocomplete="name" required></div>
+        <div class="field"><label for="f-nick" id="nickLabel">What should I call you?</label><input id="f-nick" autocomplete="nickname" required></div>
+        <div class="field"><label for="f-target">Job you're aiming for <small>(optional)</small></label><input id="f-target" placeholder="e.g. Barista, Admin, Sales"></div>
+        <div class="row2">
+          <div class="field"><label for="f-city">City</label><input id="f-city" autocomplete="address-level2"></div>
+          <div class="field"><label for="f-lang">Language</label><select id="f-lang"><option>English</option><option>Bahasa Indonesia</option></select></div>
+        </div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" inputmode="email"></div>
+        <div class="field"><label for="f-phone">Phone / WhatsApp <small>(optional)</small></label><input id="f-phone" type="tel" autocomplete="tel" inputmode="tel"></div>
+        <div class="field"><label for="f-linkedin">LinkedIn <small>(optional)</small></label><input id="f-linkedin" placeholder="linkedin.com/in/…"></div>
+        <div class="error" id="profErr" role="alert"></div>
+        <button class="btn" type="submit" id="profNext">Start chatting</button>
+        <p class="small" style="margin:0">Free to chat · pay only to download your CV</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 3. CHAT -->
+  <section class="screen" id="s-chat" aria-label="Chat">
+    <div class="chat-head">
+      <span id="chatMascot"></span>
+      <div class="who"><b id="chatName"></b><div class="dots" id="dots" aria-label="Progress"></div></div>
+      <button class="pill" id="peek">My CV</button>
+      <button class="link" id="restart" aria-label="Start over">Restart</button>
+    </div>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <div class="ready" id="readyBar"><span id="readyText">Ready when you are!</span><button class="btn" id="create">Create my CV</button></div>
+    <div class="error" id="chatErr" role="alert" style="padding:0 16px 8px"></div>
+    <form class="composer" id="composer">
+      <label for="input" class="sr">Your answer</label>
+      <textarea id="input" rows="1" placeholder="Type here…"></textarea>
+      <button class="send" type="submit" aria-label="Send"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
     </form>
   </section>
 
-  <aside>
-    <div class="aside-head">
-      <h2>Your resume</h2>
-      <button class="btn" id="download" disabled>Download PDF</button>
-    </div>
-    <div class="paper-wrap">
-      <div class="paper" id="paper"><div class="empty">Your resume will appear here after you tap “Create my resume”.</div></div>
-      <div class="lock" id="lock">
-        <div class="lock-card">
-          <h3>Your resume is ready</h3>
-          <p>Unlock it to see the full version and download it as a PDF.</p>
-          <button class="btn btn-primary" id="unlock" style="width:100%">Unlock for <span class="priceText"></span></button>
-        </div>
+  <!-- 4. RESUME -->
+  <section class="screen" id="s-cv" aria-labelledby="cvTitle">
+    <div class="top"><button class="link" data-go="chat">← Back to chat</button><div class="brand">storycv</div></div>
+    <div class="pad">
+      <div class="done-head"><span id="cvMascot"></span><h1 id="cvTitle"></h1></div>
+      <div class="paper-wrap" id="paperWrap"><div class="paper" id="paper"></div><div class="fade"></div></div>
+      <div id="payBox">
+        <div class="price-row"><span style="font-weight:800">Unlock full CV + PDF</span><b class="priceText"></b></div>
+        <button class="btn" id="unlock">Unlock & download</button>
+        <p class="small">QRIS · e-wallet · instant unlock</p>
       </div>
+      <div id="paidBox" class="actions" style="display:none;margin-top:18px">
+        <button class="btn" id="download">Download PDF</button>
+        <button class="btn ghost" id="redo">Add more & rewrite</button>
+      </div>
+      <div class="error" id="cvErr" role="alert"></div>
     </div>
-    <p class="note">Simple one-column layout so hiring software (ATS) can read every line.</p>
-  </aside>
-</main>
+  </section>
+</div>
 
 <div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
   <div class="modal">
-    <span class="test-tag">TEST MODE</span>
-    <h3 id="payTitle" style="margin-top:10px">Download your resume</h3>
-    <div class="price priceText"></div>
-    <p class="note">Payment isn't connected yet. Tap below to pretend the payment went through.</p>
-    <div class="modal-actions">
-      <button class="btn btn-primary" id="fakePay">Simulate successful payment</button>
-      <button class="btn" id="cancelPay">Cancel</button>
+    <span class="tag-test">TEST MODE</span>
+    <h2 id="payTitle">Download your CV</h2>
+    <div class="big priceText"></div>
+    <p class="sub" style="font-size:14px;margin-bottom:16px">Payment isn't connected yet. Tap below to pretend it went through.</p>
+    <div class="actions">
+      <button class="btn" id="fakePay">Simulate successful payment</button>
+      <button class="btn ghost" id="cancelPay">Cancel</button>
     </div>
   </div>
 </div>
 
 <script>
-/* ====== Easy-to-change settings ====== */
-const PRICE_IDR = 50000;
+/* ================= Easy-to-change settings ================= */
+const PRICE_IDR = 19000;
 
-const AREAS = [
-  ["experience","Experience"],["achievements","Achievements"],["education","Education"],
-  ["hard_skills","Hard skills"],["soft_skills","Soft skills"],["contact","Contact"]
-];
+const BUDDIES = {
+  kira: { name:"Kira", animal:"the Cat", role:"The Cheerleader", themeName:"Sunny Day",
+          traits:["Bubbly","Encouraging","Celebrates wins"],
+          say:"“Let's show the world how awesome you are!”",
+          hello:(n) => `Hiii! I'm Kira. Just a few basics first, then we chat!`,
+          theme:{ accent:"#3F5EF0", dark:"#2C46C4", soft:"#EEF2FF", bg:"#EAF2FF", pop:"#FFC93C", popInk:"#1F2340",
+                  head:"'Nunito', sans-serif", bub:"22px 22px 22px 8px", me:"22px 22px 8px 22px",
+                  bd:"0 solid transparent", sh:"0 2px 6px rgba(31,35,64,.06)", chip:"999px", btn:"28px", btnBd:"0 solid transparent", btnSh:"none" } },
+  kopi: { name:"Kopi", animal:"the Owl", role:"The Wise Mentor", themeName:"Cozy Café",
+          traits:["Calm","Thoughtful","Polite"],
+          say:"“Grab a drink. Let's take this slowly, together.”",
+          hello:(n) => `Good to meet you. I'm Kopi. A few details first, then we'll talk.`,
+          theme:{ accent:"#6B4226", dark:"#4E2F1A", soft:"#F3E8DA", bg:"#F6EFE4", pop:"#F0D3A8", popInk:"#2B1D14",
+                  head:"'Fraunces', Georgia, serif", bub:"14px 14px 14px 4px", me:"14px 14px 4px 14px",
+                  bd:"1px solid #E4D6C1", sh:"none", chip:"10px", btn:"14px", btnBd:"0 solid transparent", btnSh:"none" } },
+  tobi: { name:"Tobi", animal:"the Dino", role:"The Game Master", themeName:"Playground",
+          traits:["Playful","Punchy","Quick jokes"],
+          say:"“Let's speedrun your CV. Ready? Level 1!”",
+          hello:(n) => `YO! Tobi here. Quick setup, then the game starts!`,
+          theme:{ accent:"#1D7F45", dark:"#15633A", soft:"#E2F5D8", bg:"#EEF9E6", pop:"#FF8A3D", popInk:"#14231A",
+                  head:"'Bricolage Grotesque', sans-serif", bub:"16px 16px 16px 4px", me:"16px 16px 4px 16px",
+                  bd:"2px solid #14231A", sh:"3px 3px 0 #14231A", chip:"12px", btn:"16px", btnBd:"2.5px solid #14231A", btnSh:"4px 4px 0 #14231A" } },
+};
+const AREAS = ["experience","achievements","education","hard_skills","soft_skills"];
+
+/* ================= Character drawings (moods: happy, think, wink, yay) ================= */
+const INK = "#1F2340";
+function eyes(lx, rx, y, mood, r=6.5){
+  const arc = (x) => `<path d="M${x-7} ${y+3} Q${x} ${y-7} ${x+7} ${y+3}" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`;
+  const dot = (x, dx=0, dy=0) => `<circle cx="${x+dx}" cy="${y+dy}" r="${r}" fill="${INK}"/><circle cx="${x+dx+2.5}" cy="${y+dy-2.5}" r="2.2" fill="#fff"/>`;
+  if (mood === "yay") return arc(lx) + arc(rx);
+  if (mood === "wink") return dot(lx) + `<path d="M${rx-7} ${y} Q${rx} ${y+5} ${rx+7} ${y}" fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"/>`;
+  if (mood === "think") return dot(lx,2,-3) + dot(rx,2,-3);
+  return dot(lx) + dot(rx);
+}
+const DRAW = {
+  kira(m){
+    const fur="#FFC93C", pink="#FF9FB0";
+    let s = `<path d="M22 54 L28 12 L56 34 Z" fill="${fur}"/><path d="M98 54 L92 12 L64 34 Z" fill="${fur}"/><path d="M30 42 L32 22 L47 34 Z" fill="${pink}"/><path d="M90 42 L88 22 L73 34 Z" fill="${pink}"/><ellipse cx="60" cy="70" rx="47" ry="40" fill="${fur}"/><path d="M60 32 V41 M50 34 L52 42 M70 34 L68 42" stroke="#E8A100" stroke-width="4" stroke-linecap="round"/>`;
+    s += eyes(43,77,64,m) + `<circle cx="34" cy="80" r="6" fill="${pink}" opacity=".75"/><circle cx="86" cy="80" r="6" fill="${pink}" opacity=".75"/><path d="M55 74 H65 L60 80 Z" fill="#F07A8E"/>`;
+    s += m==="think" ? `<circle cx="60" cy="88" r="3.5" fill="${INK}"/>` : m==="yay" ? `<path d="M50 82 Q60 98 70 82 Z" fill="${INK}"/>` : `<path d="M60 80 Q56 87 50 83 M60 80 Q64 87 70 83" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`;
+    return s + `<path d="M12 70 L28 73 M12 80 L28 79 M108 70 L92 73 M108 80 L92 79" stroke="${INK}" stroke-width="2.5" stroke-linecap="round" opacity=".55"/>`;
+  },
+  kopi(m){
+    const body="#8A5A3B", gl="#3B2A1E";
+    let s = `<path d="M24 42 L18 8 L46 28 Z" fill="${body}"/><path d="M96 42 L102 8 L74 28 Z" fill="${body}"/><path d="M60 18 C92 18 106 44 106 70 C106 98 86 112 60 112 C34 112 14 98 14 70 C14 44 28 18 60 18 Z" fill="${body}"/><path d="M16 62 Q4 84 24 100 Q20 80 16 62 Z" fill="#6E4529"/><path d="M104 62 Q116 84 96 100 Q100 80 104 62 Z" fill="#6E4529"/><ellipse cx="60" cy="94" rx="27" ry="16" fill="#EBD6B8"/><path d="M45 87 L48 90 L51 87 M57 87 L60 90 L63 87 M69 87 L72 90 L75 87 M51 97 L54 100 L57 97 M63 97 L66 100 L69 97" fill="none" stroke="#B88B63" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="43" cy="56" r="18" fill="#F7EBD8"/><circle cx="77" cy="56" r="18" fill="#F7EBD8"/>`;
+    s += eyes(43,77,56,m,6) + `<circle cx="43" cy="56" r="14.5" fill="none" stroke="${gl}" stroke-width="3.5"/><circle cx="77" cy="56" r="14.5" fill="none" stroke="${gl}" stroke-width="3.5"/><path d="M57.5 55 Q60 51 62.5 55" fill="none" stroke="${gl}" stroke-width="3.5" stroke-linecap="round"/>`;
+    return s + `<path d="M54 70 L66 70 L60 ${m==="yay" ? 82 : 79} Z" fill="#F2A03A"/>`;
+  },
+  tobi(m){
+    let s = `<path d="M36 40 L44 14 L54 36 Z M52 34 L60 4 L68 34 Z M66 36 L76 14 L84 40 Z" fill="#FF8A3D"/><rect x="14" y="30" width="92" height="82" rx="40" fill="#5CC27A"/><ellipse cx="60" cy="94" rx="34" ry="15" fill="#D3F0C4"/><circle cx="26" cy="58" r="4.5" fill="#43A562"/><circle cx="95" cy="62" r="5.5" fill="#43A562"/><circle cx="88" cy="48" r="3.5" fill="#43A562"/>`;
+    s += eyes(42,78,62,m,8) + `<circle cx="54" cy="76" r="2.5" fill="${INK}" opacity=".45"/><circle cx="66" cy="76" r="2.5" fill="${INK}" opacity=".45"/>`;
+    if (m === "think") return s + `<path d="M52 92 H68" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`;
+    if (m === "yay") return s + `<path d="M42 86 Q60 108 78 86 Z" fill="${INK}"/><path d="M64 87 L70 87 L67 93 Z" fill="#fff"/>`;
+    return s + `<path d="M42 86 Q60 100 78 86" fill="none" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/><path d="M64 91.5 L70 90 L67.5 96 Z" fill="#fff"/>`;
+  },
+};
+function mascot(id, mood="happy", size=48){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 120 120" role="img" aria-label="${BUDDIES[id].name}" style="flex:none">${DRAW[id](mood)}</svg>`;
+}
+
+/* ================= State (saved on this device) ================= */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const priceLabel = "IDR " + PRICE_IDR.toLocaleString("id-ID");
+const fresh = () => ({ screen:"pick", buddy:"kira", profile:{}, messages:[], notes:{}, covered:{}, ready:false, suggestions:[], mood:"happy", resume:null, paid:false });
+let S = (() => { try { return Object.assign(fresh(), JSON.parse(localStorage.getItem("storycv2")) || {}); } catch(e){ return fresh(); } })();
+if (!BUDDIES[S.buddy]) S = fresh();
+const save = () => { try { localStorage.setItem("storycv2", JSON.stringify(S)); } catch(e){} };
+const priceLabel = "Rp " + PRICE_IDR.toLocaleString("id-ID");
 document.querySelectorAll(".priceText").forEach((el) => el.textContent = priceLabel);
 
-let state = load() || fresh();
-function fresh(){ return { messages: [], covered: {}, ready: false, resume: null, paid: false }; }
-function save(){ try{ localStorage.setItem("storycv", JSON.stringify(state)); }catch(e){} }
-function load(){ try{ return JSON.parse(localStorage.getItem("storycv")); }catch(e){ return null; } }
+function applyTheme(){
+  if (!BUDDIES[S.buddy]) S.buddy = "kira";
+  const t = BUDDIES[S.buddy].theme, r = document.documentElement.style;
+  const map = { "--accent":t.accent, "--accent-dark":t.dark, "--soft":t.soft, "--bg":t.bg, "--note-bg":t.pop, "--note-ink":t.popInk,
+    "--head":t.head, "--bub":t.bub, "--me":t.me, "--bd":t.bd, "--sh":t.sh, "--chip":t.chip, "--btn":t.btn, "--btn-bd":t.btnBd, "--btn-sh":t.btnSh };
+  for (const k in map) r.setProperty(k, map[k]);
+}
+function go(screen){
+  S.screen = screen; save();
+  document.querySelectorAll(".screen").forEach((el) => el.classList.toggle("on", el.id === "s-" + screen));
+  ({ pick:renderPick, profile:renderProfile, chat:renderChat, cv:renderCV })[screen]();
+  $("s-" + screen).scrollTop = 0;
+}
+document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
 
 async function post(url, body){
-  const res = await fetch(url, { method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify(body) });
+  const res = await fetch(url, { method:"POST", headers:{"content-type":"application/json"}, body:JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
   if (data.demo) $("demoBanner").style.display = "block";
   return data;
 }
 
-/* ---------- Chat ---------- */
-function renderChips(){
-  $("chips").innerHTML = AREAS.map(([k,label]) =>
-    `<span class="chip ${state.covered[k] ? "done":""}">${state.covered[k] ? "✓ ":""}${label}</span>`).join("");
+/* ================= 1. Pick ================= */
+function renderPick(){
+  applyTheme();
+  $("buddyList").innerHTML = Object.entries(BUDDIES).map(([id,b]) => `
+    <button class="buddy" data-id="${id}" aria-pressed="${S.buddy===id}" style="--b-accent:${b.theme.accent};--b-soft:${b.theme.soft}">
+      <span class="art">${mascot(id, S.buddy===id ? "yay" : "happy", 68)}</span>
+      <span style="min-width:0">
+        <span class="name" style="font-family:${b.theme.head}">${b.name}</span>
+        <div class="tag">${b.animal} · ${b.role}</div>
+        <div class="traits">${b.traits.map((t) => `<span>${t}</span>`).join("")}</div>
+        <div class="say">${b.say}</div>
+        <div class="theme-line"><i style="background:${b.theme.accent}"></i><i style="background:${b.theme.pop}"></i>Theme: ${b.themeName}</div>
+      </span>
+    </button>`).join("");
+  $("buddyList").querySelectorAll(".buddy").forEach((el) => el.addEventListener("click", () => { S.buddy = el.dataset.id; save(); renderPick(); }));
+  $("pickNext").textContent = "Continue with " + BUDDIES[S.buddy].name;
 }
-function renderChat(typing){
-  const html = state.messages.map((m) => m.role === "assistant"
-    ? `<div class="bot"><div class="avatar">K</div><div class="msg">${esc(m.content)}</div></div>`
-    : `<div class="msg user">${esc(m.content)}</div>`).join("");
-  $("scroll").innerHTML = html + (typing ? `<div class="bot"><div class="avatar">K</div><div class="msg typing">Kira is typing…</div></div>` : "");
-  $("scroll").scrollTop = $("scroll").scrollHeight;
-  const userCount = state.messages.filter((m) => m.role === "user").length;
-  $("create").disabled = !(state.ready || userCount >= 4);
-  renderChips();
-}
+$("pickNext").addEventListener("click", () => go("profile"));
 
-async function askBot(){
-  $("error").textContent = "";
-  renderChat(true);
-  try{
-    const data = await post("/api/chat", { messages: state.messages });
-    state.messages.push({ role:"assistant", content: data.reply });
-    state.covered = data.covered || {};
-    state.ready = !!data.ready;
-    save();
-  }catch(e){ $("error").textContent = e.message; }
-  renderChat(false);
+/* ================= 2. Profile ================= */
+const F = { name:"f-name", nickname:"f-nick", target:"f-target", city:"f-city", lang:"f-lang", email:"f-email", phone:"f-phone", linkedin:"f-linkedin" };
+function renderProfile(){
+  applyTheme();
+  const b = BUDDIES[S.buddy];
+  $("profMascot").innerHTML = mascot(S.buddy, "happy", 64);
+  $("profHello").textContent = b.hello();
+  $("nickLabel").textContent = `What should ${b.name} call you?`;
+  for (const [k,id] of Object.entries(F)) if (S.profile[k]) $(id).value = S.profile[k];
 }
-
-$("form").addEventListener("submit", (e) => {
+$("profileForm").addEventListener("submit", (e) => {
   e.preventDefault();
-  const text = $("input").value.trim();
-  if (!text) return;
-  state.messages.push({ role:"user", content:text });
+  const p = {}; for (const [k,id] of Object.entries(F)) p[k] = $(id).value.trim();
+  if (!p.name || !p.nickname){ $("profErr").textContent = "Please fill in your full name and nickname."; (p.name ? $("f-nick") : $("f-name")).focus(); return; }
+  if (p.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)){ $("profErr").textContent = "That email doesn't look right."; $("f-email").focus(); return; }
+  $("profErr").textContent = "";
+  const changedBuddy = S.profile._buddy && S.profile._buddy !== S.buddy;
+  S.profile = { ...p, _buddy:S.buddy };
+  if (changedBuddy){ S.messages = []; S.notes = {}; S.covered = {}; S.ready = false; S.resume = null; S.paid = false; }
+  save(); go("chat");
+});
+
+/* ================= 3. Chat ================= */
+function renderChat(typing){
+  applyTheme();
+  const b = BUDDIES[S.buddy];
+  $("chatMascot").innerHTML = mascot(S.buddy, typing ? "think" : S.mood, 44);
+  $("chatName").textContent = b.name;
+  $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}"></span>`).join("");
+  $("dots").setAttribute("aria-label", `Progress: ${AREAS.filter((a)=>S.covered[a]).length} of ${AREAS.length}`);
+  $("peek").textContent = S.resume ? "My CV" : "My CV";
+  $("peek").disabled = !S.resume; $("peek").style.opacity = S.resume ? 1 : .5;
+  let h = "";
+  S.messages.forEach((m, i) => {
+    h += `<div class="m ${m.role === "user" ? "me" : "bot"}">${esc(m.content)}</div>`;
+    if (S.notes[i]) h += `<div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"/></svg><span><b>ADDED TO YOUR CV</b>${esc(S.notes[i])}</span></div>`;
+  });
+  if (typing) h += `<div class="typing" aria-label="${b.name} is typing"><i></i><i></i><i></i></div>`;
+  else if (S.suggestions.length) h += `<div class="chips">${S.suggestions.map((s) => `<button type="button" data-say="${esc(s)}">${esc(s)}</button>`).join("")}</div>`;
+  $("msgs").innerHTML = h;
+  $("msgs").querySelectorAll("[data-say]").forEach((el) => el.addEventListener("click", () => sendText(el.dataset.say)));
+  $("msgs").scrollTop = $("msgs").scrollHeight;
+  const answers = S.messages.filter((m) => m.role === "user").length;
+  $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 4));
+  $("readyText").textContent = S.ready ? `Nice work, ${S.profile.nickname || "friend"}! Ready?` : "Enough to start. Add more or create now.";
+  if (!typing && !S.messages.length) askBuddy();
+}
+let busy = false;
+async function askBuddy(){
+  if (busy) return; busy = true; $("chatErr").textContent = "";
+  renderChat(true);
+  try {
+    const d = await post("/api/chat", { messages:S.messages, buddy:S.buddy, profile:S.profile });
+    // A strong line from the user's last answer is shown right after that answer.
+    if (d.cv_note && S.messages.length) S.notes[S.messages.length - 1] = d.cv_note;
+    S.messages.push({ role:"assistant", content:d.reply });
+    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; S.covered = d.covered || {}; S.ready = !!d.ready;
+    save();
+  } catch(e){ $("chatErr").textContent = e.message; }
+  busy = false; renderChat(false);
+}
+function sendText(text){
+  text = (text || "").trim(); if (!text || busy) return;
+  S.messages.push({ role:"user", content:text }); S.suggestions = []; save();
   $("input").value = ""; $("input").style.height = "";
-  save(); askBot();
-});
-$("input").addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("form").requestSubmit(); }
-});
+  askBuddy();
+}
+$("composer").addEventListener("submit", (e) => { e.preventDefault(); sendText($("input").value); });
+$("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendText($("input").value); } });
 $("input").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; });
-
-/* ---------- Resume ---------- */
+$("peek").addEventListener("click", () => S.resume && go("cv"));
+$("restart").addEventListener("click", () => {
+  if (!confirm("Start over? Your chat and CV will be cleared.")) return;
+  S = fresh(); save(); go("pick");
+});
 $("create").addEventListener("click", async () => {
-  $("error").textContent = "";
-  $("create").disabled = true; $("create").textContent = "Writing your resume…";
-  try{
-    const data = await post("/api/resume", { messages: state.messages, language: $("lang").value });
-    state.resume = data.resume; state.paid = false; save();
-    renderResume();
-  }catch(e){ $("error").textContent = e.message; }
-  $("create").textContent = "Create my resume"; $("create").disabled = false;
+  $("chatErr").textContent = ""; $("create").disabled = true; $("create").textContent = "Writing…";
+  $("chatMascot").innerHTML = mascot(S.buddy, "think", 44);
+  try {
+    const d = await post("/api/resume", { messages:S.messages, profile:S.profile });
+    S.resume = d.resume; save(); go("cv");
+  } catch(e){ $("chatErr").textContent = e.message; }
+  $("create").disabled = false; $("create").textContent = "Create my CV";
 });
 
+/* ================= 4. CV ================= */
 const list = (a) => (Array.isArray(a) ? a.filter(Boolean) : []);
-function renderResume(){
-  const r = state.resume;
-  if (!r){ $("paper").innerHTML = `<div class="empty">Your resume will appear here after you tap “Create my resume”.</div>`; $("lock").style.display="none"; $("paper").classList.remove("locked"); $("download").disabled = true; return; }
-  const c = r.contact || {};
+function renderCV(){
+  applyTheme();
+  if (!S.resume) return go("chat");
+  const r = S.resume, c = r.contact || {};
+  $("cvMascot").innerHTML = mascot(S.buddy, "yay", 60);
+  $("cvTitle").textContent = S.paid ? `All yours, ${S.profile.nickname}!` : `Yay ${S.profile.nickname}! Your CV is ready.`;
   const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).map(esc).join(" · ");
-  let h = `<div class="r-name">${esc(r.name || "[Your name]")}</div>`;
-  if (r.headline) h += `<div class="r-head">${esc(r.headline)}</div>`;
-  if (contact) h += `<div class="r-contact">${contact}</div>`;
-  if (r.summary) h += `<div class="r-sec">Summary</div><p>${esc(r.summary)}</p>`;
+  let top = `<div class="r-name">${esc(r.name)}</div>`;
+  if (r.headline) top += `<div class="r-head">${esc(r.headline)}</div>`;
+  if (contact) top += `<div class="r-contact">${contact}</div>`;
+  if (r.summary) top += `<div class="r-sec">Summary</div><p>${esc(r.summary)}</p>`;
+  let rest = "";
   if (list(r.experience).length){
-    h += `<div class="r-sec">Experience</div>`;
-    r.experience.forEach((j) => {
-      const dates = [j.start, j.end].filter(Boolean).join(" – ");
-      h += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc(dates)}</span></div>
-            <div class="r-org">${esc([j.company, j.location].filter(Boolean).join(", "))}</div>
-            <ul>${list(j.bullets).map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>`;
-    });
+    rest += `<div class="r-sec">Experience</div>`;
+    r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" – "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
   }
   if (list(r.education).length){
-    h += `<div class="r-sec">Education</div>`;
-    r.education.forEach((ed) => {
-      h += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div>
-            <div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`;
-    });
+    rest += `<div class="r-sec">Education</div>`;
+    r.education.forEach((ed) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div><div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`; });
   }
-  const skills = [["Hard skills", r.hard_skills], ["Soft skills", r.soft_skills], ["Certifications", r.certifications], ["Languages", r.languages]]
-    .filter(([,v]) => list(v).length);
-  if (skills.length){
-    h += `<div class="r-sec">Skills</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
-  }
-  $("paper").innerHTML = h;
-  $("paper").classList.toggle("locked", !state.paid);
-  $("lock").style.display = state.paid ? "none" : "flex";
-  $("download").disabled = !state.paid;
-  $("download").classList.toggle("btn-primary", state.paid);
+  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length) rest += `<div class="r-sec">Skills</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
+  $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
+  $("paperWrap").classList.toggle("locked", !S.paid);
+  $("payBox").style.display = S.paid ? "none" : "block";
+  $("paidBox").style.display = S.paid ? "flex" : "none";
 }
+$("redo").addEventListener("click", () => go("chat"));
 
 /* ---------- Payment (TEST MODE) ----------
-   Later: replace startPayment() with Midtrans Snap / Xendit.
-   Their popup calls back on success -> then run onPaid().
-   For real money, the server must confirm the payment before giving the PDF. */
-function startPayment(){ $("modal").style.display = "flex"; $("fakePay").focus(); }
-function onPaid(){ state.paid = true; save(); $("modal").style.display = "none"; renderResume(); }
+   Later: replace startPayment() with Midtrans Snap / Xendit, and only call onPaid()
+   after the server confirms the payment. */
+function startPayment(){ $("modal").classList.add("on"); $("fakePay").focus(); }
+function onPaid(){ S.paid = true; save(); $("modal").classList.remove("on"); renderCV(); }
 $("unlock").addEventListener("click", startPayment);
 $("fakePay").addEventListener("click", onPaid);
-$("cancelPay").addEventListener("click", () => $("modal").style.display = "none");
+$("cancelPay").addEventListener("click", () => $("modal").classList.remove("on"));
+$("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 
-/* ---------- PDF (real text, so ATS software can read it) ---------- */
+/* ---------- PDF: real text so hiring software (ATS) can read it ---------- */
 $("download").addEventListener("click", () => {
-  const r = state.resume; if (!r || !state.paid) return;
+  const r = S.resume; if (!r || !S.paid) return;
+  const hex = BUDDIES[S.buddy].theme.accent; const rgb = [1,3,5].map((i) => parseInt(hex.slice(i,i+2),16));
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
   const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
@@ -284,58 +471,30 @@ $("download").addEventListener("click", () => {
   const need = (h) => { if (y + h > H - M){ doc.addPage(); y = M; } };
   const text = (str, size, style, gap, indent) => {
     doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
-    const lines = doc.splitTextToSize(String(str), W - (indent||0));
-    lines.forEach((ln) => { need(size*1.35); doc.text(ln, M + (indent||0), y); y += size*1.35; });
+    doc.splitTextToSize(String(str), W - (indent||0)).forEach((ln) => { need(size*1.35); doc.text(ln, M + (indent||0), y); y += size*1.35; });
     y += gap || 0;
   };
-  const section = (title) => {
-    y += 8; need(30);
-    doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(30,74,62);
-    doc.text(title.toUpperCase(), M, y); y += 5;
-    doc.setDrawColor(200); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20);
-  };
-  const leftRight = (left, right, size) => {
-    need(size*1.4);
-    doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(left||""), M, y);
-    if (right){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(right), M+W, y, { align:"right" }); }
-    y += size*1.35;
-  };
+  const section = (t) => { y += 8; need(30); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 5; doc.setDrawColor(210); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20); };
+  const lr = (l, rt, size) => { need(size*1.4); doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(l||""), M, y); if (rt){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(rt), M+W, y, {align:"right"}); } y += size*1.35; };
   doc.setTextColor(20);
   text(r.name || "Your Name", 20, "bold", 2);
   if (r.headline) text(r.headline, 12, "normal", 2);
-  const c = r.contact || {};
-  const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).join("  |  ");
+  const c = r.contact || {}; const contact = [c.city,c.email,c.phone,c.linkedin].filter(Boolean).join("  |  ");
   if (contact) text(contact, 9.5, "normal", 4);
-  if (r.summary){ section("Summary"); text(r.summary, 10.5, "normal"); }
-  if (list(r.experience).length){
-    section("Experience");
-    r.experience.forEach((j) => {
-      leftRight(j.role, [j.start, j.end].filter(Boolean).join(" - "), 11);
-      const org = [j.company, j.location].filter(Boolean).join(", ");
-      if (org) text(org, 10.5, "italic");
-      list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
-      y += 6;
-    });
-  }
-  if (list(r.education).length){
-    section("Education");
-    r.education.forEach((ed) => { leftRight(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; });
-  }
-  const skills = [["Hard skills", r.hard_skills], ["Soft skills", r.soft_skills], ["Certifications", r.certifications], ["Languages", r.languages]].filter(([,v]) => list(v).length);
+  if (r.summary){ section("Summary"); text(r.summary, 10.5); }
+  if (list(r.experience).length){ section("Experience"); r.experience.forEach((j) => {
+    lr(j.role, [j.start,j.end].filter(Boolean).join(" - "), 11);
+    const org = [j.company,j.location].filter(Boolean).join(", "); if (org) text(org, 10.5, "italic");
+    list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
+    y += 6; }); }
+  if (list(r.education).length){ section("Education"); r.education.forEach((ed) => { lr(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; }); }
+  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
   if (skills.length){ section("Skills"); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
-  const file = (r.name || "resume").replace(/[^\w\- ]+/g, "").trim().replace(/\s+/g, "_") + "_Resume.pdf";
-  doc.save(file);
+  doc.save((r.name || "CV").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_") + "_CV.pdf");
 });
 
-/* ---------- Start over ---------- */
-$("restart").addEventListener("click", () => {
-  if (state.messages.length > 1 && !confirm("Start over? Your current chat and resume will be cleared.")) return;
-  state = fresh(); save(); renderResume(); askBot();
-});
-
-/* ---------- Boot ---------- */
-renderChat(false); renderResume();
-if (!state.messages.length) askBot();
+/* ================= Start ================= */
+go(S.screen === "chat" && !S.profile.name ? "pick" : S.screen);
 </script>
 </body>
 </html>
