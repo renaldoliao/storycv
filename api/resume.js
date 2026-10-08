@@ -4,6 +4,7 @@
 
 const { isDemo, cleanMessages, callClaude, parseJson, send } = require("./_shared");
 const { cleanProfile } = require("./_buddies");
+const { requireUser } = require("./_auth");
 
 function systemPrompt(language) {
   return `You are an expert resume writer. You will receive an interview transcript between a career coach (assistant) and a job seeker (user).
@@ -63,6 +64,8 @@ module.exports = async (req, res) => {
       return send(res, 400, { error: "Tell your buddy a bit more about yourself first." });
     }
     if (isDemo()) return send(res, 200, { resume: withProfile(JSON.parse(JSON.stringify(DEMO_RESUME)), profile), demo: true });
+
+    await requireUser(req, "resume");
 
     const transcript = messages
       .map((m) => (m.role === "user" ? "USER: " : "COACH: ") + m.content)

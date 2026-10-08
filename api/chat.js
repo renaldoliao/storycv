@@ -4,6 +4,7 @@
 
 const { isDemo, cleanMessages, callClaude, parseJson, send } = require("./_shared");
 const { getBuddy, cleanProfile } = require("./_buddies");
+const { requireUser } = require("./_auth");
 
 const KEYS = ["experience", "achievements", "education", "hard_skills", "soft_skills"];
 const MOODS = ["happy", "think", "wink", "yay"];
@@ -42,14 +43,29 @@ Respond ONLY with a JSON object, no other text:
  "ready":bool}`;
 }
 
-const DEMO = [
-  { q: null, mood: "happy", s: ["I'm a fresh graduate", "I work in retail"] },
-  { q: () => "Nice! What's one thing you made better at work? A rough guess is fine.", mood: "think", s: ["Not sure", "Skip"], note: "Refined classic cocktail recipes to improve consistency and guest appeal" },
-  { q: () => "Great one! Where did you study, and when did you finish?", mood: "wink", s: ["High school", "University"] },
-  { q: () => "Which tools or software do you use day to day?", mood: "happy", s: ["Excel", "None really"] },
-  { q: () => "Last one: how would your teammates describe you?", mood: "think", s: ["Cheerful", "Hard-working"] },
-  { q: () => "That's everything! Tap “Create my CV” whenever you're ready.", mood: "yay", s: [] },
-];
+// Scripted chat used only in demo mode (no AI key). Real mode is fully AI-driven.
+const DEMO = {
+  English: [
+    { q: null, mood: "happy", s: ["I'm a fresh graduate", "I work in retail"] },
+    { q: () => "Nice! What's one thing you made better at work? A rough guess is fine.", mood: "think", s: ["Not sure", "Skip"] },
+    { q: () => "Great one! Where did you study, and when did you finish?", mood: "wink", s: ["High school", "University"] },
+    { q: () => "Which tools or software do you use day to day?", mood: "happy", s: ["Excel", "None really"] },
+    { q: () => "Last one: how would your teammates describe you?", mood: "think", s: ["Cheerful", "Hard-working"] },
+    { q: () => "That's everything! Tap “Create my CV” whenever you're ready.", mood: "yay", s: [] },
+  ],
+  "Bahasa Indonesia": [
+    { q: null, mood: "happy", s: ["Saya fresh graduate", "Saya kerja di retail"] },
+    { q: () => "Mantap! Apa satu hal yang pernah kamu perbaiki di tempat kerja? Perkiraan kasar juga boleh.", mood: "think", s: ["Kurang tahu", "Lewati"] },
+    { q: () => "Keren! Kamu sekolah atau kuliah di mana, dan lulus tahun berapa?", mood: "wink", s: ["SMA/SMK", "Kuliah"] },
+    { q: () => "Alat atau aplikasi apa yang kamu pakai sehari-hari?", mood: "happy", s: ["Excel", "Tidak ada"] },
+    { q: () => "Terakhir: menurut teman kerjamu, kamu orangnya seperti apa?", mood: "think", s: ["Ceria", "Pekerja keras"] },
+    { q: () => "Sudah lengkap! Tekan “Create my CV” kalau sudah siap.", mood: "yay", s: [] },
+  ],
+};
+const DEMO_NOTE = {
+  English: "Refined classic cocktail recipes to improve consistency and guest appeal",
+  "Bahasa Indonesia": "Menyempurnakan resep koktail klasik untuk meningkatkan konsistensi dan minat tamu",
+};
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Use POST" });
@@ -61,17 +77,22 @@ module.exports = async (req, res) => {
 
     if (isDemo()) {
       const n = messages.filter((m) => m.role === "user").length;
-      const step = DEMO[Math.min(n, DEMO.length - 1)];
+      const script = DEMO[profile.lang];
+      const step = script[Math.min(n, script.length - 1)];
+      const greet = profile.lang === "Bahasa Indonesia" ? buddy.demoId : buddy.demo;
       return send(res, 200, {
-        reply: (step.q || buddy.demo)(profile.nickname || "there"),
+        reply: (step.q || greet)(profile.nickname || "kamu"),
         mood: step.mood,
-        cv_note: n === 2 ? DEMO[1].note : "",
+        cv_note: n === 2 ? DEMO_NOTE[profile.lang] : "",
         suggestions: step.s,
         covered: Object.fromEntries(KEYS.map((k, i) => [k, i < n])),
         ready: n >= KEYS.length,
         demo: true,
       });
     }
+
+    // Real AI costs money: only logged-in users, within their daily limit.
+    await requireUser(req, "message");
 
     const convo = messages.length
       ? messages.slice()
