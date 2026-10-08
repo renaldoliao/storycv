@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>StoryCV · Your career buddy</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&display=swap">
+<script src="/lib/jspdf.umd.min.js"></script>
+<script src="/lib/buddies.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* Theme colors. They change when the user picks a buddy (see BUDDIES below). */
+  :root{
+    --accent:#3F5EF0; --accent-dark:#2C46C4; --soft:#EEF2FF; --bg:#EAF2FF; --body:#FFD84D;
+    --ink:#1F2340; --muted:#4A4F70; --line:#E3E6F3; --white:#fff; --note-bg:#FFF3C4; --note-ink:#5A4300;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Nunito',system-ui,sans-serif;transition:background .4s}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  .app{max-width:520px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column;background:var(--white);box-shadow:0 0 40px rgba(31,35,64,.08)}
+  .screen{display:none;flex:1;flex-direction:column;min-height:0;overflow-y:auto}
+  #s-chat{overflow:hidden}
+  .screen.on{display:flex}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px}
+  .brand{font-family:var(--head,inherit);font-weight:900;font-size:19px;display:flex;align-items:center;gap:8px}
+  .link{background:none;border:none;color:var(--accent);font-weight:800;font-size:14px;padding:10px 4px;min-height:44px}
+  .pill{background:var(--soft);color:var(--accent);border:none;border-radius:999px;padding:10px 14px;font-weight:800;font-size:14px;min-height:44px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border:var(--btn-bd,0 solid transparent);border-radius:var(--btn,28px);box-shadow:var(--btn-sh,none);background:var(--accent);color:#fff;font-size:17px;font-weight:800;transition:transform .1s,background .2s}
+  .btn:hover{background:var(--accent-dark)} .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:var(--soft);color:var(--accent)}
+  .pad{padding:8px 22px 24px}
+  h1{font-family:var(--head,inherit);font-size:30px;line-height:1.15;font-weight:900;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:16px;line-height:1.5;margin:8px 0 0}
+  .banner{display:none;background:#FFF4D6;color:#5C4400;font-size:13px;font-weight:700;text-align:center;padding:8px 16px}
+  .error{color:#B3261E;font-size:14px;font-weight:700;min-height:0}
+  .error:empty{display:none}
+  .ok{color:#14613A;background:#E3F6EA;border-radius:14px;padding:12px 14px;font-size:14px;font-weight:700;line-height:1.45}
+  .ok:empty{display:none}
+  .trio{display:flex;justify-content:center;gap:4px;margin:4px 0 14px}
+  .tabs{display:flex;background:#F1F3FB;border-radius:999px;padding:4px;margin:18px 0 16px}
+  .tabs button{flex:1;border:none;background:none;border-radius:999px;min-height:44px;font-weight:800;font-size:15px;color:var(--muted)}
+  .tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(31,35,64,.1)}
+  a.brand{color:inherit;text-decoration:none}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+  /* 1. Pick a buddy */
+  .buddies{display:flex;flex-direction:column;gap:14px;margin:22px 0}
+  .buddy{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:16px;border-radius:24px;border:3px solid var(--line);background:#fff;color:var(--ink);transition:border-color .2s,transform .15s}
+  .buddy:hover{transform:translateY(-2px)}
+  .buddy[aria-pressed="true"]{border-color:var(--b-accent);background:var(--b-soft)}
+  .buddy .art{flex:none;width:84px;height:84px;border-radius:22px;background:var(--b-soft);display:flex;align-items:center;justify-content:center}
+  .buddy[aria-pressed="true"] .art{background:#fff}
+  .buddy .name{font-size:21px;font-weight:900}
+  .buddy .tag{font-size:14px;color:var(--muted);font-weight:700;margin-top:1px}
+  .traits{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .traits span{font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;background:#fff;color:var(--b-accent);border:1.5px solid var(--b-accent)}
+  .theme-line{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:800;color:var(--muted)}
+  .theme-line i{width:12px;height:12px;border-radius:50%;display:inline-block}
+  .say{margin-top:8px;font-size:14px;font-style:italic;color:var(--muted)}
+
+  /* 2. Profile */
+  .hello{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+  .hello .bubble{background:var(--soft);border-radius:20px 20px 20px 6px;padding:12px 14px;font-size:15px;font-weight:700;line-height:1.4}
+  form.fields{display:flex;flex-direction:column;gap:14px}
+  .field label{display:block;font-size:14px;font-weight:800;margin-bottom:6px}
+  .field label small{font-weight:600;color:var(--muted)}
+  .field input,.field select{width:100%;height:52px;border-radius:16px;border:2px solid var(--line);background:#F7F8FC;padding:0 16px;font-size:16px;color:var(--ink);outline:none}
+  .field input:focus,.field select:focus{border-color:var(--accent);background:#fff}
+  .row2{display:flex;gap:12px} .row2 .field{flex:1;min-width:0}
+  .more{font-size:14px;font-weight:800;color:var(--muted);margin-top:4px}
+
+  /* 3. Chat */
+  .chat-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
+  .chat-head .who{flex:1;min-width:0}
+  .chat-head .who b{font-family:var(--head,inherit);font-size:17px;font-weight:900}
+  .dots{display:flex;gap:5px;margin-top:6px}
+  .dots span{width:22px;height:7px;border-radius:4px;background:var(--line);transition:background .3s}
+  .dots span.on{background:var(--accent)}
+  .msgs{flex:1;min-height:0;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+  .m{max-width:82%;padding:13px 16px;font-size:16px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:pop .25s ease-out}
+  .m.bot{align-self:flex-start;background:#fff;border-radius:var(--bub);border:var(--bd);box-shadow:var(--sh)}
+  .m.me{align-self:flex-end;background:var(--accent);color:#fff;border-radius:var(--me);border:var(--bd)}
+  .note{align-self:flex-start;display:flex;gap:8px;align-items:flex-start;background:var(--note-bg);color:var(--note-ink);border-radius:16px;padding:10px 14px;font-size:14px;line-height:1.4;max-width:88%;animation:pop .3s ease-out}
+  .note b{display:block;font-size:12px;letter-spacing:.04em}
+  .typing{align-self:flex-start;background:#fff;border-radius:22px;padding:14px 18px;display:flex;gap:5px}
+  .typing i{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.4;animation:blink 1s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes blink{50%{opacity:1}}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips button{border:none;background:#fff;color:var(--accent);font-weight:800;font-size:15px;padding:10px 16px;border-radius:var(--chip);border:var(--bd);min-height:44px;box-shadow:0 2px 6px rgba(31,35,64,.08)}
+  .ready{display:none;margin:0 16px 10px;background:var(--soft);border-radius:20px;padding:12px;align-items:center;gap:12px}
+  .ready.on{display:flex}
+  .ready span{flex:1;font-weight:800;font-size:14px}
+  .ready .btn{width:auto;min-height:48px;padding:0 18px;font-size:15px}
+  .composer{display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+  .composer textarea{flex:1;min-width:0;min-height:52px;max-height:140px;resize:none;border:none;border-radius:26px;background:#F1F3FB;padding:15px 20px;font-size:16px;line-height:1.35;color:var(--ink);outline-color:var(--accent);font-family:inherit}
+  .send{flex:none;width:52px;height:52px;border-radius:50%;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center}
+
+  /* 4. Resume */
+  .done-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
+  .done-head h1{font-size:26px}
+  .paper-wrap{position:relative;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 4px 18px rgba(31,35,64,.1);border:1px solid var(--line)}
+  .paper{padding:26px 22px;font-family:'Source Serif 4',Georgia,serif;color:#1D1D20;min-height:320px}
+  .locked .blurme{filter:blur(5px);user-select:none;pointer-events:none}
+  .fade{display:none;position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 85%)}
+  .locked .fade{display:block}
+  .r-name{font-size:24px;font-weight:700}
+  .r-head{font-size:15px;color:#45454C}
+  .r-contact{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);margin-top:4px}
+  .r-sec{margin-top:18px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
+  .r-item{margin-top:10px}
+  .r-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .r-role{font-weight:700;font-size:15px}
+  .r-date{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted)}
+  .r-org{font-style:italic;font-size:14px;color:#45454C}
+  .paper ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
+  .paper p{font-size:14px;line-height:1.55;margin:8px 0 0}
+  .price-row{display:flex;justify-content:space-between;align-items:baseline;margin:18px 4px 12px}
+  .price-row b{font-size:24px;font-weight:900}
+  .small{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
+  .actions{display:flex;flex-direction:column;gap:10px}
+
+  /* Payment popup */
+  .modal-bg{position:fixed;inset:0;background:rgba(20,22,40,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+  .modal-bg.on{display:flex}
+  .modal{background:#fff;width:100%;max-width:520px;border-radius:28px 28px 0 0;padding:24px 22px calc(26px + env(safe-area-inset-bottom));animation:pop .25s ease-out}
+  .tag-test{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.08em;background:#FFF4D6;color:#5C4400;padding:4px 8px;border-radius:6px}
+  .modal h2{margin:10px 0 2px;font-size:22px;font-weight:900}
+  .modal .big{font-size:32px;font-weight:900;margin:8px 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="banner" id="demoBanner">Demo mode: the AI isn't connected yet, so answers are scripted.</div>
+
+  <!-- 0. SIGN UP / LOG IN (only when accounts are switched on) -->
+  <section class="screen" id="s-auth" aria-labelledby="authTitle">
+    <div class="top"><a class="brand" href="/">storycv</a></div>
+    <div class="pad" style="flex:1;display:flex;flex-direction:column">
+      <div class="trio" id="authTrio"></div>
+      <h1 id="authTitle" style="text-align:center"></h1>
+      <p class="sub" id="authSub" style="text-align:center"></p>
+      <div class="tabs" id="authTabs" role="tablist">
+        <button type="button" role="tab" id="tabUp">Sign up</button>
+        <button type="button" role="tab" id="tabIn">Log in</button>
+      </div>
+      <form class="fields" id="authForm" novalidate>
+        <div class="field" id="emailField"><label for="a-email">Email</label><input id="a-email" type="email" autocomplete="email" inputmode="email" required></div>
+        <div class="field" id="pwField"><label for="a-pass">Password <small>(at least 8 characters)</small></label><input id="a-pass" type="password" autocomplete="new-password" minlength="8" required></div>
+        <div class="error" id="authErr" role="alert"></div>
+        <div class="ok" id="authOk" role="status"></div>
+        <button class="btn" type="submit" id="authBtn"></button>
+        <button class="link" type="button" id="forgot" style="align-self:center"></button>
+      </form>
+    </div>
+  </section>
+
+  <!-- 1. PICK A BUDDY -->
+  <section class="screen" id="s-pick" aria-labelledby="pickTitle">
+    <div class="top"><a class="brand" href="/">storycv</a><button class="link" id="logout" hidden>Log out</button></div>
+    <div class="pad" style="flex:1;display:flex;flex-direction:column">
+      <h1 id="pickTitle">Pick your career buddy</h1>
+      <p class="sub">They'll chat with you, dig out your best stories and write your CV.</p>
+      <div class="buddies" id="buddyList"></div>
+      <div style="flex:1"></div>
+      <button class="btn" id="pickNext">Continue</button>
+    </div>
+  </section>
+
+  <!-- 2. PROFILE -->
+  <section class="screen" id="s-profile" aria-labelledby="profTitle">
+    <div class="top"><button class="link" data-go="pick">← Change buddy</button></div>
+    <div class="pad">
+      <div class="hello"><span id="profMascot"></span><div class="bubble" id="profHello"></div></div>
+      <h1 id="profTitle" class="sr">Your details</h1>
+      <form class="fields" id="profileForm" novalidate>
+        <div class="field"><label for="f-name">Full name</label><input id="f-name" autocomplete="name" required></div>
+        <div class="field"><label for="f-nick" id="nickLabel">What should I call you?</label><input id="f-nick" autocomplete="nickname" required></div>
+        <div class="field"><label for="f-target">Job you're aiming for <small>(optional)</small></label><input id="f-target" placeholder="e.g. Barista, Admin, Sales"></div>
+        <div class="row2">
+          <div class="field"><label for="f-city">City</label><input id="f-city" autocomplete="address-level2"></div>
+          <div class="field"><label for="f-lang">Language</label><select id="f-lang"><option>English</option><option>Bahasa Indonesia</option></select></div>
+        </div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" inputmode="email"></div>
+        <div class="field"><label for="f-phone">Phone / WhatsApp <small>(optional)</small></label><input id="f-phone" type="tel" autocomplete="tel" inputmode="tel"></div>
+        <div class="field"><label for="f-linkedin">LinkedIn <small>(optional)</small></label><input id="f-linkedin" placeholder="linkedin.com/in/…"></div>
+        <div class="error" id="profErr" role="alert"></div>
+        <button class="btn" type="submit" id="profNext">Start chatting</button>
+        <p class="small" style="margin:0">Free to chat · pay only to download your CV</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 3. CHAT -->
+  <section class="screen" id="s-chat" aria-label="Chat">
+    <div class="chat-head">
+      <span id="chatMascot"></span>
+      <div class="who"><b id="chatName"></b><div class="dots" id="dots" aria-label="Progress"></div></div>
+      <button class="pill" id="peek">My CV</button>
+      <button class="link" id="restart" aria-label="Start over">Restart</button>
+    </div>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <div class="ready" id="readyBar"><span id="readyText">Ready when you are!</span><button class="btn" id="create">Create my CV</button></div>
+    <div class="error" id="chatErr" role="alert" style="padding:0 16px 8px"></div>
+    <form class="composer" id="composer">
+      <label for="input" class="sr">Your answer</label>
+      <textarea id="input" rows="1" placeholder="Type here…"></textarea>
+      <button class="send" type="submit" aria-label="Send"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+    </form>
+  </section>
+
+  <!-- 4. RESUME -->
+  <section class="screen" id="s-cv" aria-labelledby="cvTitle">
+    <div class="top"><button class="link" data-go="chat">← Back to chat</button><div class="brand">storycv</div></div>
+    <div class="pad">
+      <div class="done-head"><span id="cvMascot"></span><h1 id="cvTitle"></h1></div>
+      <div class="paper-wrap" id="paperWrap"><div class="paper" id="paper"></div><div class="fade"></div></div>
+      <div id="payBox">
+        <div class="price-row"><span style="font-weight:800">Unlock full CV + PDF</span><b class="priceText"></b></div>
+        <button class="btn" id="unlock">Unlock & download</button>
+        <p class="small">QRIS · e-wallet · instant unlock</p>
+      </div>
+      <div id="paidBox" class="actions" style="display:none;margin-top:18px">
+        <button class="btn" id="download">Download PDF</button>
+        <button class="btn ghost" id="redo">Add more & rewrite</button>
+      </div>
+      <div class="error" id="cvErr" role="alert"></div>
+    </div>
+  </section>
+</div>
+
+<div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
+  <div class="modal">
+    <span class="tag-test">TEST MODE</span>
+    <h2 id="payTitle">Download your CV</h2>
+    <div class="big priceText"></div>
+    <p class="sub" style="font-size:14px;margin-bottom:16px">Payment isn't connected yet. Tap below to pretend it went through.</p>
+    <div class="actions">
+      <button class="btn" id="fakePay">Simulate successful payment</button>
+      <button class="btn ghost" id="cancelPay">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= Easy-to-change settings ================= */
+const PRICE_IDR = 19000;
+
+const { BUDDIES, mascot } = window.StoryBuddies;
+const AREAS = ["experience","achievements","education","hard_skills","soft_skills"];
+
+/* ================= State (saved on this device) ================= */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fresh = () => ({ screen:"pick", buddy:"kira", profile:{}, messages:[], notes:{}, covered:{}, ready:false, suggestions:[], mood:"happy", resume:null, paid:false });
+let S = (() => { try { return Object.assign(fresh(), JSON.parse(localStorage.getItem("storycv2")) || {}); } catch(e){ return fresh(); } })();
+if (!BUDDIES[S.buddy]) S = fresh();
+let sb = null, session = null;   // login service + the logged-in user (when accounts are switched on)
+const save = () => { try { localStorage.setItem("storycv2", JSON.stringify(S)); } catch(e){} };
+const priceLabel = "Rp " + PRICE_IDR.toLocaleString("id-ID");
+document.querySelectorAll(".priceText").forEach((el) => el.textContent = priceLabel);
+
+function applyTheme(){
+  if (!BUDDIES[S.buddy]) S.buddy = "kira";
+  const t = BUDDIES[S.buddy].theme, r = document.documentElement.style;
+  const map = { "--accent":t.accent, "--accent-dark":t.dark, "--soft":t.soft, "--bg":t.bg, "--note-bg":t.pop, "--note-ink":t.popInk,
+    "--head":t.head, "--bub":t.bub, "--me":t.me, "--bd":t.bd, "--sh":t.sh, "--chip":t.chip, "--btn":t.btn, "--btn-bd":t.btnBd, "--btn-sh":t.btnSh };
+  for (const k in map) r.setProperty(k, map[k]);
+}
+function go(screen){
+  if (sb && !session) screen = "auth";          // must be logged in to use the tool
+  if (screen === "auth" && !sb) screen = "pick";
+  if (screen !== "auth"){ S.screen = screen; save(); }
+  document.querySelectorAll(".screen").forEach((el) => el.classList.toggle("on", el.id === "s-" + screen));
+  ({ auth:renderAuth, pick:renderPick, profile:renderProfile, chat:renderChat, cv:renderCV })[screen]();
+  $("s-" + screen).scrollTop = 0;
+}
+document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
+
+async function post(url, body){
+  const headers = { "content-type":"application/json" };
+  if (sb){ const { data } = await sb.auth.getSession(); if (data.session) headers.Authorization = "Bearer " + data.session.access_token; }
+  const res = await fetch(url, { method:"POST", headers, body:JSON.stringify(body) });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401 && sb){ session = null; authMode = "in"; go("auth"); $("authErr").textContent = data.error || "Please log in again."; }
+  if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+  if (data.demo) $("demoBanner").style.display = "block";
+  return data;
+}
+
+/* ================= 0. Sign up / Log in ================= */
+let authMode = new URLSearchParams(location.search).get("mode") === "login" ? "in" : "up";
+const AUTH_TEXT = {
+  up:      ["Make your free account", "Chatting is free. You only pay when you download your CV.", "Create account"],
+  in:      ["Welcome back!", "Log in to continue your story.", "Log in"],
+  forgot:  ["Forgot your password?", "We'll email you a link to set a new one.", "Send reset link"],
+  newpass: ["Set a new password", "Choose a new password for your account.", "Save new password"],
+};
+function renderAuth(){
+  applyTheme();
+  const mood = { up:"happy", in:"wink", forgot:"think", newpass:"think" }[authMode];
+  $("authTrio").innerHTML = ["kira","kopi","tobi"].map((id) => mascot(id, mood, 64)).join("");
+  const [t, sub, btn] = AUTH_TEXT[authMode];
+  $("authTitle").textContent = t; $("authSub").textContent = sub; $("authBtn").textContent = btn;
+  $("tabUp").setAttribute("aria-selected", authMode === "up"); $("tabIn").setAttribute("aria-selected", authMode === "in");
+  $("authTabs").style.display = (authMode === "up" || authMode === "in") ? "flex" : "none";
+  $("emailField").style.display = authMode === "newpass" ? "none" : "block";
+  $("pwField").style.display = authMode === "forgot" ? "none" : "block";
+  $("a-pass").setAttribute("autocomplete", authMode === "in" ? "current-password" : "new-password");
+  $("forgot").textContent = authMode === "forgot" ? "← Back to log in" : "Forgot password?";
+  $("forgot").style.display = authMode === "newpass" ? "none" : "";
+}
+function setAuthMode(m){ authMode = m; $("authErr").textContent = ""; $("authOk").textContent = ""; renderAuth(); }
+$("tabUp").addEventListener("click", () => setAuthMode("up"));
+$("tabIn").addEventListener("click", () => setAuthMode("in"));
+$("forgot").addEventListener("click", () => setAuthMode(authMode === "forgot" ? "in" : "forgot"));
+function friendly(msg){
+  msg = String(msg || "");
+  if (/invalid login/i.test(msg)) return "Wrong email or password.";
+  if (/not confirmed/i.test(msg)) return "Please confirm your email first. Check your inbox (and spam folder).";
+  if (/already registered|already been registered/i.test(msg)) return "That email already has an account. Try logging in.";
+  if (/rate limit|too many/i.test(msg)) return "Too many tries. Please wait a minute and try again.";
+  return msg || "Something went wrong. Please try again.";
+}
+$("authForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  $("authErr").textContent = ""; $("authOk").textContent = "";
+  const email = $("a-email").value.trim(), pass = $("a-pass").value;
+  if (authMode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("authErr").textContent = "Please enter a valid email."; return $("a-email").focus(); }
+  if (authMode !== "forgot" && pass.length < 8){ $("authErr").textContent = "Your password needs at least 8 characters."; return $("a-pass").focus(); }
+  const btn = $("authBtn"), label = btn.textContent; btn.disabled = true; btn.textContent = "Please wait…";
+  const back = location.origin + "/app";
+  try {
+    if (authMode === "up"){
+      const { data, error } = await sb.auth.signUp({ email, password:pass, options:{ emailRedirectTo:back } });
+      if (error) throw error;
+      if (data.session){ session = data.session; start(); }
+      else { $("authOk").textContent = `Almost there! We sent a confirmation link to ${email}. Open it, and you'll come right back here.`; }
+    } else if (authMode === "in"){
+      const { data, error } = await sb.auth.signInWithPassword({ email, password:pass });
+      if (error) throw error;
+      session = data.session; start();
+    } else if (authMode === "forgot"){
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo:back });
+      if (error) throw error;
+      $("authOk").textContent = `If ${email} has an account, a reset link is on its way.`;
+    } else {
+      const { error } = await sb.auth.updateUser({ password:pass });
+      if (error) throw error;
+      authMode = "in"; start();
+    }
+  } catch(err){ $("authErr").textContent = friendly(err.message); }
+  btn.disabled = false; btn.textContent = label;
+});
+$("logout").addEventListener("click", async () => {
+  if (sb) await sb.auth.signOut();
+  session = null; S = fresh(); save(); setAuthMode("in"); go("auth");
+});
+
+/* ================= 1. Pick ================= */
+function renderPick(){
+  applyTheme();
+  $("buddyList").innerHTML = Object.entries(BUDDIES).map(([id,b]) => `
+    <button class="buddy" data-id="${id}" aria-pressed="${S.buddy===id}" style="--b-accent:${b.theme.accent};--b-soft:${b.theme.soft}">
+      <span class="art">${mascot(id, S.buddy===id ? "yay" : "happy", 68)}</span>
+      <span style="min-width:0">
+        <span class="name" style="font-family:${b.theme.head}">${b.name}</span>
+        <div class="tag">${b.animal} · ${b.role}</div>
+        <div class="traits">${b.traits.map((t) => `<span>${t}</span>`).join("")}</div>
+        <div class="say">${b.say}</div>
+        <div class="theme-line"><i style="background:${b.theme.accent}"></i><i style="background:${b.theme.pop}"></i>Theme: ${b.themeName}</div>
+      </span>
+    </button>`).join("");
+  $("buddyList").querySelectorAll(".buddy").forEach((el) => el.addEventListener("click", () => { S.buddy = el.dataset.id; save(); renderPick(); }));
+  $("pickNext").textContent = "Continue with " + BUDDIES[S.buddy].name;
+}
+$("pickNext").addEventListener("click", () => go("profile"));
+
+/* ================= 2. Profile ================= */
+const F = { name:"f-name", nickname:"f-nick", target:"f-target", city:"f-city", lang:"f-lang", email:"f-email", phone:"f-phone", linkedin:"f-linkedin" };
+function renderProfile(){
+  applyTheme();
+  const b = BUDDIES[S.buddy];
+  $("profMascot").innerHTML = mascot(S.buddy, "happy", 64);
+  $("profHello").textContent = b.hello();
+  $("nickLabel").textContent = `What should ${b.name} call you?`;
+  for (const [k,id] of Object.entries(F)) if (S.profile[k]) $(id).value = S.profile[k];
+}
+$("profileForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const p = {}; for (const [k,id] of Object.entries(F)) p[k] = $(id).value.trim();
+  if (!p.name || !p.nickname){ $("profErr").textContent = "Please fill in your full name and nickname."; (p.name ? $("f-nick") : $("f-name")).focus(); return; }
+  if (p.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)){ $("profErr").textContent = "That email doesn't look right."; $("f-email").focus(); return; }
+  $("profErr").textContent = "";
+  const changedBuddy = S.profile._buddy && S.profile._buddy !== S.buddy;
+  S.profile = { ...p, _buddy:S.buddy };
+  if (changedBuddy){ S.messages = []; S.notes = {}; S.covered = {}; S.ready = false; S.resume = null; S.paid = false; }
+  save(); go("chat");
+});
+
+/* ================= 3. Chat ================= */
+function renderChat(typing){
+  applyTheme();
+  const b = BUDDIES[S.buddy];
+  $("chatMascot").innerHTML = mascot(S.buddy, typing ? "think" : S.mood, 44);
+  $("chatName").textContent = b.name;
+  $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}"></span>`).join("");
+  $("dots").setAttribute("aria-label", `Progress: ${AREAS.filter((a)=>S.covered[a]).length} of ${AREAS.length}`);
+  $("peek").textContent = S.resume ? "My CV" : "My CV";
+  $("peek").disabled = !S.resume; $("peek").style.opacity = S.resume ? 1 : .5;
+  let h = "";
+  S.messages.forEach((m, i) => {
+    h += `<div class="m ${m.role === "user" ? "me" : "bot"}">${esc(m.content)}</div>`;
+    if (S.notes[i]) h += `<div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"/></svg><span><b>ADDED TO YOUR CV</b>${esc(S.notes[i])}</span></div>`;
+  });
+  if (typing) h += `<div class="typing" aria-label="${b.name} is typing"><i></i><i></i><i></i></div>`;
+  else if (S.suggestions.length) h += `<div class="chips">${S.suggestions.map((s) => `<button type="button" data-say="${esc(s)}">${esc(s)}</button>`).join("")}</div>`;
+  $("msgs").innerHTML = h;
+  $("msgs").querySelectorAll("[data-say]").forEach((el) => el.addEventListener("click", () => sendText(el.dataset.say)));
+  $("msgs").scrollTop = $("msgs").scrollHeight;
+  const answers = S.messages.filter((m) => m.role === "user").length;
+  $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 4));
+  $("readyText").textContent = S.ready ? `Nice work, ${S.profile.nickname || "friend"}! Ready?` : "Enough to start. Add more or create now.";
+  // Greet once when the chat opens. If that fails, show the error and wait (never retry in a loop).
+  if (!typing && !S.messages.length && !busy && !$("chatErr").textContent) askBuddy();
+}
+let busy = false;
+async function askBuddy(){
+  if (busy) return; busy = true; $("chatErr").textContent = "";
+  renderChat(true);
+  try {
+    const d = await post("/api/chat", { messages:S.messages, buddy:S.buddy, profile:S.profile });
+    // A strong line from the user's last answer is shown right after that answer.
+    if (d.cv_note && S.messages.length) S.notes[S.messages.length - 1] = d.cv_note;
+    S.messages.push({ role:"assistant", content:d.reply });
+    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; S.covered = d.covered || {}; S.ready = !!d.ready;
+    save();
+  } catch(e){ $("chatErr").textContent = e.message; }
+  busy = false; renderChat(false);
+}
+function sendText(text){
+  text = (text || "").trim(); if (!text || busy) return;
+  S.messages.push({ role:"user", content:text }); S.suggestions = []; save();
+  $("input").value = ""; $("input").style.height = "";
+  askBuddy();
+}
+$("composer").addEventListener("submit", (e) => { e.preventDefault(); sendText($("input").value); });
+$("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendText($("input").value); } });
+$("input").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; });
+$("peek").addEventListener("click", () => S.resume && go("cv"));
+$("restart").addEventListener("click", () => {
+  if (!confirm("Start over? Your chat and CV will be cleared.")) return;
+  S = fresh(); S.owner = session ? session.user.id : null; save(); go("pick");
+});
+$("create").addEventListener("click", async () => {
+  $("chatErr").textContent = ""; $("create").disabled = true; $("create").textContent = "Writing…";
+  $("chatMascot").innerHTML = mascot(S.buddy, "think", 44);
+  try {
+    const d = await post("/api/resume", { messages:S.messages, profile:S.profile });
+    S.resume = d.resume; save(); go("cv");
+  } catch(e){ $("chatErr").textContent = e.message; }
+  $("create").disabled = false; $("create").textContent = "Create my CV";
+});
+
+/* ================= 4. CV ================= */
+const list = (a) => (Array.isArray(a) ? a.filter(Boolean) : []);
+function renderCV(){
+  applyTheme();
+  if (!S.resume) return go("chat");
+  const r = S.resume, c = r.contact || {};
+  $("cvMascot").innerHTML = mascot(S.buddy, "yay", 60);
+  $("cvTitle").textContent = S.paid ? `All yours, ${S.profile.nickname}!` : `Yay ${S.profile.nickname}! Your CV is ready.`;
+  const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).map(esc).join(" · ");
+  let top = `<div class="r-name">${esc(r.name)}</div>`;
+  if (r.headline) top += `<div class="r-head">${esc(r.headline)}</div>`;
+  if (contact) top += `<div class="r-contact">${contact}</div>`;
+  if (r.summary) top += `<div class="r-sec">Summary</div><p>${esc(r.summary)}</p>`;
+  let rest = "";
+  if (list(r.experience).length){
+    rest += `<div class="r-sec">Experience</div>`;
+    r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" – "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
+  }
+  if (list(r.education).length){
+    rest += `<div class="r-sec">Education</div>`;
+    r.education.forEach((ed) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div><div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`; });
+  }
+  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length) rest += `<div class="r-sec">Skills</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
+  $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
+  $("paperWrap").classList.toggle("locked", !S.paid);
+  $("payBox").style.display = S.paid ? "none" : "block";
+  $("paidBox").style.display = S.paid ? "flex" : "none";
+}
+$("redo").addEventListener("click", () => go("chat"));
+
+/* ---------- Payment (TEST MODE) ----------
+   Later: replace startPayment() with Midtrans Snap / Xendit, and only call onPaid()
+   after the server confirms the payment. */
+function startPayment(){ $("modal").classList.add("on"); $("fakePay").focus(); }
+function onPaid(){ S.paid = true; save(); $("modal").classList.remove("on"); renderCV(); }
+$("unlock").addEventListener("click", startPayment);
+$("fakePay").addEventListener("click", onPaid);
+$("cancelPay").addEventListener("click", () => $("modal").classList.remove("on"));
+$("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
+
+/* ---------- PDF: real text so hiring software (ATS) can read it ---------- */
+$("download").addEventListener("click", () => {
+  const r = S.resume; if (!r || !S.paid) return;
+  const hex = BUDDIES[S.buddy].theme.accent; const rgb = [1,3,5].map((i) => parseInt(hex.slice(i,i+2),16));
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:"pt", format:"a4" });
+  const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
+  let y = M;
+  const need = (h) => { if (y + h > H - M){ doc.addPage(); y = M; } };
+  const text = (str, size, style, gap, indent) => {
+    doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
+    doc.splitTextToSize(String(str), W - (indent||0)).forEach((ln) => { need(size*1.35); doc.text(ln, M + (indent||0), y); y += size*1.35; });
+    y += gap || 0;
+  };
+  const section = (t) => { y += 8; need(30); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 5; doc.setDrawColor(210); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20); };
+  const lr = (l, rt, size) => { need(size*1.4); doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(l||""), M, y); if (rt){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(rt), M+W, y, {align:"right"}); } y += size*1.35; };
+  doc.setTextColor(20);
+  text(r.name || "Your Name", 20, "bold", 2);
+  if (r.headline) text(r.headline, 12, "normal", 2);
+  const c = r.contact || {}; const contact = [c.city,c.email,c.phone,c.linkedin].filter(Boolean).join("  |  ");
+  if (contact) text(contact, 9.5, "normal", 4);
+  if (r.summary){ section("Summary"); text(r.summary, 10.5); }
+  if (list(r.experience).length){ section("Experience"); r.experience.forEach((j) => {
+    lr(j.role, [j.start,j.end].filter(Boolean).join(" - "), 11);
+    const org = [j.company,j.location].filter(Boolean).join(", "); if (org) text(org, 10.5, "italic");
+    list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
+    y += 6; }); }
+  if (list(r.education).length){ section("Education"); r.education.forEach((ed) => { lr(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; }); }
+  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length){ section("Skills"); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
+  doc.save((r.name || "CV").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_") + "_CV.pdf");
+});
+
+/* ================= Start ================= */
+// Start: switch on accounts if the server has them set up, then open the right screen.
+function start(){
+  if (session && S.owner !== session.user.id){ S = fresh(); S.owner = session.user.id; save(); }
+  $("logout").hidden = !session;
+  if (S.screen === "auth") S.screen = "pick";
+  const qb = new URLSearchParams(location.search).get("buddy");   // buddy chosen on the landing page
+  if (qb && BUDDIES[qb] && !S.profile.name && !S.messages.length){ S.buddy = qb; save(); }
+  go(S.screen === "chat" && !S.profile.name ? "pick" : S.screen);
+}
+(async () => {
+  let cfg = { auth:null, demo:false };
+  try { cfg = await (await fetch("/api/config")).json(); } catch(e){}
+  if (cfg.demo) $("demoBanner").style.display = "block";
+  if (cfg.auth){
+    if (!window.supabase){ document.body.insertAdjacentHTML("afterbegin", '<p class="error" style="padding:12px;text-align:center">Couldn\'t load the login service. Please check your connection and refresh.</p>'); return; }
+    sb = window.supabase.createClient(cfg.auth.url, cfg.auth.anonKey);
+    session = (await sb.auth.getSession()).data.session;
+    sb.auth.onAuthStateChange((event, s) => {
+      session = s;
+      if (event === "PASSWORD_RECOVERY"){ authMode = "newpass"; go("auth"); }
+      else if (event === "SIGNED_IN" && document.getElementById("s-auth").classList.contains("on") && authMode !== "newpass") start();
+    });
+  }
+  start();
+})();
+</script>
+</body>
+</html>
