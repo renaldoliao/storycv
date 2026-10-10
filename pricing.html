@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pricing &amp; FAQ · StoryCV</title>
+<meta name="description" content="Free to chat. Pay once per CV to download your ATS-friendly PDF. No subscription.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<link rel="stylesheet" href="/lib/site.css">
+<script src="/lib/buddies.js"></script>
+<style>
+  .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:900px;margin:44px auto 0}
+  .plan{border-radius:32px;padding:30px;border:2px solid var(--line);display:flex;flex-direction:column;gap:14px;position:relative;background:#fff}
+  .plan.main{border-color:var(--accent);background:var(--soft);transition:background .4s}
+  .plan .peek{position:absolute;top:-46px;right:24px}
+  .plan .amt{font-family:var(--head);font-size:48px;font-weight:900;line-height:1}
+  .plan ul{list-style:none;padding:0;margin:4px 0 0;display:flex;flex-direction:column;gap:10px}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-weight:700}
+  .plan li svg{flex:none;margin-top:3px;color:var(--accent)}
+  .plan .btn{margin-top:auto}
+  @media (max-width:760px){ .plans{grid-template-columns:minmax(0,1fr)} .plan .peek{top:-40px} }
+  .compare{display:flex;flex-wrap:wrap;gap:28px;align-items:center;background:var(--bg);border-radius:32px;padding:30px;margin-top:28px;transition:background .4s}
+  .compare .cbox{flex:1 1 360px;min-width:0}
+  .vsrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .vsrow div{flex:1 1 140px;background:#fff;border-radius:18px;padding:14px;text-align:center;font-weight:800}
+  .vsrow div b{display:block;font-family:var(--head);font-size:26px;color:var(--accent)}
+  .pay{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+  .pay span{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:800;font-size:14px}
+  .faqwrap{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+  .faqwrap .faq-list{flex:1 1 520px;min-width:0}
+  .faqside{flex:0 1 300px;display:flex;flex-direction:column;align-items:center;gap:12px;position:sticky;top:110px}
+  @media (max-width:860px){ .faqside{position:static} }
+</style>
+</head>
+<body>
+<div id="siteNav"></div>
+
+<main>
+  <header class="phero">
+    <div class="wrap">
+      <div class="txt">
+        <span class="eyebrow">Pricing</span>
+        <h1>Free to chat.<br><mark>Pay when you love it.</mark></h1>
+        <p class="lead">Chat with your buddy and preview your CV for free. When it's ready, pay once to unlock the full CV and download the PDF. No subscription, no hidden fees.</p>
+      </div>
+      <div class="art" aria-hidden="true">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div class="say pop" style="max-width:220px">One CV, one small price. That's it!</div>
+          <span class="bob" data-m="kira yay 180"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="plans">
+        <div class="plan reveal">
+          <span class="peek" data-m="tobi happy 70" aria-hidden="true"></span>
+          <div style="font-weight:800">Chat &amp; preview</div>
+          <div class="amt">Free</div>
+          <div class="muted">Try it with zero risk</div>
+          <ul>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Chat with any buddy</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Watch your CV lines being written</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Preview the top of your CV</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>English or Bahasa Indonesia</li>
+          </ul>
+          <a class="btn ghost startLink" href="/app">Start free</a>
+        </div>
+        <div class="plan main reveal">
+          <span class="peek" data-m="kopi wink 70" aria-hidden="true"></span>
+          <div style="font-weight:800">Your full CV</div>
+          <div class="amt priceText"></div>
+          <div class="muted">One-time payment, per CV</div>
+          <ul>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Full CV unlocked</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Clean, ATS-friendly PDF</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Add more details and re-download</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Instant unlock, no waiting for an admin</li>
+          </ul>
+          <a class="btn startLink" href="/app">Make my CV</a>
+        </div>
+      </div>
+
+      <div class="compare reveal">
+        <span data-m="kopi think 110" aria-hidden="true"></span>
+        <div class="cbox">
+          <h3>Why is it so affordable?</h3>
+          <p class="muted" style="margin:8px 0 0">Your buddy does the heavy lifting, so you don't pay for hours of someone's time. You get a professional CV for about the price of a coffee.</p>
+          <div class="vsrow">
+            <div><b>~10 min</b>to finish your chat</div>
+            <div><b>1×</b>payment, no subscription</div>
+            <div><b>PDF</b>ready to send</div>
+          </div>
+        </div>
+      </div>
+      <div class="center reveal" style="margin-top:22px">
+        <div class="muted" style="font-weight:800">Pay with</div>
+        <div class="pay"><span>QRIS</span><span>GoPay</span><span>OVO</span><span>DANA</span><span>ShopeePay</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FAFAFD" id="faq">
+    <div class="wrap">
+      <div class="center reveal" style="margin-bottom:36px"><span class="eyebrow">FAQ</span><h2 style="margin-top:14px">Questions? We got you.</h2></div>
+      <div class="faqwrap">
+        <div class="faqside reveal" aria-hidden="true">
+          <div class="say" style="max-width:240px">Ask away! No question is too small.</div>
+          <span class="bob" data-m="kira happy 150"></span>
+        </div>
+        <div class="faq-list">
+          <details class="reveal"><summary>What does “ATS-friendly” mean?</summary><p>Most companies use software (an ATS) to store and search CVs. An ATS-friendly CV uses a clean layout and real text, so the software can read every line and recruiters can find you. <a href="/why-ats">Learn more about ATS</a>.</p></details>
+          <details class="reveal"><summary>Is chatting really free?</summary><p>Yes. You can chat, see your CV lines appear, and preview the top of your CV for free. You only pay when you want the full CV and the PDF.</p></details>
+          <details class="reveal"><summary>How do I pay?</summary><p>With QRIS or an e-wallet. Your CV unlocks right away, with no waiting for an admin to check your payment.</p></details>
+          <details class="reveal"><summary>Can I use Bahasa Indonesia?</summary><p>Yes. Choose English or Bahasa Indonesia, and your buddy chats and writes your CV in that language.</p></details>
+          <details class="reveal"><summary>Will it make things up about me?</summary><p>No. Your buddy only uses what you tell it. If something is unclear, it asks a follow-up question instead of guessing.</p></details>
+          <details class="reveal"><summary>Which buddy should I pick?</summary><p>Whoever feels right! Kira for a confidence boost, Kopi if you like taking your time, Tobi if you want it quick and fun. They all build the same quality CV. <a href="/buddies">Meet the buddies</a>.</p></details>
+          <details class="reveal"><summary>How long does it take?</summary><p>Most people finish the chat in about 10 minutes. You can stop anytime and come back later.</p></details>
+          <details class="reveal"><summary>Why do I need an account?</summary><p>So your chat and CV are saved, you can come back later, and the service stays fair for everyone.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" style="padding-top:72px">
+    <div class="wrap">
+      <div class="final-box reveal">
+        <div class="wave" id="wave"></div>
+        <h2>Ready to make your CV?</h2>
+        <p>Free to start. About 10 minutes. One small price when you love it.</p>
+        <a class="btn startLink" href="/app">Start chatting</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="siteFooter"></div>
+<script src="/lib/site.js"></script>
+</body>
+</html>

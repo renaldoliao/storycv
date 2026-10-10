@@ -6,14 +6,19 @@ A website that introduces StoryCV and its three career buddies (Kira the Cat, Ko
 
 | Address | What it is |
 |---|---|
-| `/` | The landing page: who we are, the buddies, how it works, pricing, FAQ. |
+| `/` | Home: what StoryCV is, 3 steps, buddies, price. |
+| `/why-ats` | Why an ATS-friendly CV matters, with sourced statistics. |
+| `/buddies` | Meet Kira, Kopi and Tobi in detail. |
+| `/pricing` | Pricing and all FAQs. |
 | `/app` | The tool. Sign up / log in, pick a buddy, chat, get the CV. |
 
 ## What's inside
 
 | File | What it does |
 |---|---|
-| `index.html` | The landing page. |
+| `index.html` | Home page. |
+| `why-ats.html`, `buddies.html`, `pricing.html` | The other pages. |
+| `lib/site.css`, `lib/site.js` | Shared look, menu and footer for the other pages. |
 | `app.html` | The tool (sign up, chat, CV, payment popup, PDF). |
 | `lib/buddies.js` | The buddies' drawings, colors and fonts (used by both pages). |
 | `lib/jspdf.umd.min.js` | A free tool that creates the PDF file. |

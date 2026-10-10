@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meet the buddies · StoryCV</title>
+<meta name="description" content="Kira the Cat, Kopi the Owl and Tobi the Dino: three career buddies, three personalities, three looks for the whole app.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
+<link rel="stylesheet" href="/lib/site.css">
+<script src="/lib/buddies.js"></script>
+<style>
+  .lineup{display:flex;justify-content:center;align-items:flex-end;gap:18px;flex-wrap:wrap}
+  .lineup button{background:none;border:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;font-weight:900;color:var(--ink)}
+  .lineup button span{font-size:15px}
+  .bsec{padding:72px 0}
+  .bsec .wrap{display:flex;flex-wrap:wrap;gap:48px;align-items:center}
+  .bsec.flip .wrap{flex-direction:row-reverse}
+  .bart{flex:1 1 320px;min-width:0;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .bart .stage{width:300px;max-width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .moods{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .moods div{display:flex;flex-direction:column;align-items:center;font-size:12px;font-weight:800;opacity:.8}
+  .binfo{flex:1 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .binfo h2{font-size:clamp(44px,6vw,72px)}
+  .role{font-weight:800;font-size:18px;opacity:.8}
+  .traits{display:flex;flex-wrap:wrap;gap:6px}
+  .traits span{font-size:13px;font-weight:800;padding:6px 12px;border-radius:999px;color:#fff}
+  .chat{background:#fff;border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:10px}
+  .chat .lbl{font-size:12px;font-weight:900;letter-spacing:.1em;opacity:.6}
+  .chat .b{max-width:85%;padding:11px 14px;font-size:15px;line-height:1.4}
+  .chat .bot{align-self:flex-start}
+  .chat .me{align-self:flex-end;color:#fff}
+  .chat .note{align-self:flex-start;font-weight:800;font-size:13.5px;border-radius:12px}
+  .facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .facts div{background:rgba(255,255,255,.7);border-radius:16px;padding:12px 14px;font-size:15px}
+  .facts b{display:block;font-size:12px;letter-spacing:.08em;opacity:.65}
+  .sw{display:inline-flex;gap:4px;vertical-align:middle;margin-right:6px}
+  .sw i{width:14px;height:14px;border-radius:50%;display:inline-block;border:1.5px solid rgba(0,0,0,.12)}
+  .pick{align-self:flex-start;min-height:52px;padding:0 24px;border-radius:999px;font-weight:800;font-size:16px}
+  @media (max-width:560px){ .facts{grid-template-columns:minmax(0,1fr)} }
+</style>
+</head>
+<body>
+<div id="siteNav"></div>
+
+<main>
+  <header class="phero">
+    <div class="wrap" style="flex-direction:column;text-align:center">
+      <div class="txt" style="flex:none">
+        <span class="eyebrow">Meet the buddies</span>
+        <h1>Three buddies. One great CV.</h1>
+        <p class="lead" style="margin:0 auto">Every buddy writes the same quality, ATS-friendly CV. What changes is the personality, the way they ask questions, and the colors of your whole app.</p>
+      </div>
+      <div class="lineup" id="lineup"></div>
+    </div>
+  </header>
+
+  <div id="buddyList"></div>
+
+  <section class="final" style="padding-top:72px">
+    <div class="wrap">
+      <div class="final-box reveal">
+        <div class="wave" id="wave"></div>
+        <h2>Found your buddy?</h2>
+        <p>Start chatting and get your CV in about 10 minutes.</p>
+        <a class="btn startLink" href="/app" id="finalCta">Start chatting</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="siteFooter"></div>
+
+<script src="/lib/site.js"></script>
+<script>
+  const { BUDDIES, mascot } = window.StoryBuddies;
+  const INFO = {
+    kira: {
+      about: "Kira is a cheerful cat who believes every small win counts. She keeps the chat light and encouraging, so you never feel stuck or judged.",
+      asks: "Easy, open questions. Celebrates every answer.",
+      best: "First-timers who need a confidence boost",
+      chat: ["Hiii! I'm Kira. What do you do right now?", "I'm a cashier at a minimarket.", "+ Added to your CV", "Ooh nice! What's one thing you made better there? Even a tiny win counts!"],
+    },
+    kopi: {
+      about: "Kopi is a wise owl with round glasses, like a kind senior over a cup of coffee. Calm and patient, Kopi helps you find the real story behind your work.",
+      asks: "Thoughtful “why” and “how” questions. Never rushes.",
+      best: "Experienced workers with stories to tell",
+      chat: ["Good evening. I'm Kopi. What does your work look like these days?", "I manage the bar at a hotel.", "+ Noted for your CV", "Interesting. Why do you think guests liked the new recipes more?"],
+    },
+    tobi: {
+      about: "Tobi is a playful little dino who turns your CV into a game. Short questions, quick jokes, levels to unlock: done before you know it.",
+      asks: "Short, punchy questions. Offers quick guesses.",
+      best: "Fresh grads who hate long forms",
+      chat: ["YO! Tobi here. Level 1: what's your job?", "Fresh grad, did an internship.", "+1 CV line unlocked!", "Big brain move! Did you help with anything cool? Guess a number, any number."],
+    },
+  };
+  const ids = Object.keys(BUDDIES);
+  document.getElementById("lineup").innerHTML = ids.map((id, i) =>
+    `<button type="button" class="bob wiggle" style="animation-delay:-${i}s" onclick="document.getElementById('b-${id}').scrollIntoView({behavior:'smooth'})">${mascot(id, "happy", 130)}<span>${BUDDIES[id].name}</span></button>`).join("");
+
+  function render(){
+    const cur = window.StorySite.current;
+    document.getElementById("buddyList").innerHTML = ids.map((id, i) => {
+      const b = BUDDIES[id], t = b.theme, x = INFO[id], on = id === cur;
+      const bot = `background:#fff;border:${t.bd === "0 solid transparent" ? "1.5px solid #E3E6F3" : t.bd};border-radius:${t.bub};box-shadow:${t.sh}`;
+      return `<section class="bsec ${i % 2 ? "flip" : ""}" id="b-${id}" style="background:${t.bg};color:${t.popInk}">
+        <div class="wrap">
+          <div class="bart reveal">
+            <div class="stage" style="background:#fff"><span class="bob">${mascot(id, on ? "yay" : "happy", 230)}</span></div>
+            <div class="moods">${[["happy","Hello"],["think","Thinking"],["wink","Nice one"],["yay","CV ready!"]].map(([m, l]) => `<div>${mascot(id, m, 52)}${l}</div>`).join("")}</div>
+          </div>
+          <div class="binfo reveal">
+            <div><h2 style="font-family:${t.head}">${b.name}</h2><div class="role">${b.animal} · ${b.role}</div></div>
+            <div class="traits">${b.traits.map((tr) => `<span style="background:${t.accent}">${tr}</span>`).join("")}</div>
+            <p style="margin:0;font-size:18px">${x.about}</p>
+            <div class="chat" style="border:${t.bd}">
+              <div class="lbl">HOW ${b.name.toUpperCase()} TALKS</div>
+              <div class="b bot" style="${bot}">${x.chat[0]}</div>
+              <div class="b me" style="background:${t.accent};border-radius:${t.me};border:${t.bd}">${x.chat[1]}</div>
+              <div class="b note" style="background:${t.pop};color:${t.popInk}">${x.chat[2]}</div>
+              <div class="b bot" style="${bot}">${x.chat[3]}</div>
+            </div>
+            <div class="facts">
+              <div><b>ASKING STYLE</b>${x.asks}</div>
+              <div><b>BEST FOR</b>${x.best}</div>
+              <div><b>APP THEME</b><span class="sw"><i style="background:${t.accent}"></i><i style="background:${t.pop}"></i><i style="background:${t.bg}"></i></span>${b.themeName}</div>
+              <div><b>FONT</b><span style="font-family:${t.head};font-weight:800;font-size:18px">Aa</span> ${t.head.split(",")[0].replace(/'/g, "")}</div>
+            </div>
+            <button class="pick" type="button" data-pick="${id}" aria-pressed="${on}" style="background:${on ? t.accent : "#fff"};color:${on ? "#fff" : t.accent};border:2px solid ${t.accent}">${on ? `${b.name} is your buddy!` : `Choose ${b.name}`}</button>
+          </div>
+        </div>
+      </section>`;
+    }).join("");
+    document.querySelectorAll("[data-pick]").forEach((el) => el.addEventListener("click", () => window.StorySite.applyTheme(el.dataset.pick)));
+    document.querySelectorAll("#buddyList .reveal").forEach((el) => el.classList.add("in"));
+    document.getElementById("finalCta").textContent = "Start chatting with " + BUDDIES[cur].name;
+  }
+  document.addEventListener("buddychange", render);
+  render();
+</script>
+</body>
+</html>

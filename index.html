@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StoryCV · Tell your story. Get hired.</title>
+<title>StoryCV · Chat for 10 minutes, get a job-ready CV</title>
 <meta name="description" content="StoryCV turns a friendly chat into a clean, ATS-friendly CV. Pick a career buddy, tell your story, download your CV.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,7 +83,7 @@
   .ph-input{display:flex;gap:8px;padding:10px 12px 16px;border-top:1px solid var(--line)}
   .ph-input span{flex:1;height:40px;border-radius:20px;background:#F1F3FB;font-size:13px;color:#8A8FA8;display:flex;align-items:center;padding:0 14px}
   .ph-input i{width:40px;height:40px;border-radius:50%;background:var(--accent)}
-  .cv-card{position:absolute;right:-70px;bottom:30px;width:230px;background:#fff;border-radius:14px;box-shadow:0 18px 40px rgba(31,35,64,.16);padding:16px 16px 18px;font-family:'Source Serif 4',serif;z-index:3;transform:rotate(3deg)}
+  .cv-card{position:relative;flex:none;align-self:flex-end;margin-bottom:40px;width:210px;background:#fff;border-radius:14px;box-shadow:0 18px 40px rgba(31,35,64,.16);padding:16px 16px 18px;font-family:'Source Serif 4',serif;z-index:3;transform:rotate(3deg)}
   .cv-card .nm{font-weight:700;font-size:17px}
   .cv-card .hd{font-family:'Nunito',sans-serif;font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--accent);margin-top:10px;border-bottom:1px solid var(--line);padding-bottom:3px}
   .cv-card .ln{font-size:12px;line-height:1.45;margin-top:5px;min-height:17px}
@@ -91,7 +91,9 @@
   .cv-card .ln.new{animation:pop .4s ease-out}
   .ready-badge{position:absolute;left:-46px;top:-20px;background:#fff;border-radius:999px;padding:8px 14px;font-weight:900;font-size:13px;box-shadow:0 10px 24px rgba(31,35,64,.14);z-index:3;display:flex;align-items:center;gap:6px;transform:rotate(-4deg)}
   .floaty{position:absolute;z-index:1}
-  @media (max-width:620px){ .cv-card{right:-8px;width:190px;bottom:10px} .ready-badge{left:-6px;top:-18px} .hero-demo{min-height:560px} .phone{width:290px;height:540px} .floaty{display:none} }
+  .demo-row{display:flex;align-items:flex-end;gap:18px}
+  .demo-row .phone{width:300px;height:560px}
+  @media (max-width:620px){ .demo-row{flex-direction:column;align-items:center} .cv-card{width:260px;margin:0;align-self:center;transform:rotate(-1.5deg)} .ready-badge{left:-6px;top:-18px} .hero-demo{min-height:560px} .phone{width:290px;height:540px} .floaty{display:none} }
 
   /* Mission */
   .mission .wrap{display:flex;flex-wrap:wrap;gap:48px;align-items:center}
@@ -120,7 +122,7 @@
   .bcard.on{border-color:var(--c-accent)}
   .bcard .art{cursor:pointer;background:none;border:none;padding:0}
   .bcard .art:hover svg{animation:wiggle .5s ease-in-out}
-  .bcard h3{font-size:38px}
+  .bcard h3{font-size:34px}
   .bcard .role{font-weight:800;font-size:15px;opacity:.8}
   .traits{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
   .traits span{font-size:12px;font-weight:800;padding:5px 10px;border-radius:999px;color:#fff}
@@ -169,6 +171,47 @@
   details[open] summary::after{content:"–"}
   details p{margin:0 0 20px;color:var(--muted)}
 
+
+  .center{text-align:center}
+  .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:44px}
+  .s3{background:var(--bg);border-radius:28px;padding:26px;display:flex;flex-direction:column;gap:10px;transition:background .4s}
+  .s3-num{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center}
+  .s3 h3{font-size:26px}
+  .s3 p{margin:0;color:var(--muted);font-size:16px}
+  .s3-art{background:#fff;border-radius:18px;padding:16px;margin-top:auto;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .s3-art .mb{font-size:14px;padding:9px 12px;max-width:85%}
+  .s3-art .mb.bot{align-self:flex-start;background:var(--soft);border-radius:var(--bub)}
+  .s3-art .mb.me{align-self:flex-end;background:var(--accent);color:#fff;border-radius:var(--me)}
+  .s3-art .say{align-self:flex-start;font-weight:700;font-size:15px;background:#F3F4F8;border-radius:14px;padding:8px 12px}
+  .s3-art .arrow{align-self:center;color:var(--accent);font-weight:900;font-size:20px;line-height:1}
+  .s3-art .cvline{background:var(--pop);color:var(--pop-ink);font-weight:800;font-size:14px;border-radius:14px;padding:9px 12px}
+  @media (max-width:860px){ .three{grid-template-columns:minmax(0,1fr)} }
+  .pf{display:flex;flex-wrap:wrap;gap:40px;align-items:flex-start}
+  .price-box{flex:1 1 380px;min-width:0;background:var(--soft);border-radius:32px;padding:32px;transition:background .4s}
+  .price-box .big{font-family:var(--head);font-size:clamp(30px,3.6vw,42px);font-weight:900;line-height:1.15}
+  .price-box .big:first-of-type{margin-top:16px}
+  .price-box ul{list-style:none;padding:0;margin:20px 0 0;display:flex;flex-direction:column;gap:10px}
+  .price-box li{display:flex;gap:10px;align-items:flex-start;font-weight:700}
+  .price-box li svg{flex:none;margin-top:3px;color:var(--accent)}
+  .pf .faq-list{flex:1 1 420px;min-width:0;margin:0}
+  .mobilelinks{display:none;gap:8px;overflow-x:auto;padding:0 22px 12px}
+  .mobilelinks a{flex:none;font-size:14px;font-weight:800;text-decoration:none;color:var(--muted);background:#F3F4F8;padding:8px 12px;border-radius:999px}
+  @media (max-width:860px){ .mobilelinks{display:flex} }
+  .teaser{background:#1F2340;color:#fff;border-radius:36px;padding:36px;display:flex;flex-wrap:wrap;gap:28px;align-items:center}
+  .teaser h2{color:#fff;font-size:clamp(28px,3.6vw,42px)}
+  .teaser p{color:rgba(255,255,255,.82);margin:10px 0 0;font-size:18px}
+  .teaser .tx{flex:1 1 420px;min-width:0}
+  .teaser .facts{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+  .teaser .facts div{background:rgba(255,255,255,.1);border-radius:16px;padding:10px 14px;font-weight:700;font-size:14px}
+  .teaser .facts b{display:block;font-family:var(--head);font-size:26px;color:var(--pop)}
+  .teaser .crew{flex:0 1 auto;display:flex;align-items:flex-end;gap:6px}
+  .explore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .ex{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:22px;border-radius:24px;border:2px solid var(--line);text-decoration:none;color:var(--ink);transition:transform .15s,border-color .2s}
+  .ex:hover{transform:translateY(-4px);border-color:var(--accent);color:var(--ink)}
+  .ex b{font-family:var(--head);font-size:21px;margin-top:6px}
+  .ex > span:last-child{color:var(--muted);font-size:15px}
+  .ex b::after{content:" →";color:var(--accent)}
+  @media (max-width:760px){ .explore{grid-template-columns:minmax(0,1fr)} }
   /* Final CTA */
   .final{padding:0 0 96px}
   .final-box{background:var(--accent);color:#fff;border-radius:40px;padding:56px 32px;text-align:center;position:relative;overflow:hidden;transition:background .4s}
@@ -189,40 +232,40 @@
   <div class="wrap">
     <a class="logo" href="#top"><span id="navMascot"></span>storycv</a>
     <div class="navlinks">
-      <a href="#why">Why StoryCV</a><a href="#buddies">Buddies</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+      <a href="/why-ats">Why ATS-friendly?</a><a href="/buddies">Meet the buddies</a><a href="/pricing">Pricing &amp; FAQ</a>
     </div>
     <div class="navcta">
       <a class="login" href="/app?mode=login">Log in</a>
       <a class="btn small startLink" href="/app">Start free</a>
     </div>
   </div>
+  <div class="mobilelinks"><a href="/why-ats">Why ATS-friendly?</a><a href="/buddies">Meet the buddies</a><a href="/pricing">Pricing &amp; FAQ</a></div>
 </nav>
 
 <main id="top">
-  <!-- HERO -->
+  <!-- HERO: what it is, in one look -->
   <header class="hero">
     <div class="dots-deco" aria-hidden="true">
       <span style="width:18px;height:18px;left:6%;top:14%"></span><span style="width:10px;height:10px;left:46%;top:8%"></span>
       <span style="width:26px;height:26px;left:52%;bottom:10%"></span><span style="width:12px;height:12px;right:5%;top:20%"></span>
-      <span style="width:14px;height:14px;left:30%;bottom:6%"></span>
     </div>
     <div class="wrap">
       <div class="hero-text">
-        <span class="eyebrow">Made in Indonesia · English &amp; Bahasa</span>
-        <h1>Your story,<br>but make it <mark>hireable.</mark></h1>
-        <p class="lead">StoryCV turns a friendly chat into a clean, ATS-friendly CV. No forms. No templates. No staring at a blank page. Just talk to your buddy.</p>
+        <span class="eyebrow">CV maker for job seekers in Indonesia</span>
+        <h1>Chat for 10 minutes.<br>Get a <mark>job&#8209;ready CV.</mark></h1>
+        <p class="lead">Tell a friendly buddy about your work, school and skills, like texting a friend. StoryCV turns it into a professional CV you can send to employers.</p>
         <div class="ctas">
-          <a class="btn startLink" href="/app">Start chatting, it's free</a>
-          <a class="btn ghost" href="#how">See how it works</a>
+          <a class="btn startLink" href="/app">Make my CV, it's free to start</a>
+          <a class="btn ghost" href="#how">How it works</a>
         </div>
-        <div class="fine">Free to chat · <span class="priceText"></span> per CV · About 10 minutes</div>
+        <div class="fine">Free to chat · <span class="priceText"></span> to download the PDF · English &amp; Bahasa</div>
       </div>
 
       <div class="hero-demo">
-        <div class="floaty bob" style="left:0;top:2%;animation-delay:-1s" id="floatA"></div>
-        <div class="floaty bob" style="left:-2%;bottom:14%;animation-delay:-2s" id="floatB"></div>
-        <figure style="margin:0;position:relative">
-          <figcaption class="sr">An example chat: the buddy asks about your job, and each answer becomes a line on your CV.</figcaption>
+        <div class="floaty bob" style="right:4%;top:8%;animation-delay:-1s" id="floatA"></div>
+        <div class="floaty bob" style="right:16%;top:26%;animation-delay:-2s" id="floatB"></div>
+        <figure class="demo-row" style="margin:0;position:relative">
+          <figcaption class="sr">Example: you chat about your job, and each answer becomes a line on your CV.</figcaption>
           <div class="ready-badge" aria-hidden="true"><span id="badgeMascot"></span><span id="badgeText">Chatting…</span></div>
           <div class="phone" aria-hidden="true">
             <div class="ph-head"><span id="phMascot"></span><div><b id="phName"></b><small id="phRole"></small></div></div>
@@ -242,139 +285,43 @@
     </div>
   </header>
 
-  <!-- WHY / MISSION -->
-  <section class="mission" id="why">
-    <div class="wrap">
-      <div class="mission-text reveal">
-        <span class="eyebrow">Why StoryCV</span>
-        <h2 style="margin-top:16px">Everyone has a story. Not everyone has a CV that tells it.</h2>
-        <p class="lead" style="margin-top:18px">Baristas, bartenders, cashiers, drivers, admins, fresh grads: people do impressive work every day. But turning “I just do my job” into CV language is hard, and most CV builders hand you an empty form.</p>
-        <p class="lead"><b style="color:var(--ink)">Our mission:</b> help every job seeker in Indonesia tell their story well, and get noticed. Easy, affordable, and actually fun.</p>
-      </div>
-      <div class="ba reveal" aria-live="polite">
-        <div class="ba-row">
-          <div class="ba-label">WHAT YOU SAY</div>
-          <div class="ba-say" id="baSay"></div>
-          <div class="ba-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M6 13l6 6 6-6"/></svg>Your buddy turns it into</div>
-          <div class="ba-label" style="align-self:flex-end">WHAT YOUR CV SAYS</div>
-          <div class="ba-cv" id="baCv"></div>
-        </div>
-        <div class="ba-nav">
-          <div class="ba-dots" id="baDots"></div>
-          <button class="btn small" id="baNext" type="button">Show another</button>
-        </div>
-      </div>
-    </div>
-    <div class="wrap">
-      <div class="values">
-        <div class="value reveal">
-          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <h3>No blank pages</h3>
-          <p>Your buddy asks one easy question at a time. You just answer like you're texting a friend.</p>
-        </div>
-        <div class="value reveal">
-          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10l-5 3.6L16.5 20 12 16.5 7.5 20 9 13.6 4 10l6.1-1.2z"/></svg></div>
-          <h3>Your words, made pro</h3>
-          <p>We dig out your wins and write them the way recruiters and hiring software (ATS) like to read them. Nothing made up.</p>
-        </div>
-        <div class="value reveal">
-          <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6.5v11"/></svg></div>
-          <h3>A fair price</h3>
-          <p>Chatting is free. You only pay a small one-time fee when you love your CV and want the PDF.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- BUDDIES -->
-  <section class="buddies" id="buddies">
-    <div class="wrap">
-      <div class="reveal" style="text-align:center">
-        <span class="eyebrow">Meet the crew</span>
-        <h2 style="margin-top:16px">Pick your career buddy</h2>
-        <p class="lead" style="margin:16px auto 0">Each buddy has its own personality, its own way of asking questions, and its own look for the whole app. Tap one to try it on. Yes, this page too.</p>
-      </div>
-      <div class="buddy-grid" id="buddyGrid"></div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
+  <!-- HOW IT WORKS: 3 steps -->
   <section id="how">
     <div class="wrap">
-      <div class="reveal">
+      <div class="center reveal">
         <span class="eyebrow">How it works</span>
-        <h2 style="margin-top:16px">From “hmm” to ready-to-send in 4 steps</h2>
+        <h2 style="margin-top:14px">3 simple steps</h2>
       </div>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="mini"><div class="row" id="miniTrio"></div></div>
-          <div class="num">1</div><h3>Pick your buddy</h3>
-          <p>Kira, Kopi or Tobi. Your choice sets the vibe and the theme.</p>
+      <div class="three">
+        <div class="s3 reveal">
+          <div class="s3-num">1</div>
+          <h3>Chat</h3>
+          <p>Answer easy questions about your work, school and skills. No forms, no blank page.</p>
+          <div class="s3-art"><div class="mb bot">What do you do right now?</div><div class="mb me">I make cocktails at a bar.</div></div>
         </div>
-        <div class="step reveal">
-          <div class="mini"><div class="bar" style="width:40%"></div><div class="field"></div><div class="bar" style="width:55%"></div><div class="field"></div></div>
-          <div class="num">2</div><h3>Tell the basics</h3>
-          <p>Your name, nickname, city and contact. Takes about a minute.</p>
+        <div class="s3 reveal">
+          <div class="s3-num">2</div>
+          <h3>We write it</h3>
+          <p>Your buddy turns your everyday words into strong CV lines. Nothing made up.</p>
+          <div class="s3-art"><div class="say">“I just make cocktails lol”</div><div class="arrow" aria-hidden="true">↓</div><div class="cvline">Refined classic cocktail recipes to improve consistency and guest appeal</div></div>
         </div>
-        <div class="step reveal">
-          <div class="mini"><div class="bb"></div><div class="bm"></div><div class="bn"></div><div class="bb" style="width:55%"></div></div>
-          <div class="num">3</div><h3>Chat it out</h3>
-          <p>Answer a few friendly questions. Watch “Added to your CV” pop up as you go.</p>
-        </div>
-        <div class="step reveal">
-          <div class="mini" style="align-items:center"><svg width="86" height="104" viewBox="0 0 86 104" aria-hidden="true"><rect x="3" y="3" width="80" height="98" rx="10" fill="#fff" stroke="#E3E6F3" stroke-width="3"/><rect x="14" y="16" width="40" height="8" rx="4" fill="#1F2340"/><rect x="14" y="32" width="58" height="5" rx="2.5" fill="#E3E6F3"/><rect x="14" y="43" width="52" height="5" rx="2.5" fill="#E3E6F3"/><rect x="14" y="54" width="56" height="5" rx="2.5" fill="#E3E6F3"/><rect x="40" y="72" width="38" height="20" rx="8" class="pdfTag" fill="#3F5EF0"/><text x="59" y="86" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#fff">PDF</text></svg></div>
-          <div class="num">4</div><h3>Unlock your CV</h3>
-          <p>Preview it, pay once, and download a clean PDF ready to send.</p>
+        <div class="s3 reveal">
+          <div class="s3-num">3</div>
+          <h3>Download</h3>
+          <p>Check your CV, pay once, and download a clean PDF ready to send.</p>
+          <div class="s3-art" style="align-items:center"><svg width="90" height="108" viewBox="0 0 86 104" aria-hidden="true"><rect x="3" y="3" width="80" height="98" rx="10" fill="#fff" stroke="#E3E6F3" stroke-width="3"/><rect x="14" y="16" width="40" height="8" rx="4" fill="#1F2340"/><rect x="14" y="32" width="58" height="5" rx="2.5" fill="#E3E6F3"/><rect x="14" y="43" width="52" height="5" rx="2.5" fill="#E3E6F3"/><rect x="14" y="54" width="56" height="5" rx="2.5" fill="#E3E6F3"/><rect x="40" y="72" width="38" height="20" rx="8" class="pdfTag" fill="#3F5EF0"/><text x="59" y="86" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="11" fill="#fff">PDF</text></svg></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PRICING -->
-  <section class="pricing" id="pricing" style="padding-top:0">
+  <!-- MORE TO EXPLORE: simple links to the other pages -->
+  <section style="padding-top:0">
     <div class="wrap">
-      <div class="reveal" style="flex:1 1 320px;min-width:0">
-        <span class="eyebrow">Pricing</span>
-        <h2 style="margin-top:16px">Simple and fair. Pay only when you love it.</h2>
-        <p class="lead" style="margin-top:16px">No subscription. No hidden fees. Pay with QRIS or your favourite e-wallet, and your CV unlocks instantly.</p>
-      </div>
-      <div class="price-cards">
-        <div class="pcard reveal">
-          <div style="font-weight:800">Chat &amp; preview</div>
-          <div class="amt">Free</div>
-          <div class="muted" style="font-size:14px">Try it with zero risk</div>
-          <ul>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Chat with any buddy</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>See your CV take shape</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>English or Bahasa Indonesia</li>
-          </ul>
-        </div>
-        <div class="pcard main reveal">
-          <div style="font-weight:800">Your full CV</div>
-          <div class="amt priceText"></div>
-          <div class="muted" style="font-size:14px">One-time, per CV</div>
-          <ul>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Full CV unlocked</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Clean, ATS-friendly PDF</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Add more and re-download</li>
-            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Instant unlock, no waiting</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="faq" id="faq">
-    <div class="wrap">
-      <div class="reveal" style="text-align:center"><span class="eyebrow">FAQ</span><h2 style="margin-top:16px">Questions? We got you.</h2></div>
-      <div class="faq-list">
-        <details class="reveal"><summary>What does “ATS-friendly” mean?</summary><p>Many companies use hiring software (called an ATS) to scan CVs before a person reads them. Fancy layouts can confuse it. StoryCV uses a clean, one-column layout with real text, so the software can read every line.</p></details>
-        <details class="reveal"><summary>Can I chat in Bahasa Indonesia?</summary><p>Yes! Pick English or Bahasa Indonesia when you set up, and your buddy will chat and write your CV in that language.</p></details>
-        <details class="reveal"><summary>Will it make things up about me?</summary><p>No. Your buddy only uses what you tell it. If something is unclear, it asks a follow-up question instead of guessing.</p></details>
-        <details class="reveal"><summary>Which buddy should I pick?</summary><p>Whoever feels right! Kira is great if you want a confidence boost, Kopi if you like taking your time, and Tobi if you want it quick and fun. They all build the same quality CV.</p></details>
-        <details class="reveal"><summary>How long does it take?</summary><p>Most people finish the chat in about 10 minutes. You can stop anytime and come back later.</p></details>
-        <details class="reveal"><summary>Why do I need an account?</summary><p>Your account keeps your chat and CV with you, lets you come back to finish later, and helps us keep the service fair for everyone.</p></details>
+      <div class="explore">
+        <a class="ex reveal" href="/why-ats"><span class="m" data-m="kopi happy"></span><b>Why ATS-friendly?</b><span>Why a clean CV gets you found</span></a>
+        <a class="ex reveal" href="/buddies"><span class="m" data-m="kira happy"></span><b>Meet the buddies</b><span>Kira, Kopi and Tobi</span></a>
+        <a class="ex reveal" href="/pricing"><span class="m" data-m="tobi happy"></span><b>Pricing &amp; FAQ</b><span>Free to chat, <span class="priceText"></span> per CV</span></a>
       </div>
     </div>
   </section>
@@ -384,8 +331,8 @@
     <div class="wrap">
       <div class="final-box reveal">
         <div class="wave" id="wave"></div>
-        <h2>Ready to tell your story?</h2>
-        <p>Your buddy is waiting. It's free to start, and it only takes about 10 minutes.</p>
+        <h2>Ready to make your CV?</h2>
+        <p>It's free to start and takes about 10 minutes.</p>
         <a class="btn startLink" href="/app" id="finalCta">Start chatting</a>
       </div>
     </div>
@@ -394,8 +341,8 @@
 
 <footer>
   <div class="wrap">
-    <div><b style="color:var(--ink)">storycv</b> · © <span id="yr"></span> StoryCV</div>
-    <div><a href="#why">About</a><a href="#faq">FAQ</a><a href="/app?mode=login">Log in</a></div>
+    <div><b style="color:var(--ink)">StoryCV</b> helps job seekers in Indonesia turn their experience into a CV that gets noticed. © <span id="yr"></span></div>
+    <div><a href="/why-ats">Why ATS-friendly?</a><a href="/buddies">Meet the buddies</a><a href="/pricing">Pricing &amp; FAQ</a><a href="/app?mode=login">Log in</a></div>
   </div>
 </footer>
 
@@ -438,31 +385,11 @@ function setTheme(id){
   const others = Object.keys(BUDDIES).filter((k) => k !== id);
   $("floatA").innerHTML = mascot(others[0], "wink", 74);
   $("floatB").innerHTML = mascot(others[1], "happy", 64);
-  renderCards(); restartDemo();
+  restartDemo();
 }
 
-/* ============ Buddy cards ============ */
-function renderCards(){
-  $("buddyGrid").innerHTML = Object.entries(BUDDIES).map(([id, b], i) => {
-    const t = b.theme, x = EXTRA[id], on = id === current;
-    return `<article class="bcard ${on ? "on" : ""}" style="background:${t.bg};--c-accent:${t.accent};color:${t.popInk}">
-      <button class="art bob" style="animation-delay:-${i}s" data-id="${id}" aria-label="Say hi to ${b.name}">${mascot(id, on ? "yay" : "happy", 150)}</button>
-      <h3 style="font-family:${t.head}">${b.name}</h3>
-      <div class="role">${b.animal} · ${b.role}</div>
-      <div class="traits">${b.traits.map((tr) => `<span style="background:${t.accent}">${tr}</span>`).join("")}</div>
-      <div class="quote" style="border-radius:${t.bub.split(" ")[0]}">${x.talk}</div>
-      <div class="theme"><i style="background:${t.accent}"></i><i style="background:${t.pop}"></i>Theme: ${b.themeName}</div>
-      <div class="best">Best for: ${x.best}</div>
-      <button class="try" type="button" data-try="${id}" aria-pressed="${on}">${on ? `You're with ${b.name}!` : `Try ${b.name}'s theme`}</button>
-    </article>`;
-  }).join("");
-  document.querySelectorAll("[data-try]").forEach((el) => el.addEventListener("click", () => setTheme(el.dataset.try)));
-  document.querySelectorAll(".bcard .art").forEach((el) => el.addEventListener("click", () => {
-    const id = el.dataset.id; el.innerHTML = mascot(id, "wink", 150);
-    setTimeout(() => { el.innerHTML = mascot(id, id === current ? "yay" : "happy", 150); }, 900);
-  }));
-}
-$("miniTrio").innerHTML = Object.keys(BUDDIES).map((id) => mascot(id, "happy", 52)).join("");
+/* ============ Little characters in the "explore" links ============ */
+document.querySelectorAll("[data-m]").forEach((el) => { el.innerHTML = mascot(el.dataset.m.split(" ")[0], el.dataset.m.split(" ")[1], 64); });
 $("wave").innerHTML = Object.keys(BUDDIES).map((id, i) => `<span class="bob" style="animation-delay:-${i * .6}s;display:inline-block">${mascot(id, "yay", 76)}</span>`).join("");
 
 /* ============ Animated demo chat in the hero ============ */
@@ -490,23 +417,6 @@ function restartDemo(){
   t += 4200;
   later(t, restartDemo);
 }
-
-/* ============ Before / after examples ============ */
-const BA = [
-  ["“I just make cocktails lol”", "Refined classic cocktail recipes to improve consistency and guest appeal"],
-  ["“I handle the cashier and sometimes train new people”", "Trained new cashiers and handled daily transactions accurately"],
-  ["“I post stuff on our shop's Instagram”", "Managed the shop's Instagram account, planning and posting regular content"],
-  ["“I organised my campus music event”", "Organised a campus music event, coordinating volunteers, vendors and schedule"],
-];
-let ba = 0;
-function showBA(i){
-  ba = (i + BA.length) % BA.length;
-  $("baSay").textContent = BA[ba][0]; $("baCv").textContent = BA[ba][1];
-  $("baDots").innerHTML = BA.map((_, k) => `<button type="button" aria-label="Example ${k + 1}" aria-current="${k === ba}" data-k="${k}"></button>`).join("");
-  $("baDots").querySelectorAll("button").forEach((el) => el.addEventListener("click", () => showBA(+el.dataset.k)));
-}
-$("baNext").addEventListener("click", () => showBA(ba + 1));
-showBA(0);
 
 /* ============ Reveal on scroll ============ */
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold:.12 });
