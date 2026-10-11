@@ -108,6 +108,12 @@
   .composer{display:flex;gap:8px;align-items:flex-end;padding:10px 12px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
   .composer textarea{flex:1;min-width:0;min-height:52px;max-height:140px;resize:none;border:none;border-radius:26px;background:#F1F3FB;padding:15px 20px;font-size:16px;line-height:1.35;color:var(--ink);outline-color:var(--accent);font-family:inherit}
   .send{flex:none;width:52px;height:52px;border-radius:50%;border:none;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center}
+  .mic{flex:none;width:52px;height:52px;border-radius:50%;border:none;background:var(--soft);color:var(--accent);display:none;align-items:center;justify-content:center}
+  .mic.ok{display:flex}
+  .mic.on{background:#E5484D;color:#fff;animation:micpulse 1.2s ease-in-out infinite}
+  @keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.45)}50%{box-shadow:0 0 0 10px rgba(229,72,77,0)}}
+  .listening{font-size:13px;font-weight:800;color:#E5484D;text-align:center;padding:6px 12px 0;display:none}
+  .listening.on{display:block}
 
   /* 4. Resume */
   .done-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
@@ -242,9 +248,11 @@
     <div class="msgs" id="msgs" aria-live="polite"></div>
     <div class="ready" id="readyBar"><span id="readyText"></span><button class="btn" id="create" data-t="a.create"></button></div>
     <div class="error" id="chatErr" role="alert" style="padding:0 16px 8px"></div>
+    <div class="listening" id="listening" role="status" data-t="a.listening"></div>
     <form class="composer" id="composer">
       <label for="input" class="sr" data-t="a.yourAnswer"></label>
       <textarea id="input" rows="1" data-t-ph="a.typeHere"></textarea>
+      <button class="mic" type="button" id="mic" data-t-aria="a.mic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg></button>
       <button class="send" type="submit" data-t-aria="a.send"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
     </form>
   </section>
@@ -342,7 +350,8 @@ I18N.add({
     "a.added": "MASUK KE CV KAMU", "a.typing": "{name} lagi ngetik", "a.ready": "Mantap, {nick}! Udah siap?", "a.friend": "teman",
     "a.enough": "Udah cukup buat mulai. Tambah lagi atau bikin sekarang.", "a.create": "Bikin CV-ku", "a.writing": "Lagi nulis…",
     "a.confirmRestart": "Mulai dari awal? Obrolan dan CV kamu bakal dihapus.",
-    "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik di sini…", "a.send": "Kirim",
+    "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik, atau tekan mikrofon…", "a.mic": "Ngomong pakai suara",
+    "a.listening": "Lagi dengerin… ngomong aja, terus tekan mikrofon lagi kalau udah.", "a.micDenied": "Mikrofon belum diizinkan. Izinkan di pengaturan browser, atau ketik aja ya.", "a.micFail": "Suaranya nggak kedengeran. Coba lagi, atau ketik aja ya.", "a.send": "Kirim",
     "a.backChat": "← Balik ngobrol", "a.cvReady": "Yeay {nick}! CV kamu udah jadi.", "a.allYours": "Ini dia CV kamu, {nick}!",
     "a.unlockRow": "Buka CV lengkap + PDF", "a.unlock": "Buka & download", "a.payNote": "QRIS · e-wallet · langsung kebuka",
     "a.download": "Download PDF", "a.redo": "Tambah info & tulis ulang",
@@ -382,7 +391,8 @@ I18N.add({
     "a.added": "ADDED TO YOUR CV", "a.typing": "{name} is typing", "a.ready": "Nice work, {nick}! Ready?", "a.friend": "friend",
     "a.enough": "Enough to start. Add more or create now.", "a.create": "Create my CV", "a.writing": "Writing…",
     "a.confirmRestart": "Start over? Your chat and CV will be cleared.",
-    "a.yourAnswer": "Your answer", "a.typeHere": "Type here…", "a.send": "Send",
+    "a.yourAnswer": "Your answer", "a.typeHere": "Type, or tap the mic…", "a.mic": "Speak instead of typing",
+    "a.listening": "Listening… just talk, then tap the mic again when you're done.", "a.micDenied": "Microphone isn't allowed. Allow it in your browser settings, or just type.", "a.micFail": "Couldn't hear you. Try again, or just type.", "a.send": "Send",
     "a.backChat": "← Back to chat", "a.cvReady": "Yay {nick}! Your CV is ready.", "a.allYours": "All yours, {nick}!",
     "a.unlockRow": "Unlock full CV + PDF", "a.unlock": "Unlock & download", "a.payNote": "QRIS · e-wallet · instant unlock",
     "a.download": "Download PDF", "a.redo": "Add more & rewrite",
@@ -643,7 +653,38 @@ function sendText(text){
   $("input").value = ""; $("input").style.height = "";
   askBuddy();
 }
-$("composer").addEventListener("submit", (e) => { e.preventDefault(); sendText($("input").value); });
+$("composer").addEventListener("submit", (e) => { e.preventDefault(); stopMic(); sendText($("input").value); });
+
+/* ---------- Voice input: speak instead of typing ----------
+   Uses the phone's own speech-to-text (free, built into Chrome, Samsung Internet and Safari).
+   The words appear in the box first, so people can fix mistakes before sending. */
+const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, micBase = "";
+if (Speech) $("mic").classList.add("ok");
+function stopMic(){ if (rec){ try { rec.stop(); } catch(e){} } }
+function micOff(){ rec = null; $("mic").classList.remove("on"); $("listening").classList.remove("on"); }
+$("mic").addEventListener("click", () => {
+  if (rec) return stopMic();
+  $("chatErr").textContent = "";
+  rec = new Speech();
+  rec.lang = S.profile.lang === "English" ? "en-US" : "id-ID";
+  rec.continuous = true; rec.interimResults = true;
+  micBase = $("input").value.trim();
+  rec.onresult = (e) => {
+    let said = "";
+    for (let i = 0; i < e.results.length; i++) said += e.results[i][0].transcript;
+    const box = $("input");
+    box.value = (micBase ? micBase + " " : "") + said.trim();
+    box.style.height = "auto"; box.style.height = box.scrollHeight + "px";
+  };
+  rec.onerror = (e) => {
+    if (e.error === "not-allowed" || e.error === "service-not-allowed") $("chatErr").textContent = T("a.micDenied");
+    else if (e.error !== "aborted") $("chatErr").textContent = T("a.micFail");
+  };
+  rec.onend = micOff;
+  try { rec.start(); $("mic").classList.add("on"); $("listening").classList.add("on"); }
+  catch(e){ micOff(); $("chatErr").textContent = T("a.micFail"); }
+});
 $("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendText($("input").value); } });
 $("input").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; });
 $("peek").addEventListener("click", () => S.resume && go("cv"));
