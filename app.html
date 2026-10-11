@@ -124,25 +124,27 @@
   .done-head{display:flex;align-items:center;gap:12px;margin:4px 0 16px}
   .done-head h1{font-size:26px}
   .paper-wrap{position:relative;border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 4px 18px rgba(31,35,64,.1);border:1px solid var(--line)}
-  .paper{padding:26px 22px;font-family:'Source Serif 4',Georgia,serif;color:#1D1D20;min-height:320px}
-  .locked .blurme{filter:blur(5px);user-select:none;pointer-events:none}
-  .fade{display:none;position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff 85%)}
-  .locked .fade{display:block}
-  .r-name{font-size:24px;font-weight:700}
-  .r-head{font-size:15px;color:#45454C}
-  .r-contact{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted);margin-top:4px}
-  .r-sec{margin-top:18px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
-  .r-item{margin-top:10px}
-  .r-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-  .r-role{font-weight:700;font-size:15px}
-  .r-date{font-family:'Nunito',sans-serif;font-size:12px;color:var(--muted)}
-  .r-org{font-style:italic;font-size:14px;color:#45454C}
-  .paper ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
-  .paper p{font-size:14px;line-height:1.55;margin:8px 0 0}
+  @font-face{font-family:'InterCV';src:url(/lib/fonts/Inter-400Regular.ttf) format('truetype');font-weight:400;font-display:swap}
+  @font-face{font-family:'InterCV';src:url(/lib/fonts/Inter-600SemiBold.ttf) format('truetype');font-weight:600;font-display:swap}
+  @font-face{font-family:'InterCV';src:url(/lib/fonts/Inter-700Bold.ttf) format('truetype');font-weight:700;font-display:swap}
+  .paper{padding:28px 24px;font-family:'InterCV',system-ui,sans-serif;color:#1F2937;min-height:320px;font-size:13px;line-height:1.5}
+  .r-name{font-size:24px;font-weight:700;color:#111827;letter-spacing:-.01em}
+  .r-head{font-size:14px;font-weight:600;color:#374151;margin-top:2px}
+  .r-contact{font-size:11.5px;color:#6B7280;margin-top:6px}
+  .r-sec{margin-top:20px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#111827;border-bottom:1px solid #D1D5DB;padding-bottom:5px}
+  .r-item{margin-top:12px}
+  .r-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .r-org{font-size:14px;font-weight:700;color:#111827}
+  .r-sub{font-weight:600;color:#374151;margin-top:1px}
+  .paper ul + .r-sub{margin-top:10px}
+  .r-date{font-size:11.5px;font-weight:400;color:#6B7280;white-space:nowrap;text-align:right}
+  .paper ul{margin:5px 0 0;padding-left:18px}
+  .paper li{margin:2px 0}
+  .paper p{margin:8px 0 0}
   .paper ul ul{margin-top:2px;list-style:circle}
-  .r-when{font-size:14px;margin-top:4px}
-  .r-when .r-date{font-size:13px}
-  .r-glabel{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;margin-top:6px}
+  .r-glabel{font-weight:600;font-size:12px;color:#6B7280;margin-top:6px}
+  .r-extra{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-top:10px}
+  .r-extra b{font-weight:600;color:#111827;white-space:nowrap}
   .price-row{display:flex;justify-content:space-between;align-items:baseline;margin:18px 4px 12px}
   .price-row b{font-size:24px;font-weight:900}
   .small{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
@@ -748,11 +750,12 @@ function cvExtras(r){
 function renderCV(){
   applyTheme();
   if (!S.resume) return go("chat");
-  const r = normCV(S.resume), c = r.contact;
+  const r = normCV(S.resume), c = r.contact, head = S.resume.headline || S.profile.target;
   $("cvMascot").innerHTML = mascot(S.buddy, "yay", 60);
   $("cvTitle").textContent = S.paid ? T("a.allYours", { nick: S.profile.nickname }) : T("a.cvReady", { nick: S.profile.nickname });
-  const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean).map(esc).join(" | ");
+  const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean).map(esc).join(" &nbsp;•&nbsp; ");
   let top = `<div class="r-name">${esc(r.name)}</div>`;
+  if (head) top += `<div class="r-head">${esc(head)}</div>`;
   if (contact) top += `<div class="r-contact">${contact}</div>`;
   if (r.summary) top += `<div class="r-sec">${CVH("Summary")}</div><p>${esc(r.summary)}</p>`;
   const ul = (bs) => `<ul>${bs.map((b) => `<li>${esc(b.text)}${b.sub.length ? `<ul>${b.sub.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ul>`;
@@ -760,9 +763,9 @@ function renderCV(){
   if (r.experience.length){
     rest += `<div class="r-sec">${CVH("Work Experience")}</div>`;
     r.experience.forEach((j) => {
-      rest += `<div class="r-item"><div class="r-role">${esc([j.company, j.location].filter(Boolean).join(", "))}</div>`;
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(j.company)}</b><span class="r-date">${esc(j.location)}</span></div>`;
       j.roles.forEach((ro) => {
-        rest += `<div class="r-when"><span class="r-date">${esc(span(ro.start, ro.end))}</span>${span(ro.start, ro.end) && ro.title ? " | " : ""}<i>${esc(ro.title)}</i></div>`;
+        rest += `<div class="r-row r-sub"><span>${esc(ro.title)}</span><span class="r-date">${esc(span(ro.start, ro.end))}</span></div>`;
         ro.groups.forEach((g) => { if (g.label) rest += `<div class="r-glabel">${esc(g.label)}</div>`; rest += ul(g.bullets); });
       });
       rest += `</div>`;
@@ -771,13 +774,13 @@ function renderCV(){
   if (r.education.length){
     rest += `<div class="r-sec">${CVH("Education")}</div>`;
     r.education.forEach((e) => {
-      rest += `<div class="r-item"><div class="r-role">${esc([e.school, e.location].filter(Boolean).join(", "))}</div>
-        <div class="r-when"><span class="r-date">${esc(span(e.start, e.end))}</span>${span(e.start, e.end) && e.degree ? " | " : ""}<i>${esc(e.degree)}</i></div>
-        ${e.activities.length ? `<ul><li>${CVH("Activities")}:<ul>${e.activities.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></li></ul>` : ""}</div>`;
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(e.school)}</b><span class="r-date">${esc(e.location)}</span></div>
+        <div class="r-row r-sub"><span>${esc(e.degree)}</span><span class="r-date">${esc(span(e.start, e.end))}</span></div>
+        ${e.activities.length ? `<ul>${e.activities.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`;
     });
   }
   const ex = cvExtras(r);
-  if (ex.length) rest += `<div class="r-sec">${CVH("Additional Information")}</div><ul>${ex.map(([k,v]) => `<li><b>${k}:</b> ${v.map(esc).join(", ")}</li>`).join("")}</ul>`;
+  if (ex.length) rest += `<div class="r-sec">${CVH("Additional Information")}</div><div class="r-extra">${ex.map(([k,v]) => `<b>${k}</b><span>${v.map(esc).join(", ")}</span>`).join("")}</div>`;
   $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
   $("paperWrap").classList.toggle("locked", !S.paid);
   $("payBox").style.display = S.paid ? "none" : "block";
@@ -804,58 +807,108 @@ $("fakePay").addEventListener("click", onPaid);
 $("cancelPay").addEventListener("click", () => $("modal").classList.remove("on"));
 $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 
-/* ---------- PDF: real text so hiring software (ATS) can read it ---------- */
-$("download").addEventListener("click", () => {
+/* ---------- PDF: real text so hiring software (ATS) can read it ----------
+   Clean one-page layout in the Inter typeface (lib/fonts, free license), black and grey only. */
+let interFonts = null;   // loaded once, the first time someone downloads
+async function loadInter(){
+  if (interFonts) return interFonts;
+  const files = { normal:"Inter-400Regular.ttf", semibold:"Inter-600SemiBold.ttf", bold:"Inter-700Bold.ttf" };
+  const out = {};
+  for (const [style, f] of Object.entries(files)){
+    const buf = new Uint8Array(await (await fetch("/lib/fonts/" + f)).arrayBuffer());
+    let bin = ""; for (let i = 0; i < buf.length; i += 8192) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 8192));
+    out[style] = { file:f, data:btoa(bin) };
+  }
+  return (interFonts = out);
+}
+$("download").addEventListener("click", async () => {
   if (!S.resume || !S.paid || S.resume.locked) return;
   const r = normCV(S.resume);
-  const hex = BUDDIES[S.buddy].theme.accent; const rgb = [1,3,5].map((i) => parseInt(hex.slice(i,i+2),16));
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
-  const M = 48, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
-  const FS = 10;
-  let y = M;
-  const need = (h) => { if (y + h > H - M){ doc.addPage(); y = M; } };
-  const text = (str, size, style, gap, indent, align) => {
-    doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
-    doc.splitTextToSize(String(str), W - (indent||0)).forEach((ln) => { need(size*1.3); doc.text(ln, align === "center" ? M + W/2 : M + (indent||0), y, align === "center" ? { align:"center" } : undefined); y += size*1.3; });
-    y += gap || 0;
+  let F = "helvetica", SEMI = "bold";
+  try {
+    const fonts = await loadInter();
+    for (const [style, f] of Object.entries(fonts)){ doc.addFileToVFS(f.file, f.data); doc.addFont(f.file, "Inter", style); }
+    F = "Inter"; SEMI = "semibold";
+  } catch(e){ /* no internet for the font: fall back to the built-in one */ }
+
+  const INK = [17,24,39], BODY = [31,41,55], GREY = [107,114,128], RULE = [209,213,219];
+  const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
+  const FS = 9.8, LH = 1.45;
+  let y = 54;
+  const need = (h) => { if (y + h > H - 46){ doc.addPage(); y = 50; } };
+  const font = (style, size, color) => { doc.setFont(F, style === "semibold" ? SEMI : style); doc.setFontSize(size); doc.setTextColor(...color); };
+  // wrapped paragraph at a given indent
+  const para = (str, size, style, color, indent = 0) => {
+    font(style, size, color);
+    doc.splitTextToSize(String(str), W - indent).forEach((ln) => { need(size*LH); doc.text(ln, M + indent, y); y += size*LH; });
   };
-  // filled dot for main points, hollow ring for sub points
-  const bullet = (str, level) => { need(FS*1.3); const ind = level ? 30 : 13; doc.setDrawColor(20); doc.setFillColor(20); doc.setLineWidth(.7);
-    doc.circle(M + ind - 8, y - 3.2, level ? 1.6 : 1.5, level ? "S" : "F"); text(str, FS, "normal", 1, ind); };
-  const section = (t) => { y += 10; need(32); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 4; doc.setDrawColor(200); doc.line(M, y, M+W, y); y += 13; doc.setTextColor(20); };
-  // "Jul 2023 - Present | Role": date normal, role italic
-  const when = (dates, what) => {
-    need(FS*1.35); doc.setFontSize(FS); let x = M;
-    if (dates){ doc.setFont("helvetica","normal"); doc.text(dates + (what ? "  |  " : ""), x, y); x += doc.getTextWidth(dates + (what ? "  |  " : "")); }
-    if (what){ doc.setFont("helvetica","italic"); doc.text(doc.splitTextToSize(what, M + W - x)[0], x, y); }
-    y += FS*1.35;
+  // one line with text on the left and on the right (e.g. company / city, role / dates)
+  const row = (left, right, lStyle, lSize, lColor) => {
+    need(lSize*LH);
+    font("normal", 9.2, GREY); const rw = right ? doc.getTextWidth(right) : 0;
+    if (right) doc.text(right, M + W, y, { align:"right" });
+    font(lStyle, lSize, lColor);
+    doc.text(doc.splitTextToSize(String(left || ""), W - rw - 14)[0] || "", M, y);
+    y += lSize*LH;
   };
-  doc.setTextColor(20);
-  text(r.name || CVH("Your Name"), 18, "bold", 2, 0, "center");
-  const c = r.contact; const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean).join("  |  ");
-  if (contact) text(contact, 9, "normal", 2, 0, "center");
-  if (r.summary){ section(CVH("Summary")); text(r.summary, FS); }
+  const bullet = (str, level) => {
+    const ind = level ? 30 : 16;
+    need(FS*LH);
+    doc.setFillColor(...BODY); doc.setDrawColor(...BODY); doc.setLineWidth(.6);
+    doc.circle(M + ind - 8, y - 3.1, level ? 1.5 : 1.35, level ? "S" : "F");
+    para(str, FS, "normal", BODY, ind);
+    y += 1.5;
+  };
+  const section = (t) => {
+    y += 12; need(40);
+    font("bold", 9.6, INK); doc.text(t.toUpperCase(), M, y, { charSpace:1.1 });
+    y += 6; doc.setDrawColor(...RULE); doc.setLineWidth(.7); doc.line(M, y, M + W, y); y += 15;
+  };
+
+  // Header: name, target job, contact
+  font("bold", 22, INK); doc.text(r.name || CVH("Your Name"), M, y); y += 20;
+  const head = S.resume.headline || S.profile.target;
+  if (head){ font("semibold", 11.5, [55,65,81]); doc.text(head, M, y); y += 17; }
+  const c = r.contact; const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean);
+  if (contact.length){ para(contact.join("   •   "), 9.2, "normal", GREY); }
+  y += 2;
+
+  if (r.summary){ section(CVH("Summary")); para(r.summary, FS + .2, "normal", BODY); }
+
   if (r.experience.length){ section(CVH("Work Experience")); r.experience.forEach((j, i) => {
-    if (i) y += 6;
-    need(40); text([j.company, j.location].filter(Boolean).join(", "), 10.5, "bold", 1);
+    if (i) y += 9;
+    need(46); row(j.company, j.location, "bold", 10.6, INK);
     j.roles.forEach((ro, k) => {
-      if (k) y += 4;
-      when(span(ro.start, ro.end), ro.title);
+      if (k) y += 5;
+      row(ro.title, span(ro.start, ro.end), "semibold", 10, [55,65,81]);
+      y += 2;
       ro.groups.forEach((g) => {
-        if (g.label){ y += 2; text(g.label, FS, "bold", 1); }
+        if (g.label){ y += 1; para(g.label, 9.2, "semibold", GREY); y += 1; }
         g.bullets.forEach((b) => { bullet(b.text, 0); b.sub.forEach((x) => bullet(x, 1)); });
       });
     });
   }); }
+
   if (r.education.length){ section(CVH("Education")); r.education.forEach((e, i) => {
-    if (i) y += 6;
-    need(30); text([e.school, e.location].filter(Boolean).join(", "), 10.5, "bold", 1);
-    when(span(e.start, e.end), e.degree);
-    if (e.activities.length){ bullet(CVH("Activities") + ":", 0); e.activities.forEach((x) => bullet(x, 1)); }
+    if (i) y += 9;
+    need(34); row(e.school, e.location, "bold", 10.6, INK);
+    if (e.degree || e.start || e.end) row(e.degree, span(e.start, e.end), "semibold", 10, [55,65,81]);
+    y += 2;
+    e.activities.forEach((x) => bullet(x, 0));
   }); }
+
   const ex = cvExtras(r);
-  if (ex.length){ section(CVH("Additional Information")); ex.forEach(([k, v]) => bullet(k + ": " + v.join(", "), 0)); }
+  if (ex.length){ section(CVH("Additional Information"));
+    const col = 128;
+    ex.forEach(([k, v]) => {
+      need(FS*LH); const y0 = y;
+      font("semibold", FS, INK); doc.text(k, M, y0);
+      para(v.join(", "), FS, "normal", BODY, col);
+      y += 3;
+    });
+  }
   doc.save((r.name || "CV").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_") + "_CV.pdf");
 });
 

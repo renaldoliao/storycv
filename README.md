@@ -22,6 +22,7 @@ A website (Bahasa Indonesia first, with an ID/EN switch, casual tone) that intro
 | `app.html` | The tool (sign up, chat, CV, payment popup, PDF). |
 | `lib/i18n.js` | The language switch. All Bahasa and English words for the site live here and in each page. |
 | `lib/buddies.js` | The buddies' drawings, colors and fonts (used by both pages). |
+| `lib/fonts/` | Inter typeface for the CV (SIL Open Font License, free to use), trimmed to the letters a CV needs. |
 | `lib/jspdf.umd.min.js` | A free tool that creates the PDF file. |
 | `api/chat.js` | Talks to the AI during the chat. |
 | `api/resume.js` | Asks the AI to write the final CV. |
