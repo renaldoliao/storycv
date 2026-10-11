@@ -82,8 +82,12 @@ async function callClaude({ system, messages, maxTokens, tool }) {
   const data = await res.json();
   const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
   if (!tool) return text;
+  if (data.stop_reason && data.stop_reason !== "end_turn") console.error("AI stopped early:", data.stop_reason, JSON.stringify(data.usage || {}));
   const parsed = parseJson(text);
   if (parsed) return parsed;
+  // Reply cut off halfway: still rescue the chat message itself
+  const m = text.match(/"reply"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if (m) { try { return { reply: JSON.parse('"' + m[1] + '"'), plainText: true }; } catch {} }
   // Plain text instead of JSON: keep the actual message (drop any code or notes after it)
   const plain = text.replace(/```[\s\S]*?```/g, "").split("{")[0].replace(/```[a-z]*/gi, "").trim();
   console.error("AI answered without JSON:", text.slice(0, 500));

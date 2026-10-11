@@ -147,7 +147,7 @@ module.exports = async (req, res) => {
     const resume = await callClaude({
       system: systemPrompt(language),
       messages: [{ role: "user", content: (profile.target ? "Target job: " + profile.target + "\n\n" : "") + "Interview transcript:\n\n" + transcript }],
-      maxTokens: 3000,
+      maxTokens: 8000,
       tool: TOOL,
     });
     if (!resume || resume.plainText) return send(res, 502, { error: "Couldn't build the resume. Please try again." });

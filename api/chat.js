@@ -147,7 +147,7 @@ module.exports = async (req, res) => {
     for (const m of convo) if (m.role === "assistant" && /"reply"\s*:/.test(m.content)) m.content = (parseJson(m.content) || {}).reply || m.content.split("{")[0].trim() || "...";
     if (convo[0].role !== "user") convo.unshift({ role: "user", content: "(Start of chat.)" });
 
-    const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 700, tool: TOOL })) || {};
+    const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 2500, tool: TOOL })) || {};
     // Safety net: never show raw code or notes as a chat bubble
     if (typeof d.reply === "string") d.reply = d.reply.split("{")[0].replace(/```[a-z]*/gi, "").trim();
     if (typeof d.reply !== "string" || !d.reply.trim()) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
