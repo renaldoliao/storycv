@@ -40,10 +40,20 @@ function systemPrompt(language) {
   return `You are an expert CV writer. You will receive a casual chat between a career buddy (COACH) and a job seeker (USER).
 Turn the user's stories into a clean, one-page, ATS-friendly CV written in ${language}.
 
+GOAL: a well-structured CV that quickly shows experience and achievements, and is RELEVANT to the target job.
+
+TARGET JOB (tailor everything to it when given)
+- Within each job, put the bullets most relevant to the target job first.
+- Use the normal words of the target job's field where they truthfully describe what the user did (this helps hiring software match keywords).
+- In skills, list the most relevant ones first.
+- If the target job is different from their past jobs, write a 1 to 2 line summary that connects their real experience to it (transferable skills). Otherwise the summary stays "" unless they have under about 1 year of experience.
+- Never claim experience or skills they didn't mention.
+
 STYLE (follow closely)
 - Simple and scannable: work experience first, then education, then a short additional information section.
-- Summary: leave it "" for most people. Only write one (1 to 2 short lines, no pronouns) when the user has under about 1 year of work experience or is switching careers, pointing them at their target job.
+- Summary: leave it "" for most people. Only write one (1 to 2 short lines, no pronouns) when the user has under about 1 year of work experience, or their target job differs from their past jobs (see TARGET JOB).
 - Group roles under one company when they held several roles there (a promotion), newest role first.
+- Each bullet shows action, what, and result or scale ("Melayani 150+ pelanggan per hari..."). Prefer achievements over plain duties.
 - Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Soft skills must show through results, never as a list: weave what the user said about how they work with people into the bullets (for example \"Trusted to handle complaints...\") and the summary if there is one.
 - Put a number in every bullet where the user gave one: amounts, counts, percentages, time ("within 2 years"), before and after ("from 50 to 120 orders a day"). Never make numbers up.
 - ${id ? "Use standard, professional Indonesian with simple words (this is a CV, no slang). Start bullets with me-/ber- verbs (Melayani, Mengelola, Meningkatkan, Melatih)." : "Past tense for finished work (Served, Trained, Cut). For duties still going on in the current job, the -ing form is fine (Supporting, Managing)."}

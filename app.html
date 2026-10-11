@@ -105,6 +105,18 @@
   @keyframes blink{50%{opacity:1}}
   @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
+  /* Fill-in form inside the chat (for plain facts) */
+  .fcard{align-self:stretch;background:#fff;border-radius:20px;border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px;animation:pop .25s ease-out}
+  .fcard label.l{display:block;font-size:13px;font-weight:800;margin-bottom:4px}
+  .fcard input[type=text],.fcard input[type=month],.fcard input[type=number],.fcard select{width:100%;height:46px;border-radius:12px;border:2px solid var(--line);background:#F7F8FC;padding:0 12px;font-size:16px;color:var(--ink);font-family:inherit}
+  .fcard input:focus,.fcard select:focus{outline:none;border-color:var(--accent)}
+  .fcard .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .fcard .checks{display:flex;flex-wrap:wrap;gap:8px}
+  .fcard .checks label{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;background:#F1F3FB;border-radius:999px;padding:8px 12px;cursor:pointer}
+  .fcard .checks input{accent-color:var(--accent);width:18px;height:18px}
+  .fcard .acts{display:flex;gap:8px}
+  .fcard .acts .btn{min-height:46px;font-size:15px}
+  .fcard .acts .btn.ghost{flex:0 0 auto;width:auto;padding:0 18px}
   .chips button{border:none;background:#fff;color:var(--accent);font-weight:800;font-size:15px;padding:10px 16px;border-radius:var(--chip);border:var(--bd);min-height:44px;box-shadow:0 2px 6px rgba(31,35,64,.08)}
   .ready{display:none;margin:0 16px 10px;background:var(--soft);border-radius:20px;padding:12px;align-items:center;gap:12px}
   .ready.on{display:flex}
@@ -359,6 +371,15 @@ I18N.add({
     "a.enough": "Udah cukup buat mulai. Tambah lagi atau bikin sekarang.", "a.create": "Bikin CV-ku", "a.writing": "Lagi nulis…",
     "a.confirmRestart": "Mulai dari awal? Obrolan dan CV kamu bakal dihapus.",
     "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik di sini…",
+    "fm.place": "Nama tempat kerja", "fm.placeP": "cth. Kopi Senja", "fm.city": "Kota", "fm.role": "Posisi", "fm.roleP": "cth. Barista",
+    "fm.start": "Mulai", "fm.end": "Sampai", "fm.still": "Masih kerja di sini", "fm.now": "sekarang",
+    "fm.school": "Nama sekolah atau kampus", "fm.schoolP": "cth. SMKN 3 Bekasi", "fm.level": "Jenjang", "fm.major": "Jurusan", "fm.majorP": "cth. IPS, Tata Boga, Manajemen",
+    "fm.syear": "Tahun masuk", "fm.eyear": "Tahun lulus",
+    "fm.tools": "Alat, mesin, atau aplikasi yang dikuasai", "fm.toolsP": "cth. mesin kopi, mesin kasir, Excel", "fm.sim": "SIM yang dimiliki",
+    "fm.certs": "Sertifikat atau pelatihan", "fm.certsP": "cth. pelatihan barista, K3", "fm.langs": "Bahasa yang dikuasai", "fm.langOther": "Bahasa lain (cth. Jawa, Sunda)",
+    "fm.send": "Kirim", "fm.skip": "Lewati", "fm.skipMsg": "Lewati dulu ya", "fm.empty": "Isi minimal satu kolom, atau tekan Lewati.",
+    "fm.levels": "SD|SMP|SMA|SMK|D3|D4/S1|S2", "fm.indo": "Bahasa Indonesia", "fm.eng": "Bahasa Inggris",
+    "fm.months": "Jan|Feb|Mar|Apr|Mei|Jun|Jul|Agu|Sep|Okt|Nov|Des",
     "a.ar.work": "Kerjaan sekarang", "a.ar.wins": "Prestasi", "a.ar.history": "Kerjaan sebelumnya", "a.ar.school": "Sekolah", "a.ar.soft": "Cara kerjamu", "a.ar.extras": "Keahlian & bahasa",
     "a.toast.kira": "Yay! {area} beres ({n}/{total})", "a.toast.kopi": "{area} sudah lengkap ({n}/{total})", "a.toast.tobi": "Level {n} beres: {area}!", "a.mic": "Ngomong pakai suara",
     "a.listening": "Lagi dengerin… ngomong aja, terus tekan mikrofon lagi kalau udah.", "a.micDenied": "Mikrofon belum diizinkan. Izinkan di pengaturan browser, atau ketik aja ya.", "a.micFail": "Suaranya nggak kedengeran. Coba lagi, atau ketik aja ya.", "a.send": "Kirim",
@@ -402,6 +423,15 @@ I18N.add({
     "a.enough": "Enough to start. Add more or create now.", "a.create": "Create my CV", "a.writing": "Writing…",
     "a.confirmRestart": "Start over? Your chat and CV will be cleared.",
     "a.yourAnswer": "Your answer", "a.typeHere": "Type here…",
+    "fm.place": "Workplace name", "fm.placeP": "e.g. Kopi Senja", "fm.city": "City", "fm.role": "Position", "fm.roleP": "e.g. Barista",
+    "fm.start": "Started", "fm.end": "Until", "fm.still": "I still work here", "fm.now": "present",
+    "fm.school": "School or campus", "fm.schoolP": "e.g. SMKN 3 Bekasi", "fm.level": "Level", "fm.major": "Major", "fm.majorP": "e.g. Social studies, Culinary, Management",
+    "fm.syear": "Year started", "fm.eyear": "Year finished",
+    "fm.tools": "Tools, machines or apps you can use", "fm.toolsP": "e.g. coffee machine, cash register, Excel", "fm.sim": "Driving licences",
+    "fm.certs": "Certificates or trainings", "fm.certsP": "e.g. barista training, safety (K3)", "fm.langs": "Languages you speak", "fm.langOther": "Other languages (e.g. Javanese)",
+    "fm.send": "Send", "fm.skip": "Skip", "fm.skipMsg": "Skip for now", "fm.empty": "Fill in at least one box, or tap Skip.",
+    "fm.levels": "Primary|Junior high|Senior high|Vocational high (SMK)|Diploma|Bachelor's|Master's", "fm.indo": "Indonesian", "fm.eng": "English",
+    "fm.months": "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec",
     "a.ar.work": "Current job", "a.ar.wins": "Wins", "a.ar.history": "Earlier jobs", "a.ar.school": "School", "a.ar.soft": "How you work", "a.ar.extras": "Skills & languages",
     "a.toast.kira": "Yay! {area} done ({n}/{total})", "a.toast.kopi": "{area} is complete ({n}/{total})", "a.toast.tobi": "Level {n} cleared: {area}!", "a.mic": "Speak instead of typing",
     "a.listening": "Listening… just talk, then tap the mic again when you're done.", "a.micDenied": "Microphone isn't allowed. Allow it in your browser settings, or just type.", "a.micFail": "Couldn't hear you. Try again, or just type.", "a.send": "Send",
@@ -418,7 +448,7 @@ const AREAS = ["work","wins","history","school","soft","extras"];
 /* ================= State (saved on this device) ================= */
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fresh = () => ({ screen:"pick", buddy:"kira", profile:{}, messages:[], notes:{}, covered:{}, ready:false, suggestions:[], mood:"happy", resume:null, paid:false, cvId:null });
+const fresh = () => ({ screen:"pick", buddy:"kira", profile:{}, messages:[], notes:{}, covered:{}, ready:false, suggestions:[], mood:"happy", resume:null, paid:false, cvId:null, form:null });
 let S = (() => { try { return Object.assign(fresh(), JSON.parse(localStorage.getItem("storycv2")) || {}); } catch(e){ return fresh(); } })();
 if (!BUDDIES[S.buddy]) S = fresh();
 let sb = null, session = null;   // login service + the logged-in user (when accounts are switched on)
@@ -635,23 +665,71 @@ function renderChat(typing){
     if (S.notes[i]) h += `<div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"/></svg><span><b>${T("a.added")}</b>${esc(S.notes[i])}</span></div>`;
   });
   if (typing) h += `<div class="typing" aria-label="${T("a.typing", { name: b.name })}"><i></i><i></i><i></i></div>`;
+  else if (S.form) h += formCard(S.form);
   else if (S.suggestions.length) h += `<div class="chips">${S.suggestions.map((s) => `<button type="button" data-say="${esc(s)}">${esc(s)}</button>`).join("")}</div>`;
   $("msgs").innerHTML = h;
   $("msgs").querySelectorAll("[data-say]").forEach((el) => el.addEventListener("click", () => sendText(el.dataset.say)));
-  $("msgs").scrollTop = $("msgs").scrollHeight;
+  if (!typing && S.form) bindForm();
   const answers = S.messages.filter((m) => m.role === "user").length;
   $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 8));
+  $("msgs").scrollTop = $("msgs").scrollHeight;   // after the ready bar, so the newest message and form stay in view
   $("readyText").textContent = S.ready ? T("a.ready", { nick: S.profile.nickname || T("a.friend") }) : T("a.enough");
   // Greet once when the chat opens. If that fails, show the error and wait (never retry in a loop).
   if (!typing && !S.messages.length && !busy && !$("chatErr").textContent) askBuddy();
 }
+/* ---------- Fill-in forms for plain facts (job, school, extras) ----------
+   One form answer replaces 3 or 4 back-and-forth questions, and nobody forgets the position or the dates. */
+const fld = (id, label, attrs) => `<div><label class="l" for="${id}">${T(label)}</label><input type="text" id="${id}" ${attrs || ""}></div>`;
+const chk = (name, value, label) => `<label><input type="checkbox" name="${name}" value="${esc(value)}">${esc(label)}</label>`;
+function formCard(kind){
+  let f = "";
+  if (kind === "job") f = fld("fm-place", "fm.place", `placeholder="${esc(T("fm.placeP"))}" autocomplete="organization"`)
+    + `<div class="two">${fld("fm-role", "fm.role", `placeholder="${esc(T("fm.roleP"))}"`)}${fld("fm-city", "fm.city", `autocomplete="address-level2"`)}</div>`
+    + `<div class="two"><div><label class="l" for="fm-start">${T("fm.start")}</label><input type="month" id="fm-start"></div><div><label class="l" for="fm-end">${T("fm.end")}</label><input type="month" id="fm-end"></div></div>`
+    + `<div class="checks"><label><input type="checkbox" id="fm-still">${T("fm.still")}</label></div>`;
+  if (kind === "school") f = fld("fm-school", "fm.school", `placeholder="${esc(T("fm.schoolP"))}"`)
+    + `<div class="two"><div><label class="l" for="fm-level">${T("fm.level")}</label><select id="fm-level"><option value=""></option>${T("fm.levels").split("|").map((l) => `<option>${esc(l)}</option>`).join("")}</select></div>${fld("fm-major", "fm.major", `placeholder="${esc(T("fm.majorP"))}"`)}</div>`
+    + `<div class="two">${fld("fm-sy", "fm.syear", `inputmode="numeric" maxlength="4" placeholder="2018"`)}${fld("fm-ey", "fm.eyear", `inputmode="numeric" maxlength="4" placeholder="2021"`)}</div>`;
+  if (kind === "extras") f = fld("fm-tools", "fm.tools", `placeholder="${esc(T("fm.toolsP"))}"`)
+    + `<div><span class="l" style="display:block;font-size:13px;font-weight:800;margin-bottom:6px">${T("fm.sim")}</span><div class="checks">${["SIM A","SIM B","SIM C"].map((x) => chk("fm-sim", x, x)).join("")}</div></div>`
+    + fld("fm-certs", "fm.certs", `placeholder="${esc(T("fm.certsP"))}"`)
+    + `<div><span class="l" style="display:block;font-size:13px;font-weight:800;margin-bottom:6px">${T("fm.langs")}</span><div class="checks">${chk("fm-lang", T("fm.indo"), T("fm.indo"))}${chk("fm-lang", T("fm.eng"), T("fm.eng"))}</div></div>`
+    + `<input type="text" id="fm-lang-other" placeholder="${esc(T("fm.langOther"))}">`;
+  return `<form class="fcard" id="fcard" novalidate>${f}<div class="error" id="fmErr"></div><div class="acts"><button class="btn" type="submit">${T("fm.send")}</button><button class="btn ghost" type="button" id="fmSkip">${T("fm.skip")}</button></div></form>`;
+}
+function monthText(v){   // "2020-03" -> "Mar 2020" (typed text is kept as is)
+  const m = /^(\d{4})-(\d{2})$/.exec(v || ""); if (!m) return (v || "").trim();
+  return T("fm.months").split("|")[+m[2] - 1] + " " + m[1];
+}
+function bindForm(){
+  const form = $("fcard"); if (!form) return;
+  const v = (id) => ($(id) ? $(id).value.trim() : "");
+  const checked = (name) => [...form.querySelectorAll(`input[name=${name}]:checked`)].map((x) => x.value);
+  if ($("fm-still")) $("fm-still").addEventListener("change", (e) => { $("fm-end").disabled = e.target.checked; });
+  $("fmSkip").addEventListener("click", () => sendText(T("fm.skipMsg")));
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const line = (label, val) => (val ? `${T(label)}: ${val}` : "");
+    let rows = [];
+    if (S.form === "job") rows = [line("fm.place", v("fm-place")), line("fm.role", v("fm-role")), line("fm.city", v("fm-city")),
+      line("fm.start", monthText(v("fm-start"))), line("fm.end", $("fm-still").checked ? T("fm.now") : monthText(v("fm-end")))];
+    if (S.form === "school") rows = [line("fm.school", v("fm-school")), line("fm.level", v("fm-level")), line("fm.major", v("fm-major")),
+      line("fm.syear", v("fm-sy")), line("fm.eyear", v("fm-ey"))];
+    if (S.form === "extras") rows = [line("fm.tools", v("fm-tools")), line("fm.sim", checked("fm-sim").join(", ")), line("fm.certs", v("fm-certs")),
+      line("fm.langs", [...checked("fm-lang"), v("fm-lang-other")].filter(Boolean).join(", "))];
+    rows = rows.filter(Boolean);
+    if (!rows.length){ $("fmErr").textContent = T("fm.empty"); return; }
+    sendText(rows.join("\n"));
+  });
+}
+
 // Progress pop-up when a topic is finished (instead of "level up" talk inside the chat)
 const toastQueue = []; let toastBusy = false;
-function toast(area){ toastQueue.push(area); if (!toastBusy) nextToast(); }
+function toast(area, n){ toastQueue.push([area, n]); if (!toastBusy) nextToast(); }
 function nextToast(){
-  const area = toastQueue.shift(); if (!area){ toastBusy = false; return; }
+  const next = toastQueue.shift(); if (!next){ toastBusy = false; return; }
   toastBusy = true;
-  const n = AREAS.filter((a) => S.covered[a]).length;
+  const [area, n] = next;
   $("toast").innerHTML = `<span class="tm">${mascot(S.buddy, "yay", 28)}</span><span>${esc(T("a.toast." + S.buddy, { area:T("a.ar." + area), n, total:AREAS.length }))}</span>`;
   $("toast").classList.add("on");
   setTimeout(() => { $("toast").classList.remove("on"); setTimeout(nextToast, 350); }, 2600);
@@ -665,14 +743,14 @@ async function askBuddy(){
     // A strong line from the user's last answer is shown right after that answer.
     if (d.cv_note && S.messages.length) S.notes[S.messages.length - 1] = d.cv_note;
     S.messages.push({ role:"assistant", content:d.reply });
-    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; if (d.covered){ const done = AREAS.filter((a) => d.covered[a] && !S.covered[a]); S.covered = d.covered; done.forEach(toast); } S.ready = !!d.ready;
+    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; S.form = d.form || null; if (d.covered){ const before = AREAS.filter((a) => S.covered[a]).length; const done = AREAS.filter((a) => d.covered[a] && !S.covered[a]); S.covered = d.covered; done.forEach((a, i) => toast(a, before + i + 1)); } S.ready = !!d.ready;
     save();
   } catch(e){ $("chatErr").textContent = e.message; }
   busy = false; renderChat(false);
 }
 function sendText(text){
   text = (text || "").trim(); if (!text || busy) return;
-  S.messages.push({ role:"user", content:text }); S.suggestions = []; save();
+  S.messages.push({ role:"user", content:text }); S.suggestions = []; S.form = null; save();
   $("input").value = ""; $("input").style.height = "";
   askBuddy();
 }
