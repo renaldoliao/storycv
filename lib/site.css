@@ -74,7 +74,8 @@ nav.site .wrap{display:flex;align-items:center;gap:22px;height:70px}
 .wave{display:flex;justify-content:center;gap:10px;margin-bottom:16px}
 footer.site{border-top:1px solid var(--line);padding:28px 0;font-size:14px;color:var(--muted)}
 footer.site .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center}
-footer.site a{color:var(--muted);text-decoration:none;font-weight:700;margin-left:18px}
+footer.site a{color:var(--muted);text-decoration:none;font-weight:700}
+footer.site .wrap > div:last-child{display:flex;flex-wrap:wrap;gap:8px 18px}
 footer.site a:first-child{margin-left:0}
 
 /* FAQ */

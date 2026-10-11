@@ -1,5 +1,9 @@
 {
   "cleanUrls": true,
+  "regions": ["sin1"],
+  "crons": [
+    { "path": "/api/cleanup", "schedule": "0 19 * * *" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

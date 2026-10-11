@@ -28,6 +28,9 @@ A website (Bahasa Indonesia first, with an ID/EN switch, casual tone) that intro
 | `api/_buddies.js` | Each buddy's personality and way of asking questions. |
 | `api/_auth.js` | Checks the visitor is logged in and within their daily limit. |
 | `api/config.js` | Tells the app how to reach the login service. |
+| `privasi.html`, `syarat.html` | Privacy Policy and Terms (Bahasa + English). Fill in your name and contact email in `lib/i18n.js` (OPERATOR, CONTACT). |
+| `api/account.js` | Users download all their data or delete their account (UU PDP rights). |
+| `api/cleanup.js` | Runs daily: deletes unpaid CVs after 90 days and old usage counts. Needs `CRON_SECRET`. |
 | `api/cv.js`, `api/pay.js`, `api/_db.js` | Save each CV in the user's account, and unlock it only after payment (checked on the server). |
 | `api/_shared.js` | Shared settings and chat-length limits. |
 | `supabase-setup.sql` | Database setup: usage counter and saved CVs (see below). Safe to run again. |
@@ -63,6 +66,8 @@ In your Vercel project, open **Settings → Environment Variables** and add:
 | `SUPABASE_URL` | Supabase Project URL |
 | `SUPABASE_ANON_KEY` | Supabase anon / publishable key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role / secret key |
+
+Also add `CRON_SECRET` (any long random text) so the daily cleanup can run.
 
 Optional: `DAILY_MESSAGE_LIMIT`, `DAILY_RESUME_LIMIT` (numbers), and `STORYCV_MODEL` = `claude-haiku-4-5-20251001` for the cheaper AI.
 

@@ -43,6 +43,8 @@ async function requireUser(req, kind) {
   if (!user || !user.id) throw fail(401, "Please log in again.");
   if (!user.email_confirmed_at && !user.confirmed_at) throw fail(403, "Please confirm your email first (check your inbox).");
   if (!kind) return user;   // just checking who it is, nothing to count
+  // UU PDP: the AI may only process someone's story after they agreed to the privacy policy
+  if (!(user.user_metadata || {}).consent_at) throw fail(403, "Please agree to the privacy policy first.");
 
   const u = await fetch(URL_ + "/rest/v1/rpc/bump_usage", {
     method: "POST",
@@ -64,4 +66,4 @@ async function requireUser(req, kind) {
   return user;
 }
 
-module.exports = { authConfigured, requireUser, URL_, ANON };
+module.exports = { authConfigured, requireUser, keyHeaders, fail, URL_, ANON };

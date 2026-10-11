@@ -100,6 +100,9 @@ const ERR_ID = {
   "Couldn't save your CV. Please try again.": "CV kamu gagal disimpan. Coba lagi ya.",
   "CV not found.": "CV-nya nggak ketemu.",
   "Payment isn't available yet.": "Pembayaran belum tersedia.",
+  "Please agree to the privacy policy first.": "Setujui kebijakan privasi dulu ya.",
+  "Couldn't delete your account. Please try again.": "Akun kamu gagal dihapus. Coba lagi ya.",
+  "Use GET or DELETE": "Gunakan GET atau DELETE",
 };
 
 // Errors we wrote ourselves are safe to show; anything unexpected gets a plain message (no internal details).

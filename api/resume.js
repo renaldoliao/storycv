@@ -26,6 +26,7 @@ STYLE (follow closely)
 - Education: school, city, years, degree or major (for high school, e.g. ${id ? '"SMK, Tata Boga"' : '"Vocational High School, Culinary"'}). Activities (committees, organisations, competitions, events, projects) as short bullets.
 - Additional information: technical skills (tools, machines, equipment, software, using standard names, e.g. "excel" to "Microsoft Excel"), languages with level, certifications (include driving licences like SIM C and trainings like K3).
 - Order everything newest first.
+- Privacy: never include religion, ethnicity, health, disability, marital or family status, age or date of birth, ID card or bank numbers, salary, political views or criminal records, even if the user mentioned them.
 - Use ONLY facts the user said. NEVER invent companies, dates, numbers, cities or skills. Use "" or [] when unknown.
 - Never use em dashes or en dashes. Use commas, periods or colons. A plain hyphen is only for date ranges.
 

@@ -144,6 +144,14 @@
   .tag-test{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.08em;background:#FFF4D6;color:#5C4400;padding:4px 8px;border-radius:6px}
   .modal h2{margin:10px 0 2px;font-size:22px;font-weight:900}
   .modal .big{font-size:32px;font-weight:900;margin:8px 0}
+  .consent{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.5;color:var(--muted);font-weight:600;text-align:left}
+  .consent input{flex:none;width:22px;height:22px;margin-top:1px;accent-color:var(--accent)}
+  .consent a{color:var(--accent);font-weight:800}
+  .acc-email{font-weight:800;margin:4px 0 16px;word-break:break-all}
+  .acc-list{display:flex;flex-direction:column;gap:10px}
+  .btn.danger{background:#FDECEA;color:#B3261E;box-shadow:none;border:0}
+  .acc-links{display:flex;gap:16px;justify-content:center;margin-top:14px;font-size:14px}
+  .acc-links a{color:var(--accent);font-weight:800}
 </style>
 </head>
 <body>
@@ -164,6 +172,7 @@
       <form class="fields" id="authForm" novalidate>
         <div class="field" id="emailField"><label for="a-email">Email</label><input id="a-email" type="email" autocomplete="email" inputmode="email" required></div>
         <div class="field" id="pwField"><label for="a-pass" data-t="a.pass"></label><input id="a-pass" type="password" autocomplete="new-password" minlength="8" required></div>
+        <label class="consent" id="consentField"><input type="checkbox" id="a-consent"><span data-t="a.consent"></span></label>
         <div class="error" id="authErr" role="alert"></div>
         <div class="ok" id="authOk" role="status"></div>
         <button class="btn" type="submit" id="authBtn"></button>
@@ -172,9 +181,23 @@
     </div>
   </section>
 
+  <!-- CONSENT (accounts made before the privacy policy existed) -->
+  <section class="screen" id="s-consent" aria-labelledby="csTitle">
+    <div class="top"><a class="link" href="/" style="text-decoration:none" data-t="a.home"></a><button class="langToggle" type="button"></button></div>
+    <div class="pad" style="flex:1;display:flex;flex-direction:column;gap:14px">
+      <div class="trio" id="csMascot"></div>
+      <h1 id="csTitle" style="text-align:center" data-t="a.csH"></h1>
+      <p class="sub" style="text-align:center" data-t="a.csP"></p>
+      <label class="consent"><input type="checkbox" id="cs-consent"><span data-t="a.consent"></span></label>
+      <div class="error" id="csErr" role="alert"></div>
+      <button class="btn" id="csBtn" data-t="a.csBtn"></button>
+      <button class="link" id="csLogout" style="align-self:center" data-t="a.logout"></button>
+    </div>
+  </section>
+
   <!-- 1. PICK A BUDDY -->
   <section class="screen" id="s-pick" aria-labelledby="pickTitle">
-    <div class="top"><a class="link" href="/" style="text-decoration:none" data-t="a.home"></a><button class="langToggle" type="button"></button><button class="link" id="logout" hidden data-t="a.logout"></button></div>
+    <div class="top"><a class="link" href="/" style="text-decoration:none" data-t="a.home"></a><button class="langToggle" type="button"></button><button class="pill" id="accountBtn" hidden data-t="a.account"></button></div>
     <div class="pad" style="flex:1;display:flex;flex-direction:column">
       <h1 id="pickTitle" data-t="a.pickH"></h1>
       <p class="sub" data-t="a.pickP"></p>
@@ -260,6 +283,21 @@
   </div>
 </div>
 
+<div class="modal-bg" id="accModal" role="dialog" aria-modal="true" aria-labelledby="accTitle">
+  <div class="modal">
+    <h2 id="accTitle" data-t="a.accH"></h2>
+    <div class="acc-email" id="accEmail"></div>
+    <div class="acc-list">
+      <button class="btn ghost" id="accDl" data-t="a.accDl"></button>
+      <button class="btn ghost" id="logout" data-t="a.logout"></button>
+      <button class="btn danger" id="accDel" data-t="a.accDel"></button>
+    </div>
+    <p class="sub" style="font-size:13px;text-align:center" data-t="a.accShared"></p>
+    <p class="error" id="accErr" role="alert"></p>
+    <div class="acc-links"><a href="/privasi" target="_blank" data-t="nav.privacy"></a><a href="/syarat" target="_blank" data-t="nav.terms"></a><button class="link" id="accClose" style="padding:0;min-height:0" data-t="a.close"></button></div>
+  </div>
+</div>
+
 <script>
 /* ================= Easy-to-change settings ================= */
 const PRICE_IDR = I18N.PRICE_IDR;
@@ -273,6 +311,13 @@ const CVH = (w) => (S.profile.lang === "English" ? w : (CV_ID[w] || w));
 I18N.add({
   id: {
     "a.title": "Ceritain · Buddy karier kamu", "a.theme": "Tema",
+    "a.consent": 'Aku setuju dengan <a href="/privasi" target="_blank">Kebijakan Privasi</a> dan <a href="/syarat" target="_blank">Syarat &amp; Ketentuan</a>, termasuk ceritaku diproses AI di luar negeri (Singapura dan Amerika Serikat). Umurku 18 tahun ke atas, atau sudah dapat izin orang tua/wali.',
+    "a.eConsent": "Centang persetujuannya dulu ya.",
+    "a.csH": "Satu hal dulu", "a.csP": "Sebelum ngobrol, baca dan setujui dulu cara kami menjaga data kamu.", "a.csBtn": "Setuju & lanjut",
+    "a.account": "Akun", "a.accH": "Akun kamu", "a.accDl": "Download data saya", "a.accDel": "Hapus akun & semua data", "a.close": "Tutup",
+    "a.accDelConfirm": "Yakin hapus akun? Semua CV dan obrolan kamu bakal hilang permanen, termasuk CV yang sudah dibayar. Ini nggak bisa dibatalkan.",
+    "a.accDeleted": "Akun dan semua data kamu sudah dihapus.",
+    "a.accShared": "Pakai HP bareng orang lain? Keluar setelah selesai, supaya obrolanmu terhapus dari HP ini.",
     "a.demo": "Mode demo: AI-nya belum nyambung, jadi jawabannya masih pakai skrip.",
     "a.backHome": "← Balik ke beranda", "a.home": "← Beranda", "a.logout": "Keluar", "a.tabUp": "Daftar", "a.tabIn": "Masuk",
     "a.pass": "Kata sandi <small>(minimal 8 karakter)</small>",
@@ -306,6 +351,13 @@ I18N.add({
   },
   en: {
     "a.title": "Ceritain · Your career buddy", "a.theme": "Theme",
+    "a.consent": 'I agree to the <a href="/privasi" target="_blank">Privacy Policy</a> and <a href="/syarat" target="_blank">Terms</a>, including my story being processed by AI outside Indonesia (Singapore and the United States). I am 18 or older, or have permission from a parent or guardian.',
+    "a.eConsent": "Please tick the agreement first.",
+    "a.csH": "One thing first", "a.csP": "Before we chat, please read and agree to how we look after your data.", "a.csBtn": "Agree & continue",
+    "a.account": "Account", "a.accH": "Your account", "a.accDl": "Download my data", "a.accDel": "Delete account & all data", "a.close": "Close",
+    "a.accDelConfirm": "Delete your account? All your CVs and chats will be gone for good, including paid CVs. This can't be undone.",
+    "a.accDeleted": "Your account and all your data have been deleted.",
+    "a.accShared": "Sharing a phone? Log out when you're done so your chat is removed from this phone.",
     "a.demo": "Demo mode: the AI isn't connected yet, so answers are scripted.",
     "a.backHome": "← Back to home", "a.home": "← Home", "a.logout": "Log out", "a.tabUp": "Sign up", "a.tabIn": "Log in",
     "a.pass": "Password <small>(at least 8 characters)</small>",
@@ -362,9 +414,10 @@ function applyTheme(){
 function go(screen){
   if (sb && !session) screen = "auth";          // must be logged in to use the tool
   if (screen === "auth" && !sb) screen = "pick";
-  if (screen !== "auth"){ S.screen = screen; save(); }
+  if (sb && session && !hasConsent() && screen !== "auth") screen = "consent";   // UU PDP: agree before anything is processed
+  if (screen !== "auth" && screen !== "consent"){ S.screen = screen; save(); }
   document.querySelectorAll(".screen").forEach((el) => el.classList.toggle("on", el.id === "s-" + screen));
-  ({ auth:renderAuth, pick:renderPick, profile:renderProfile, chat:renderChat, cv:renderCV })[screen]();
+  ({ auth:renderAuth, consent:renderConsent, pick:renderPick, profile:renderProfile, chat:renderChat, cv:renderCV })[screen]();
   $("s-" + screen).scrollTop = 0;
 }
 document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
@@ -400,6 +453,7 @@ function renderAuth(){
   $("authTabs").style.display = (authMode === "up" || authMode === "in") ? "flex" : "none";
   $("emailField").style.display = authMode === "newpass" ? "none" : "block";
   $("pwField").style.display = authMode === "forgot" ? "none" : "block";
+  $("consentField").style.display = authMode === "up" ? "flex" : "none";
   $("a-pass").setAttribute("autocomplete", authMode === "in" ? "current-password" : "new-password");
   $("forgot").textContent = authMode === "forgot" ? T("a.backLogin") : T("a.forgot");
   $("forgot").style.display = authMode === "newpass" ? "none" : "";
@@ -422,11 +476,12 @@ $("authForm").addEventListener("submit", async (e) => {
   const email = $("a-email").value.trim(), pass = $("a-pass").value;
   if (authMode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("authErr").textContent = T("a.eEmail"); return $("a-email").focus(); }
   if (authMode !== "forgot" && pass.length < 8){ $("authErr").textContent = T("a.ePass"); return $("a-pass").focus(); }
+  if (authMode === "up" && !$("a-consent").checked){ $("authErr").textContent = T("a.eConsent"); return $("a-consent").focus(); }
   const btn = $("authBtn"), label = btn.textContent; btn.disabled = true; btn.textContent = T("a.wait");
   const back = location.origin + "/app";
   try {
     if (authMode === "up"){
-      const { data, error } = await sb.auth.signUp({ email, password:pass, options:{ emailRedirectTo:back } });
+      const { data, error } = await sb.auth.signUp({ email, password:pass, options:{ emailRedirectTo:back, data:consentRecord() } });
       if (error) throw error;
       if (data.session){ session = data.session; start(); }
       else { $("authOk").textContent = T("a.sent", { email }); }
@@ -446,9 +501,58 @@ $("authForm").addEventListener("submit", async (e) => {
   } catch(err){ $("authErr").textContent = friendly(err.message); }
   btn.disabled = false; btn.textContent = label;
 });
-$("logout").addEventListener("click", async () => {
-  if (sb) await sb.auth.signOut();
-  session = null; S = fresh(); save(); setAuthMode("in"); go("auth");
+async function logout(msg){
+  if (sb){ try { await sb.auth.signOut(); } catch(e){} }
+  session = null; S = fresh(); try { localStorage.removeItem("storycv2"); } catch(e){}   // nothing personal stays on this device
+  $("accModal").classList.remove("on"); setAuthMode("in"); go("auth");
+  if (msg) $("authOk").textContent = msg;
+}
+$("logout").addEventListener("click", () => logout());
+$("csLogout").addEventListener("click", () => logout());
+
+/* ---------- Consent (UU PDP) ---------- */
+const CONSENT_VERSION = "2026-10-11";   // date of the privacy policy and terms the user agreed to
+const consentRecord = () => ({ consent_at:new Date().toISOString(), consent_version:CONSENT_VERSION });
+const hasConsent = () => !!(session && session.user && (session.user.user_metadata || {}).consent_at);
+function renderConsent(){
+  applyTheme();
+  $("csMascot").innerHTML = mascot("kopi", "think", 72);
+  $("csErr").textContent = "";
+}
+$("csBtn").addEventListener("click", async () => {
+  if (!$("cs-consent").checked){ $("csErr").textContent = T("a.eConsent"); return; }
+  $("csBtn").disabled = true;
+  try {
+    const { error } = await sb.auth.updateUser({ data:consentRecord() });
+    if (error) throw error;
+    session = (await sb.auth.getSession()).data.session;
+    start();
+  } catch(e){ $("csErr").textContent = friendly(e.message); }
+  $("csBtn").disabled = false;
+});
+
+/* ---------- Account: your data rights ---------- */
+$("accountBtn").addEventListener("click", () => {
+  $("accEmail").textContent = session ? session.user.email : ""; $("accErr").textContent = "";
+  $("accModal").classList.add("on");
+});
+$("accClose").addEventListener("click", () => $("accModal").classList.remove("on"));
+$("accModal").addEventListener("click", (e) => { if (e.target === $("accModal")) $("accModal").classList.remove("on"); });
+$("accDl").addEventListener("click", async () => {
+  $("accErr").textContent = "";
+  try {
+    const data = await get("/api/account");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type:"application/json" }));
+    a.download = "ceritain-data-saya.json"; document.body.appendChild(a); a.click(); a.remove();
+  } catch(e){ $("accErr").textContent = e.message; }
+});
+$("accDel").addEventListener("click", async () => {
+  if (!confirm(T("a.accDelConfirm"))) return;
+  $("accErr").textContent = ""; $("accDel").disabled = true;
+  try { await api("/api/account", { method:"DELETE" }); await logout(T("a.accDeleted")); }
+  catch(e){ $("accErr").textContent = e.message; }
+  $("accDel").disabled = false;
 });
 
 /* ================= 1. Pick ================= */
@@ -700,7 +804,7 @@ document.addEventListener("langchange", () => { const on = document.querySelecto
 // Start: switch on accounts if the server has them set up, then open the right screen.
 function start(){
   if (session && S.owner !== session.user.id){ S = fresh(); S.owner = session.user.id; save(); }
-  $("logout").hidden = !session;
+  $("accountBtn").hidden = !session;
   if (S.screen === "auth") S.screen = "pick";
   const qb = new URLSearchParams(location.search).get("buddy");   // buddy chosen on the landing page
   if (qb && BUDDIES[qb] && !S.profile.name && !S.messages.length){ S.buddy = qb; save(); }
