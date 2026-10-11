@@ -150,7 +150,7 @@ module.exports = async (req, res) => {
       maxTokens: 3000,
       tool: TOOL,
     });
-    if (!resume) return send(res, 502, { error: "Couldn't build the resume. Please try again." });
+    if (!resume || resume.plainText) return send(res, 502, { error: "Couldn't build the resume. Please try again." });
     withProfile(resume, profile);
 
     // Save it to the account. A rewrite of the same CV keeps its paid status,

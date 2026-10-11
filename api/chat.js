@@ -19,7 +19,7 @@ const TOOL = {
       reply: { type: "string", description: "Your chat message to the user. Only the message itself, nothing else." },
       mood: { type: "string", enum: MOODS, description: "Your mascot's face for this message" },
       cv_note: { type: "string", description: "If their last answer gave a strong CV line: that line in CV style (action verb, a number if they gave one, max 16 words, in the chat language). Otherwise an empty string." },
-      suggestions: { type: "array", items: { type: "string" }, maxItems: 3, description: "Up to 3 very short tap-to-reply answers the user might give, in the chat language" },
+      suggestions: { type: "array", items: { type: "string" }, description: "Up to 3 very short tap-to-reply answers the user might give, in the chat language" },
       covered: {
         type: "object",
         properties: { work: { type: "boolean" }, wins: { type: "boolean" }, history: { type: "boolean" }, school: { type: "boolean" }, extras: { type: "boolean" } },
@@ -149,13 +149,14 @@ module.exports = async (req, res) => {
 
     const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 700, tool: TOOL })) || {};
     // Safety net: never show raw code or notes as a chat bubble
-    if (typeof d.reply !== "string" || !d.reply.trim() || /[{}]|"reply"/.test(d.reply)) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
+    if (typeof d.reply === "string" && /[{}]|"reply"/.test(d.reply)) d.reply = d.reply.split("{")[0].trim();
+    if (typeof d.reply !== "string" || !d.reply.trim()) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
     return send(res, 200, {
       reply: String(d.reply || "Sorry, could you say that again?"),
       mood: MOODS.includes(d.mood) ? d.mood : "happy",
       cv_note: typeof d.cv_note === "string" ? d.cv_note.slice(0, 200) : "",
       suggestions: Array.isArray(d.suggestions) ? d.suggestions.filter((x) => typeof x === "string").slice(0, 3).map((x) => x.slice(0, 40)) : [],
-      covered: Object.fromEntries(KEYS.map((k) => [k, !!(d.covered || {})[k]])),
+      covered: d.covered ? Object.fromEntries(KEYS.map((k) => [k, !!d.covered[k]])) : null,   // null = unknown, keep the old progress
       ready: !!d.ready,
     });
   } catch (e) {

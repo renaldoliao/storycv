@@ -74,7 +74,13 @@ async function callClaude({ system, messages, maxTokens, tool }) {
     if (used) return used.input;
   }
   const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
-  return tool ? parseJson(text) : text;
+  if (!tool) return text;
+  const parsed = parseJson(text);
+  if (parsed) return parsed;
+  // Plain text instead of JSON: keep the actual message (drop any code or notes after it)
+  const plain = text.replace(/```[\s\S]*?```/g, "").split("{")[0].trim();
+  console.error("AI answered without JSON:", text.slice(0, 500));
+  return plain ? { reply: plain, plainText: true } : null;
 }
 
 // Pull the first {...} JSON object out of the AI's reply.

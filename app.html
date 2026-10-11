@@ -632,7 +632,7 @@ async function askBuddy(){
     // A strong line from the user's last answer is shown right after that answer.
     if (d.cv_note && S.messages.length) S.notes[S.messages.length - 1] = d.cv_note;
     S.messages.push({ role:"assistant", content:d.reply });
-    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; S.covered = d.covered || {}; S.ready = !!d.ready;
+    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; if (d.covered) S.covered = d.covered; S.ready = !!d.ready;
     save();
   } catch(e){ $("chatErr").textContent = e.message; }
   busy = false; renderChat(false);
