@@ -83,5 +83,5 @@ details{background:#fff;border-radius:20px;border:2px solid var(--line);padding:
 summary{cursor:pointer;list-style:none;font-weight:800;font-size:18px;padding:20px 0;display:flex;justify-content:space-between;gap:12px;align-items:center}
 summary::-webkit-details-marker{display:none}
 summary::after{content:"+";font-size:26px;color:var(--accent);line-height:1}
-details[open] summary::after{content:"–"}
+details[open] summary::after{content:"−"}
 details p{margin:0 0 20px;color:var(--muted)}

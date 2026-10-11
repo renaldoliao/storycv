@@ -63,7 +63,16 @@ function parseJson(text) {
   }
 }
 
+// House style: no em/en dashes anywhere in what users see.
+function noDashes(v) {
+  if (typeof v === "string") return v.replace(/\s*[—–]\s*(?=\d)/g, "-").replace(/\s*—\s*/g, ", ").replace(/\s*–\s*/g, "-");
+  if (Array.isArray(v)) return v.map(noDashes);
+  if (v && typeof v === "object") { const o = {}; for (const k in v) o[k] = noDashes(v[k]); return o; }
+  return v;
+}
+
 function send(res, status, body) {
+  body = noDashes(body);
   res.status(status).setHeader("content-type", "application/json");
   res.end(JSON.stringify(body));
 }

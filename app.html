@@ -485,7 +485,7 @@ function renderCV(){
   let rest = "";
   if (list(r.experience).length){
     rest += `<div class="r-sec">Experience</div>`;
-    r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" – "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
+    r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" - "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
   }
   if (list(r.education).length){
     rest += `<div class="r-sec">Education</div>`;

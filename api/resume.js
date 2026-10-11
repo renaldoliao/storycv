@@ -1,4 +1,4 @@
-// POST /api/resume — turns the whole chat into a structured resume.
+// POST /api/resume: turns the whole chat into a structured resume.
 // Body: { messages: [...], profile: { name, nickname, target, city, email, phone, linkedin, lang } }
 // Returns: { resume: {...}, demo }
 
@@ -11,10 +11,11 @@ function systemPrompt(language) {
 Turn the user's stories into a sellable, ATS-friendly resume written in ${language}.
 
 Writing rules:
+- Never use em dashes (—) or en dashes (–). Use commas, periods or colons instead.
 - Start every bullet with a strong action verb (Led, Cut, Grew, Built, Trained...).
-- Put results and numbers first where possible: "Cut response time from 24h to 2h (–92%) by ...".
-- 2–5 bullets per job, each under 25 words. Most impressive first.
-- Summary: 2–3 sentences, third person without pronouns, highlighting years of experience, field and best result.
+- Put results and numbers first where possible: "Cut response time from 24h to 2h (-92%) by ...".
+- 2 to 5 bullets per job, each under 25 words. Most impressive first.
+- Summary: 2 to 3 sentences, third person without pronouns, highlighting years of experience, field and best result.
 - Headline: short job title they're targeting or currently hold.
 - Use only facts the user actually said. NEVER invent companies, dates, numbers or skills. Leave a field as "" if unknown.
 - Turn casual skill mentions into standard names (e.g. "excel" -> "Microsoft Excel").
@@ -32,7 +33,7 @@ const DEMO_RESUME = {
   experience: [{
     role: "Customer Service Lead", company: "PT Sinar Niaga", location: "Jakarta", start: "2023", end: "Present",
     bullets: [
-      "Cut average customer response time from 24 hours to 2 hours (–92%) by introducing reply templates and a redesigned shift schedule",
+      "Cut average customer response time from 24 hours to 2 hours (-92%) by introducing reply templates and a redesigned shift schedule",
       "Led and coached a team of 8 customer service agents",
       "Trained every new hire, shortening onboarding for the support team",
     ],

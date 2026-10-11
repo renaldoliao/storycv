@@ -1,4 +1,4 @@
-// GET /api/config — tells the app how to reach the login service.
+// GET /api/config: tells the app how to reach the login service.
 // Only public values are sent (the anon/publishable key is meant to be public).
 
 const { authConfigured, URL_, ANON } = require("./_auth");
