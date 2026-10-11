@@ -1,4 +1,4 @@
--- StoryCV: run this once in Supabase → SQL Editor → New query → Run.
+-- Ceritain: run this in Supabase → SQL Editor → New query → Run.
 -- It creates a small table that counts how much each user chats per day,
 -- so nobody can overuse (and overspend) the AI.
 
@@ -34,3 +34,24 @@ $$;
 
 revoke all on function public.bump_usage(uuid, text) from public, anon, authenticated;
 grant execute on function public.bump_usage(uuid, text) to service_role;
+
+-- ===== Part 2: saved CVs (added later; running this whole file again is safe) =====
+-- Every CV is kept in the user's account, so it survives a phone change,
+-- and "paid" can only be switched on by the website's server.
+create table if not exists public.cvs (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid not null references auth.users(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  buddy       text,
+  profile     jsonb,
+  messages    jsonb,
+  resume      jsonb,
+  paid        boolean not null default false,
+  paid_at     timestamptz,
+  payment_ref text
+);
+create index if not exists cvs_user_idx on public.cvs (user_id, updated_at desc);
+
+-- Lock the table: no rules for visitors, so only the server (secret key) can read or change it.
+alter table public.cvs enable row level security;

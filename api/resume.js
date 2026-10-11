@@ -2,9 +2,10 @@
 // Body: { messages: [...], profile: { name, nickname, target, city, email, phone, linkedin, lang } }
 // Returns: { resume: {...}, demo }
 
-const { isDemo, cleanMessages, callClaude, parseJson, send } = require("./_shared");
+const { isDemo, cleanMessages, callClaude, parseJson, send, fail } = require("./_shared");
 const { cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
+const { getCv, insertCv, updateCv, view } = require("./_db");
 
 function systemPrompt(language) {
   const id = language !== "English";
@@ -113,7 +114,7 @@ module.exports = async (req, res) => {
     }
     if (isDemo()) return send(res, 200, { resume: withProfile(JSON.parse(JSON.stringify(language === "English" ? DEMO_RESUME : DEMO_RESUME_ID)), profile), demo: true });
 
-    await requireUser(req, "resume");
+    const user = await requireUser(req, "resume");
 
     const transcript = messages
       .map((m) => (m.role === "user" ? "USER: " : "COACH: ") + m.content)
@@ -125,8 +126,17 @@ module.exports = async (req, res) => {
     });
     const resume = parseJson(text);
     if (!resume) return send(res, 502, { error: "Couldn't build the resume. Please try again." });
-    return send(res, 200, { resume: withProfile(resume, profile) });
+    withProfile(resume, profile);
+
+    // Save it to the account. A rewrite of the same CV keeps its paid status,
+    // but a different person's name always starts a new (unpaid) CV.
+    const row = { buddy: String(body.buddy || "").slice(0, 10), profile, messages, resume };
+    const old = await getCv(user.id, body.cvId);
+    const cv = old && (old.profile || {}).name === profile.name
+      ? await updateCv(user.id, old.id, row)
+      : await insertCv({ ...row, user_id: user.id });
+    return send(res, 200, view(cv));
   } catch (e) {
-    return send(res, e.status || 500, { error: e.message || "Something went wrong" });
+    return fail(res, e);
   }
 };

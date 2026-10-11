@@ -28,11 +28,16 @@ A website (Bahasa Indonesia first, with an ID/EN switch, casual tone) that intro
 | `api/_buddies.js` | Each buddy's personality and way of asking questions. |
 | `api/_auth.js` | Checks the visitor is logged in and within their daily limit. |
 | `api/config.js` | Tells the app how to reach the login service. |
+| `api/cv.js`, `api/pay.js`, `api/_db.js` | Save each CV in the user's account, and unlock it only after payment (checked on the server). |
 | `api/_shared.js` | Shared settings and chat-length limits. |
-| `supabase-setup.sql` | One-time setup for the usage counter (see below). |
+| `supabase-setup.sql` | Database setup: usage counter and saved CVs (see below). Safe to run again. |
 | `vercel.json` | Lets `/app` work without typing `.html`. |
 
 ## How the protection works
+
+- CVs are saved in the user's account, so they survive a phone change.
+- Before payment the browser only gets a scrambled preview. The full CV is sent only after the server marks it paid.
+- Payment is in test mode (`PAYMENT_TEST_MODE`, on by default). Set it to `off` before launch, and connect a real payment provider.
 
 - The real AI only answers people who are **logged in with a confirmed email**.
 - Each account gets a **daily limit**: 80 chat messages and 5 CVs by default.

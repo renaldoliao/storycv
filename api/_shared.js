@@ -30,6 +30,14 @@ function cleanMessages(raw) {
   return msgs;
 }
 
+// Prompt caching: the instructions and the chat so far are re-read at about a tenth of the
+// normal price on the next turn, which cuts the AI bill for long chats.
+function withCache(messages) {
+  return messages.map((m, i) => (i === messages.length - 1
+    ? { role: m.role, content: [{ type: "text", text: m.content, cache_control: { type: "ephemeral" } }] }
+    : m));
+}
+
 async function callClaude({ system, messages, maxTokens }) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -38,7 +46,7 @@ async function callClaude({ system, messages, maxTokens }) {
       "x-api-key": API_KEY,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system, messages }),
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }], messages: withCache(messages) }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -74,6 +82,7 @@ function noDashes(v) {
 // Error messages in Bahasa (the site's main language). Keys are the English messages.
 const ERR_ID = {
   "Use POST": "Gunakan POST",
+  "Use GET": "Gunakan GET",
   "Bad request": "Permintaan tidak valid",
   "Something went wrong": "Waduh, ada yang error. Coba lagi ya.",
   "This chat is too long. Please create your resume now or start over.": "Obrolannya udah panjang banget. Bikin CV-nya sekarang, atau mulai dari awal ya.",
@@ -88,13 +97,22 @@ const ERR_ID = {
   "Couldn't check your usage. Please try again.": "Nggak bisa ngecek pemakaianmu. Coba lagi ya.",
   "You've reached today's CV limit. Please try again tomorrow.": "Jatah bikin CV hari ini udah habis. Coba lagi besok ya.",
   "You've reached today's chat limit. Come back tomorrow!": "Jatah ngobrol hari ini udah habis. Balik lagi besok ya!",
+  "Couldn't save your CV. Please try again.": "CV kamu gagal disimpan. Coba lagi ya.",
+  "CV not found.": "CV-nya nggak ketemu.",
+  "Payment isn't available yet.": "Pembayaran belum tersedia.",
 };
+
+// Errors we wrote ourselves are safe to show; anything unexpected gets a plain message (no internal details).
+function fail(res, e) {
+  return send(res, e.status || 500, { error: e.status ? e.message : "Something went wrong" });
+}
 
 function send(res, status, body) {
   if (res.lang !== "en" && body && typeof body.error === "string" && ERR_ID[body.error]) body = { ...body, error: ERR_ID[body.error] };
   body = noDashes(body);
   res.status(status).setHeader("content-type", "application/json");
+  res.setHeader("cache-control", "no-store");
   res.end(JSON.stringify(body));
 }
 
-module.exports = { isDemo, cleanMessages, callClaude, parseJson, send };
+module.exports = { isDemo, cleanMessages, callClaude, parseJson, send, fail };

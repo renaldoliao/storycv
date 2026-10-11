@@ -29,7 +29,7 @@ function keyHeaders(key) {
 }
 
 // Checks the visitor is logged in with a confirmed email, then counts this use.
-// kind: "message" (one chat reply) or "resume" (one CV write-up).
+// kind: "message" (one chat reply), "resume" (one CV write-up), or nothing (only check who it is).
 async function requireUser(req, kind) {
   if (!authConfigured()) throw fail(503, "Accounts aren't switched on yet. Please try again later.");
 
@@ -42,6 +42,7 @@ async function requireUser(req, kind) {
   const user = await r.json();
   if (!user || !user.id) throw fail(401, "Please log in again.");
   if (!user.email_confirmed_at && !user.confirmed_at) throw fail(403, "Please confirm your email first (check your inbox).");
+  if (!kind) return user;   // just checking who it is, nothing to count
 
   const u = await fetch(URL_ + "/rest/v1/rpc/bump_usage", {
     method: "POST",

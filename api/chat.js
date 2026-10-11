@@ -2,7 +2,7 @@
 // Body: { messages:[{role,content}], buddy:"kira"|"kopi"|"tobi", profile:{...} }
 // Returns: { reply, mood, cv_note, suggestions, covered, ready, demo }
 
-const { isDemo, cleanMessages, callClaude, parseJson, send } = require("./_shared");
+const { isDemo, cleanMessages, callClaude, parseJson, send, fail } = require("./_shared");
 const { getBuddy, cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
 
@@ -139,6 +139,6 @@ module.exports = async (req, res) => {
       ready: !!d.ready,
     });
   } catch (e) {
-    return send(res, e.status || 500, { error: e.message || "Something went wrong" });
+    return fail(res, e);
   }
 };
