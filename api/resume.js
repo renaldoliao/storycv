@@ -2,10 +2,38 @@
 // Body: { messages: [...], profile: { name, nickname, target, city, email, phone, linkedin, lang } }
 // Returns: { resume: {...}, demo }
 
-const { isDemo, cleanMessages, callClaude, parseJson, send, fail } = require("./_shared");
+const { isDemo, cleanMessages, callClaude, send, fail } = require("./_shared");
 const { cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
 const { getCv, insertCv, updateCv, view } = require("./_db");
+
+// The form the AI fills in for the CV
+const str = { type: "string" }, strs = { type: "array", items: { type: "string" } };
+const TOOL = {
+  name: "write_cv",
+  description: "Save the finished CV.",
+  input_schema: {
+    type: "object",
+    properties: {
+      summary: str,
+      experience: { type: "array", items: { type: "object", properties: {
+        company: str, location: str,
+        roles: { type: "array", items: { type: "object", properties: {
+          title: str, start: str, end: str,
+          groups: { type: "array", items: { type: "object", properties: {
+            label: str,
+            bullets: { type: "array", items: { type: "object", properties: { text: str, sub: strs }, required: ["text"] } },
+          }, required: ["label", "bullets"] } },
+        }, required: ["title", "start", "end", "groups"] } },
+      }, required: ["company", "location", "roles"] } },
+      education: { type: "array", items: { type: "object", properties: {
+        school: str, location: str, start: str, end: str, degree: str, activities: strs,
+      }, required: ["school"] } },
+      skills: strs, languages: strs, certifications: strs,
+    },
+    required: ["summary", "experience", "education", "skills", "languages", "certifications"],
+  },
+};
 
 function systemPrompt(language) {
   const id = language !== "English";
@@ -30,11 +58,7 @@ STYLE (follow closely)
 - Use ONLY facts the user said. NEVER invent companies, dates, numbers, cities or skills. Use "" or [] when unknown.
 - Never use em dashes or en dashes. Use commas, periods or colons. A plain hyphen is only for date ranges.
 
-Respond ONLY with this JSON (no other text):
-{"summary":"",
- "experience":[{"company":"","location":"","roles":[{"title":"","start":"","end":"","groups":[{"label":"","bullets":[{"text":"","sub":[""]}]}]}]}],
- "education":[{"school":"","location":"","start":"","end":"","degree":"","activities":[""]}],
- "skills":[""],"languages":[""],"certifications":[""]}`;
+Always answer by filling in the "write_cv" form.`;
 }
 
 const DEMO_RESUME = {
@@ -120,12 +144,12 @@ module.exports = async (req, res) => {
     const transcript = messages
       .map((m) => (m.role === "user" ? "USER: " : "COACH: ") + m.content)
       .join("\n\n");
-    const text = await callClaude({
+    const resume = await callClaude({
       system: systemPrompt(language),
       messages: [{ role: "user", content: (profile.target ? "Target job: " + profile.target + "\n\n" : "") + "Interview transcript:\n\n" + transcript }],
-      maxTokens: 2500,
+      maxTokens: 3000,
+      tool: TOOL,
     });
-    const resume = parseJson(text);
     if (!resume) return send(res, 502, { error: "Couldn't build the resume. Please try again." });
     withProfile(resume, profile);
 

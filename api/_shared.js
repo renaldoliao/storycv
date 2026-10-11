@@ -38,7 +38,9 @@ function withCache(messages) {
     : m));
 }
 
-async function callClaude({ system, messages, maxTokens }) {
+// With "tool", the AI must answer by filling in a fixed form (a JSON shape we define),
+// so it can never reply with loose text, notes to itself, or broken JSON.
+async function callClaude({ system, messages, maxTokens, tool }) {
   const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -46,7 +48,12 @@ async function callClaude({ system, messages, maxTokens }) {
       "x-api-key": API_KEY,
       "anthropic-version": "2023-06-01",
     },
-    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }], messages: withCache(messages) }),
+    body: JSON.stringify({
+      model: MODEL, max_tokens: maxTokens,
+      system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
+      messages: withCache(messages),
+      ...(tool ? { tools: [tool], tool_choice: { type: "tool", name: tool.name } } : {}),
+    }),
   });
   if (!res.ok) {
     const text = await res.text();
@@ -56,19 +63,29 @@ async function callClaude({ system, messages, maxTokens }) {
     throw err;
   }
   const data = await res.json();
-  return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  if (tool) {
+    const used = (data.content || []).find((b) => b.type === "tool_use" && b.input && typeof b.input === "object");
+    if (used) return used.input;
+  }
+  const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  return tool ? parseJson(text) : text;
 }
 
 // Pull the first {...} JSON object out of the AI's reply.
 function parseJson(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) return null;
-  try {
-    return JSON.parse(text.slice(start, end + 1));
-  } catch {
-    return null;
+  text = String(text || "");
+  let found = null;
+  for (let i = text.indexOf("{"); i !== -1; i = text.indexOf("{", i + 1)) {
+    let depth = 0, inStr = false, esc = false;
+    for (let j = i; j < text.length; j++) {
+      const c = text[j];
+      if (inStr) { if (esc) esc = false; else if (c === "\\") esc = true; else if (c === '"') inStr = false; continue; }
+      if (c === '"') inStr = true;
+      else if (c === "{") depth++;
+      else if (c === "}" && --depth === 0) { try { found = JSON.parse(text.slice(i, j + 1)); } catch {} i = j; break; }
+    }
   }
+  return found;
 }
 
 // House style: no em/en dashes anywhere in what users see.

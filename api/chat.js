@@ -2,12 +2,34 @@
 // Body: { messages:[{role,content}], buddy:"kira"|"kopi"|"tobi", profile:{...} }
 // Returns: { reply, mood, cv_note, suggestions, covered, ready, demo }
 
-const { isDemo, cleanMessages, callClaude, parseJson, send, fail } = require("./_shared");
+const { isDemo, cleanMessages, callClaude, send, fail, parseJson } = require("./_shared");
 const { getBuddy, cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
 
 const KEYS = ["work", "wins", "history", "school", "extras"];
 const MOODS = ["happy", "think", "wink", "yay"];
+
+// The form the AI fills in for every chat reply
+const TOOL = {
+  name: "respond",
+  description: "Send your next chat message to the user, plus progress info for the app.",
+  input_schema: {
+    type: "object",
+    properties: {
+      reply: { type: "string", description: "Your chat message to the user. Only the message itself, nothing else." },
+      mood: { type: "string", enum: MOODS, description: "Your mascot's face for this message" },
+      cv_note: { type: "string", description: "If their last answer gave a strong CV line: that line in CV style (action verb, a number if they gave one, max 16 words, in the chat language). Otherwise an empty string." },
+      suggestions: { type: "array", items: { type: "string" }, maxItems: 3, description: "Up to 3 very short tap-to-reply answers the user might give, in the chat language" },
+      covered: {
+        type: "object",
+        properties: { work: { type: "boolean" }, wins: { type: "boolean" }, history: { type: "boolean" }, school: { type: "boolean" }, extras: { type: "boolean" } },
+        required: ["work", "wins", "history", "school", "extras"],
+      },
+      ready: { type: "boolean", description: "True when all areas are covered, or the user wants to finish now" },
+    },
+    required: ["reply", "mood", "cv_note", "suggestions", "covered", "ready"],
+  },
+};
 
 function systemPrompt(buddy, p) {
   const btn = p.lang === "English" ? "Create my CV" : "Bikin CV-ku";
@@ -47,13 +69,7 @@ Aim for about 15 to 20 short exchanges in total. Only mark an area covered once 
 If the user says they want to finish early, respect it: tell them they can tap "${btn}" now and set ready true.
 When all 5 areas are covered, cheer them on and tell them they can tap "${btn}" (or keep adding more), and set ready true.
 
-Respond ONLY with a JSON object, no other text:
-{"reply":"<your message>",
- "mood":"happy|think|wink|yay",
- "cv_note":"<if their last answer gave a strong CV line, that line in CV style (action verb, a number if they gave one, max 16 words, in ${p.lang}); otherwise empty string>",
- "suggestions":["<up to 3 very short tap-to-reply answers they might give, in ${p.lang}, e.g. a rough number range or 'Nggak ingat'>"],
- "covered":{"work":bool,"wins":bool,"history":bool,"school":bool,"extras":bool},
- "ready":bool}`;
+Always answer by filling in the "respond" form.`;
 }
 
 // Scripted chat used only in demo mode (no AI key). Real mode is fully AI-driven and follows the user's story.
@@ -127,10 +143,13 @@ module.exports = async (req, res) => {
     const convo = messages.length
       ? messages.slice()
       : [{ role: "user", content: "(The user just finished setup. Greet them by nickname, in character, and ask your first question.)" }];
+    // Clean up any old broken replies still saved in the chat, so the AI doesn't copy them
+    for (const m of convo) if (m.role === "assistant" && /"reply"\s*:/.test(m.content)) m.content = (parseJson(m.content) || {}).reply || m.content.split("{")[0].trim() || "...";
     if (convo[0].role !== "user") convo.unshift({ role: "user", content: "(Start of chat.)" });
 
-    const text = await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 600 });
-    const d = parseJson(text) || { reply: text };
+    const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 700, tool: TOOL })) || {};
+    // Safety net: never show raw code or notes as a chat bubble
+    if (typeof d.reply !== "string" || !d.reply.trim() || /[{}]|"reply"/.test(d.reply)) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
     return send(res, 200, {
       reply: String(d.reply || "Sorry, could you say that again?"),
       mood: MOODS.includes(d.mood) ? d.mood : "happy",
