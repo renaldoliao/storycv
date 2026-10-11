@@ -41,20 +41,26 @@ function withCache(messages) {
 // With "tool", the AI must answer by filling in a fixed form (a JSON shape we define),
 // so it can never reply with loose text, notes to itself, or broken JSON.
 async function callClaude({ system, messages, maxTokens, tool }) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": API_KEY,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: MODEL, max_tokens: maxTokens,
-      system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
-      messages: withCache(messages),
-      ...(tool ? { tools: [tool], tool_choice: { type: "tool", name: tool.name } } : {}),
-    }),
-  });
+  const ask = async (useTool) => {
+    const sys = useTool || !tool ? system
+      : system + "\n\nReply with ONE JSON object only, matching this shape, with no other text before or after it and no notes to yourself:\n" + JSON.stringify(tool.input_schema);
+    return fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
+      body: JSON.stringify({
+        model: MODEL, max_tokens: maxTokens,
+        system: [{ type: "text", text: sys, cache_control: { type: "ephemeral" } }],
+        messages: withCache(messages),
+        ...(useTool ? { tools: [tool], tool_choice: { type: "tool", name: tool.name } } : {}),
+      }),
+    });
+  };
+  let res = await ask(!!tool);
+  // If this AI model won't accept the form, ask again in plain JSON (we clean it up below)
+  if (!res.ok && tool && res.status === 400) {
+    console.error("Claude API refused the form, retrying without it:", await res.text());
+    res = await ask(false);
+  }
   if (!res.ok) {
     const text = await res.text();
     console.error("Claude API error", res.status, text);
