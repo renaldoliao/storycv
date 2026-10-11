@@ -149,7 +149,7 @@ module.exports = async (req, res) => {
 
     const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 700, tool: TOOL })) || {};
     // Safety net: never show raw code or notes as a chat bubble
-    if (typeof d.reply === "string" && /[{}]|"reply"/.test(d.reply)) d.reply = d.reply.split("{")[0].trim();
+    if (typeof d.reply === "string") d.reply = d.reply.split("{")[0].replace(/```[a-z]*/gi, "").trim();
     if (typeof d.reply !== "string" || !d.reply.trim()) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
     return send(res, 200, {
       reply: String(d.reply || "Sorry, could you say that again?"),
