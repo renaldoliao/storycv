@@ -128,6 +128,10 @@
   .r-org{font-style:italic;font-size:14px;color:#45454C}
   .paper ul{margin:6px 0 0;padding-left:18px;font-size:14px;line-height:1.55}
   .paper p{font-size:14px;line-height:1.55;margin:8px 0 0}
+  .paper ul ul{margin-top:2px;list-style:circle}
+  .r-when{font-size:14px;margin-top:4px}
+  .r-when .r-date{font-size:13px}
+  .r-glabel{font-family:'Nunito',sans-serif;font-weight:800;font-size:12.5px;margin-top:6px}
   .price-row{display:flex;justify-content:space-between;align-items:baseline;margin:18px 4px 12px}
   .price-row b{font-size:24px;font-weight:900}
   .small{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
@@ -262,8 +266,8 @@ const PRICE_IDR = I18N.PRICE_IDR;
 const { BUDDIES, mascot } = window.StoryBuddies;
 const T = I18N.t;
 // CV section headings follow the CV's language (chosen in the details form), not the site language
-const CV_ID = { "Summary":"Ringkasan", "Experience":"Pengalaman", "Education":"Pendidikan", "Skills":"Keahlian", "Hard skills":"Keahlian teknis",
-  "Soft skills":"Keahlian non-teknis", "Certifications":"Sertifikasi", "Languages":"Bahasa", "Your Name":"Nama Kamu" };
+const CV_ID = { "Summary":"Ringkasan", "Work Experience":"Pengalaman Kerja", "Education":"Pendidikan", "Additional Information":"Informasi Tambahan",
+  "Technical Skills":"Keahlian Teknis", "Languages":"Bahasa", "Certifications":"Sertifikasi & Lisensi", "Activities":"Kegiatan", "Your Name":"Nama Kamu" };
 const CVH = (w) => (S.profile.lang === "English" ? w : (CV_ID[w] || w));
 I18N.add({
   id: {
@@ -334,7 +338,7 @@ I18N.add({
   },
 });
 I18N.apply();
-const AREAS = ["experience","achievements","education","hard_skills","soft_skills"];
+const AREAS = ["work","wins","history","school","extras"];
 
 /* ================= State (saved on this device) ================= */
 const $ = (id) => document.getElementById(id);
@@ -494,7 +498,7 @@ function renderChat(typing){
   $("chatName").textContent = b.name;
   $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}"></span>`).join("");
   $("dots").setAttribute("aria-label", T("a.progress", { n: AREAS.filter((a)=>S.covered[a]).length, total: AREAS.length }));
-  $("peek").textContent = S.resume ? "My CV" : "My CV";
+  $("peek").textContent = T("a.myCv");
   $("peek").disabled = !S.resume; $("peek").style.opacity = S.resume ? 1 : .5;
   let h = "";
   S.messages.forEach((m, i) => {
@@ -507,7 +511,7 @@ function renderChat(typing){
   $("msgs").querySelectorAll("[data-say]").forEach((el) => el.addEventListener("click", () => sendText(el.dataset.say)));
   $("msgs").scrollTop = $("msgs").scrollHeight;
   const answers = S.messages.filter((m) => m.role === "user").length;
-  $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 4));
+  $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 8));
   $("readyText").textContent = S.ready ? T("a.ready", { nick: S.profile.nickname || T("a.friend") }) : T("a.enough");
   // Greet once when the chat opens. If that fails, show the error and wait (never retry in a loop).
   if (!typing && !S.messages.length && !busy && !$("chatErr").textContent) askBuddy();
@@ -552,28 +556,57 @@ $("create").addEventListener("click", async () => {
 
 /* ================= 4. CV ================= */
 const list = (a) => (Array.isArray(a) ? a.filter(Boolean) : []);
+// Makes any CV (new format, older saved format, or slightly off AI output) fit one shape
+function normCV(r){
+  const bl = (x) => (typeof x === "string" ? { text:x, sub:[] } : { text:String((x && x.text) || ""), sub:list(x && x.sub).map(String) });
+  const groups = (o) => { const g = list(o.groups).map((g) => ({ label:g.label || "", bullets:list(g.bullets).map(bl).filter((b) => b.text) })).filter((g) => g.bullets.length);
+    return g.length ? g : [{ label:"", bullets:list(o.bullets).map(bl).filter((b) => b.text) }]; };
+  const exp = list(r.experience).map((j) => j.roles
+    ? { company:j.company || "", location:j.location || "", roles:list(j.roles).map((ro) => ({ title:ro.title || ro.role || "", start:ro.start || "", end:ro.end || "", groups:groups(ro) })) }
+    : { company:j.company || "", location:j.location || "", roles:[{ title:j.role || "", start:j.start || "", end:j.end || "", groups:groups(j) }] });
+  const edu = list(r.education).map((e) => ({ school:e.school || "", location:e.location || "", start:e.start || "", end:e.end || e.year || "",
+    degree:e.degree || "", activities:list(e.activities).length ? list(e.activities) : (e.notes ? [e.notes] : []) }));
+  return { name:r.name || "", contact:r.contact || {}, summary:r.summary || "", experience:exp, education:edu,
+    skills:list(r.skills).length ? list(r.skills) : list(r.hard_skills), languages:list(r.languages), certifications:list(r.certifications) };
+}
+const span = (a, b) => [a, b].filter(Boolean).join(" - ");
+const whenLine = (when, what) => [when, what].filter(Boolean).join(" | ");
+function cvExtras(r){
+  return [[CVH("Technical Skills"), r.skills], [CVH("Languages"), r.languages], [CVH("Certifications"), r.certifications]].filter(([,v]) => v.length);
+}
 function renderCV(){
   applyTheme();
   if (!S.resume) return go("chat");
-  const r = S.resume, c = r.contact || {};
+  const r = normCV(S.resume), c = r.contact;
   $("cvMascot").innerHTML = mascot(S.buddy, "yay", 60);
   $("cvTitle").textContent = S.paid ? T("a.allYours", { nick: S.profile.nickname }) : T("a.cvReady", { nick: S.profile.nickname });
-  const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).map(esc).join(" · ");
+  const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean).map(esc).join(" | ");
   let top = `<div class="r-name">${esc(r.name)}</div>`;
-  if (r.headline) top += `<div class="r-head">${esc(r.headline)}</div>`;
   if (contact) top += `<div class="r-contact">${contact}</div>`;
   if (r.summary) top += `<div class="r-sec">${CVH("Summary")}</div><p>${esc(r.summary)}</p>`;
+  const ul = (bs) => `<ul>${bs.map((b) => `<li>${esc(b.text)}${b.sub.length ? `<ul>${b.sub.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ul>`;
   let rest = "";
-  if (list(r.experience).length){
-    rest += `<div class="r-sec">${CVH("Experience")}</div>`;
-    r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" - "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
+  if (r.experience.length){
+    rest += `<div class="r-sec">${CVH("Work Experience")}</div>`;
+    r.experience.forEach((j) => {
+      rest += `<div class="r-item"><div class="r-role">${esc([j.company, j.location].filter(Boolean).join(", "))}</div>`;
+      j.roles.forEach((ro) => {
+        rest += `<div class="r-when"><span class="r-date">${esc(span(ro.start, ro.end))}</span>${span(ro.start, ro.end) && ro.title ? " | " : ""}<i>${esc(ro.title)}</i></div>`;
+        ro.groups.forEach((g) => { if (g.label) rest += `<div class="r-glabel">${esc(g.label)}</div>`; rest += ul(g.bullets); });
+      });
+      rest += `</div>`;
+    });
   }
-  if (list(r.education).length){
+  if (r.education.length){
     rest += `<div class="r-sec">${CVH("Education")}</div>`;
-    r.education.forEach((ed) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div><div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`; });
+    r.education.forEach((e) => {
+      rest += `<div class="r-item"><div class="r-role">${esc([e.school, e.location].filter(Boolean).join(", "))}</div>
+        <div class="r-when"><span class="r-date">${esc(span(e.start, e.end))}</span>${span(e.start, e.end) && e.degree ? " | " : ""}<i>${esc(e.degree)}</i></div>
+        ${e.activities.length ? `<ul><li>${CVH("Activities")}:<ul>${e.activities.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></li></ul>` : ""}</div>`;
+    });
   }
-  const skills = [[CVH("Hard skills"),r.hard_skills],[CVH("Soft skills"),r.soft_skills],[CVH("Certifications"),r.certifications],[CVH("Languages"),r.languages]].filter(([,v]) => list(v).length);
-  if (skills.length) rest += `<div class="r-sec">${CVH("Skills")}</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
+  const ex = cvExtras(r);
+  if (ex.length) rest += `<div class="r-sec">${CVH("Additional Information")}</div><ul>${ex.map(([k,v]) => `<li><b>${k}:</b> ${v.map(esc).join(", ")}</li>`).join("")}</ul>`;
   $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
   $("paperWrap").classList.toggle("locked", !S.paid);
   $("payBox").style.display = S.paid ? "none" : "block";
@@ -593,34 +626,56 @@ $("modal").addEventListener("click", (e) => { if (e.target === $("modal")) $("mo
 
 /* ---------- PDF: real text so hiring software (ATS) can read it ---------- */
 $("download").addEventListener("click", () => {
-  const r = S.resume; if (!r || !S.paid) return;
+  if (!S.resume || !S.paid) return;
+  const r = normCV(S.resume);
   const hex = BUDDIES[S.buddy].theme.accent; const rgb = [1,3,5].map((i) => parseInt(hex.slice(i,i+2),16));
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:"pt", format:"a4" });
-  const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
+  const M = 48, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
+  const FS = 10;
   let y = M;
   const need = (h) => { if (y + h > H - M){ doc.addPage(); y = M; } };
-  const text = (str, size, style, gap, indent) => {
+  const text = (str, size, style, gap, indent, align) => {
     doc.setFont("helvetica", style || "normal"); doc.setFontSize(size);
-    doc.splitTextToSize(String(str), W - (indent||0)).forEach((ln) => { need(size*1.35); doc.text(ln, M + (indent||0), y); y += size*1.35; });
+    doc.splitTextToSize(String(str), W - (indent||0)).forEach((ln) => { need(size*1.3); doc.text(ln, align === "center" ? M + W/2 : M + (indent||0), y, align === "center" ? { align:"center" } : undefined); y += size*1.3; });
     y += gap || 0;
   };
-  const section = (t) => { y += 8; need(30); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 5; doc.setDrawColor(210); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20); };
-  const lr = (l, rt, size) => { need(size*1.4); doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(l||""), M, y); if (rt){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(rt), M+W, y, {align:"right"}); } y += size*1.35; };
+  // filled dot for main points, hollow ring for sub points
+  const bullet = (str, level) => { need(FS*1.3); const ind = level ? 30 : 13; doc.setDrawColor(20); doc.setFillColor(20); doc.setLineWidth(.7);
+    doc.circle(M + ind - 8, y - 3.2, level ? 1.6 : 1.5, level ? "S" : "F"); text(str, FS, "normal", 1, ind); };
+  const section = (t) => { y += 10; need(32); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 4; doc.setDrawColor(200); doc.line(M, y, M+W, y); y += 13; doc.setTextColor(20); };
+  // "Jul 2023 - Present | Role": date normal, role italic
+  const when = (dates, what) => {
+    need(FS*1.35); doc.setFontSize(FS); let x = M;
+    if (dates){ doc.setFont("helvetica","normal"); doc.text(dates + (what ? "  |  " : ""), x, y); x += doc.getTextWidth(dates + (what ? "  |  " : "")); }
+    if (what){ doc.setFont("helvetica","italic"); doc.text(doc.splitTextToSize(what, M + W - x)[0], x, y); }
+    y += FS*1.35;
+  };
   doc.setTextColor(20);
-  text(r.name || CVH("Your Name"), 20, "bold", 2);
-  if (r.headline) text(r.headline, 12, "normal", 2);
-  const c = r.contact || {}; const contact = [c.city,c.email,c.phone,c.linkedin].filter(Boolean).join("  |  ");
-  if (contact) text(contact, 9.5, "normal", 4);
-  if (r.summary){ section(CVH("Summary")); text(r.summary, 10.5); }
-  if (list(r.experience).length){ section(CVH("Experience")); r.experience.forEach((j) => {
-    lr(j.role, [j.start,j.end].filter(Boolean).join(" - "), 11);
-    const org = [j.company,j.location].filter(Boolean).join(", "); if (org) text(org, 10.5, "italic");
-    list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
-    y += 6; }); }
-  if (list(r.education).length){ section(CVH("Education")); r.education.forEach((ed) => { lr(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; }); }
-  const skills = [[CVH("Hard skills"),r.hard_skills],[CVH("Soft skills"),r.soft_skills],[CVH("Certifications"),r.certifications],[CVH("Languages"),r.languages]].filter(([,v]) => list(v).length);
-  if (skills.length){ section(CVH("Skills")); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
+  text(r.name || CVH("Your Name"), 18, "bold", 2, 0, "center");
+  const c = r.contact; const contact = [c.city, c.phone, c.email, c.linkedin].filter(Boolean).join("  |  ");
+  if (contact) text(contact, 9, "normal", 2, 0, "center");
+  if (r.summary){ section(CVH("Summary")); text(r.summary, FS); }
+  if (r.experience.length){ section(CVH("Work Experience")); r.experience.forEach((j, i) => {
+    if (i) y += 6;
+    need(40); text([j.company, j.location].filter(Boolean).join(", "), 10.5, "bold", 1);
+    j.roles.forEach((ro, k) => {
+      if (k) y += 4;
+      when(span(ro.start, ro.end), ro.title);
+      ro.groups.forEach((g) => {
+        if (g.label){ y += 2; text(g.label, FS, "bold", 1); }
+        g.bullets.forEach((b) => { bullet(b.text, 0); b.sub.forEach((x) => bullet(x, 1)); });
+      });
+    });
+  }); }
+  if (r.education.length){ section(CVH("Education")); r.education.forEach((e, i) => {
+    if (i) y += 6;
+    need(30); text([e.school, e.location].filter(Boolean).join(", "), 10.5, "bold", 1);
+    when(span(e.start, e.end), e.degree);
+    if (e.activities.length){ bullet(CVH("Activities") + ":", 0); e.activities.forEach((x) => bullet(x, 1)); }
+  }); }
+  const ex = cvExtras(r);
+  if (ex.length){ section(CVH("Additional Information")); ex.forEach(([k, v]) => bullet(k + ": " + v.join(", "), 0)); }
   doc.save((r.name || "CV").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_") + "_CV.pdf");
 });
 

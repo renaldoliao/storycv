@@ -7,70 +7,95 @@ const { cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
 
 function systemPrompt(language) {
-  return `You are an expert resume writer. You will receive an interview transcript between a career coach (assistant) and a job seeker (user).
-Turn the user's stories into a sellable, ATS-friendly resume written in ${language}.
+  const id = language !== "English";
+  return `You are an expert CV writer. You will receive a casual chat between a career buddy (COACH) and a job seeker (USER).
+Turn the user's stories into a clean, one-page, ATS-friendly CV written in ${language}.
 
-Writing rules:
-- Never use em dashes (—) or en dashes (–). Use commas, periods or colons instead.
-- Start every bullet with a strong action verb (Led, Cut, Grew, Built, Trained...).
-- Put results and numbers first where possible: "Cut response time from 24h to 2h (-92%) by ...".
-- 2 to 5 bullets per job, each under 25 words. Most impressive first.
-- Summary: 2 to 3 sentences, third person without pronouns, highlighting years of experience, field and best result.
-- Headline: short job title they're targeting or currently hold.
-- Use only facts the user actually said. NEVER invent companies, dates, numbers or skills. Leave a field as "" if unknown.
-- Turn casual skill mentions into standard names (e.g. "excel" -> "Microsoft Excel").
-- Order jobs and education newest first.
-- If writing in Bahasa Indonesia, use clear, standard and professional Indonesian (this is a CV, so no slang), with simple words a recruiter reads quickly.
+STYLE (follow closely)
+- Simple and scannable: work experience first, then education, then a short additional information section.
+- Summary: leave it "" for most people. Only write one (1 to 2 short lines, no pronouns) when the user has under about 1 year of work experience or is switching careers, pointing them at their target job.
+- Group roles under one company when they held several roles there (a promotion), newest role first.
+- Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Soft skills must show through results, never as a list.
+- Put a number in every bullet where the user gave one: amounts, counts, percentages, time ("within 2 years"), before and after ("from 50 to 120 orders a day"). Never make numbers up.
+- ${id ? "Use standard, professional Indonesian with simple words (this is a CV, no slang). Start bullets with me-/ber- verbs (Melayani, Mengelola, Meningkatkan, Melatih)." : "Past tense for finished work (Served, Trained, Cut). For duties still going on in the current job, the -ing form is fine (Supporting, Managing)."}
+- The current or latest role gets the most bullets (3 to 6). Older roles get 2 to 3.
+- When one big win has supporting details, put up to 3 short details in "sub" under it.
+- Only if the latest role has 6 or more bullets that split naturally, group them with short labels in "groups" (for example ${id ? '"Tanggung jawab utama" and "Pencapaian"' : '"Key responsibilities" and "Key results"'}); otherwise use a single group with label "".
+- Dates as "Mon YYYY" (${id ? "Jan, Feb, Mar, Apr, Mei, Jun, Jul, Agu, Sep, Okt, Nov, Des; current job ends with 'Sekarang'" : "Jan to Dec; current job ends with 'Present'"}). Use just the year if the month is unknown, "" if unknown.
+- Education: school, city, years, degree or major (for high school, e.g. ${id ? '"SMK, Tata Boga"' : '"Vocational High School, Culinary"'}). Activities (committees, organisations, competitions, events, projects) as short bullets.
+- Additional information: technical skills (tools, machines, equipment, software, using standard names, e.g. "excel" to "Microsoft Excel"), languages with level, certifications (include driving licences like SIM C and trainings like K3).
+- Order everything newest first.
+- Use ONLY facts the user said. NEVER invent companies, dates, numbers, cities or skills. Use "" or [] when unknown.
+- Never use em dashes or en dashes. Use commas, periods or colons. A plain hyphen is only for date ranges.
 
 Respond ONLY with this JSON (no other text):
-{"name":"","headline":"","contact":{"city":"","email":"","phone":"","linkedin":""},"summary":"","experience":[{"role":"","company":"","location":"","start":"","end":"","bullets":[""]}],"education":[{"degree":"","school":"","year":"","notes":""}],"hard_skills":[""],"soft_skills":[""],"certifications":[""],"languages":[""]}`;
+{"summary":"",
+ "experience":[{"company":"","location":"","roles":[{"title":"","start":"","end":"","groups":[{"label":"","bullets":[{"text":"","sub":[""]}]}]}]}],
+ "education":[{"school":"","location":"","start":"","end":"","degree":"","activities":[""]}],
+ "skills":[""],"languages":[""],"certifications":[""]}`;
 }
 
 const DEMO_RESUME = {
-  name: "Rina Pratama",
-  headline: "Customer Service Lead",
-  contact: { city: "Jakarta", email: "rina@example.com", phone: "", linkedin: "" },
-  summary: "Customer service lead with 3 years in e-commerce, known for turning slow support into fast, calm service. Cut response time by 92% while coaching a team of 8.",
-  experience: [{
-    role: "Customer Service Lead", company: "PT Sinar Niaga", location: "Jakarta", start: "2023", end: "Present",
-    bullets: [
-      "Cut average customer response time from 24 hours to 2 hours (-92%) by introducing reply templates and a redesigned shift schedule",
-      "Led and coached a team of 8 customer service agents",
-      "Trained every new hire, shortening onboarding for the support team",
-    ],
-  }],
-  education: [{ degree: "Bachelor of Business Management", school: "Universitas Nusa Bangsa", year: "2019", notes: "" }],
-  hard_skills: ["Zendesk", "Microsoft Excel", "Google Sheets", "Canva"],
-  soft_skills: ["Conflict resolution", "Coaching & onboarding", "Composure under pressure"],
-  certifications: [],
-  languages: ["Bahasa Indonesia (native)", "English (professional)"],
+  summary: "",
+  experience: [
+    { company: "Kopi Senja", location: "Jakarta", roles: [
+      { title: "Head Barista", start: "Mar 2024", end: "Present", groups: [{ label: "", bullets: [
+        { text: "Leading a bar team of 4 baristas across morning and evening shifts", sub: [] },
+        { text: "Served 150+ customers a day during weekend peaks while keeping wait times under 5 minutes", sub: [] },
+        { text: "Created 3 seasonal drinks that became bestsellers", sub: ["Palm sugar oat latte sold 900+ cups in its first month", "Reduced syrup waste by 30% by prepping in smaller batches"] },
+        { text: "Trained 6 new baristas on espresso, milk texturing and opening routines", sub: [] },
+      ] }] },
+      { title: "Barista", start: "Jun 2022", end: "Feb 2024", groups: [{ label: "", bullets: [
+        { text: "Promoted to Head Barista within 2 years", sub: [] },
+        { text: "Handled the cash register and daily cash count with zero shortages", sub: [] },
+      ] }] },
+    ] },
+    { company: "Indomaret", location: "Bekasi", roles: [
+      { title: "Store Crew", start: "2021", end: "2022", groups: [{ label: "", bullets: [
+        { text: "Served 200+ customers per shift at the cashier", sub: [] },
+        { text: "Restocked and arranged 3 aisles every morning before opening", sub: [] },
+      ] }] },
+    ] },
+  ],
+  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "Vocational High School, Culinary", activities: ["Event committee for the school's yearly food bazaar"] }],
+  skills: ["Espresso machine", "Latte art", "Cash register (POS)", "Microsoft Excel"],
+  languages: ["Bahasa Indonesia (native)", "English (basic)"],
+  certifications: ["Driving licence C (SIM C)", "Basic Barista Training"],
 };
 
 const DEMO_RESUME_ID = {
-  name: "Rina Pratama",
-  headline: "Customer Service Lead",
-  contact: {},
-  summary: "Customer service lead dengan 3 tahun pengalaman di e-commerce, dikenal mampu mengubah layanan yang lambat menjadi cepat dan tenang. Memangkas waktu respons hingga 92% sambil membimbing tim berisi 8 orang.",
-  experience: [{
-    role: "Customer Service Lead", company: "PT Sinar Niaga", location: "Jakarta", start: "2023", end: "Sekarang",
-    bullets: [
-      "Memangkas rata-rata waktu respons pelanggan dari 24 jam menjadi 2 jam (-92%) dengan template balasan dan jadwal shift baru",
-      "Memimpin dan membimbing tim berisi 8 agen layanan pelanggan",
-      "Melatih setiap karyawan baru sehingga proses orientasi tim lebih singkat",
-    ],
-  }],
-  education: [{ degree: "S1 Manajemen Bisnis", school: "Universitas Nusa Bangsa", year: "2019", notes: "" }],
-  hard_skills: ["Zendesk", "Microsoft Excel", "Google Sheets", "Canva"],
-  soft_skills: ["Penyelesaian konflik", "Melatih dan membimbing tim", "Tenang di bawah tekanan"],
-  certifications: [],
-  languages: ["Bahasa Indonesia (penutur asli)", "Bahasa Inggris (profesional)"],
+  summary: "",
+  experience: [
+    { company: "Kopi Senja", location: "Jakarta", roles: [
+      { title: "Head Barista", start: "Mar 2024", end: "Sekarang", groups: [{ label: "", bullets: [
+        { text: "Memimpin tim bar berisi 4 barista untuk shift pagi dan malam", sub: [] },
+        { text: "Melayani 150+ pelanggan per hari saat akhir pekan dengan waktu tunggu di bawah 5 menit", sub: [] },
+        { text: "Menciptakan 3 menu musiman yang menjadi menu terlaris", sub: ["Oat latte gula aren terjual 900+ gelas di bulan pertama", "Mengurangi sisa sirup 30% dengan menyiapkan bahan dalam porsi lebih kecil"] },
+        { text: "Melatih 6 barista baru dalam espresso, teknik susu, dan persiapan buka toko", sub: [] },
+      ] }] },
+      { title: "Barista", start: "Jun 2022", end: "Feb 2024", groups: [{ label: "", bullets: [
+        { text: "Dipromosikan menjadi Head Barista dalam 2 tahun", sub: [] },
+        { text: "Mengelola mesin kasir dan hitung kas harian tanpa selisih", sub: [] },
+      ] }] },
+    ] },
+    { company: "Indomaret", location: "Bekasi", roles: [
+      { title: "Store Crew", start: "2021", end: "2022", groups: [{ label: "", bullets: [
+        { text: "Melayani 200+ pelanggan per shift di kasir", sub: [] },
+        { text: "Menata dan mengisi ulang 3 lorong produk setiap pagi sebelum toko buka", sub: [] },
+      ] }] },
+    ] },
+  ],
+  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "SMK, Tata Boga", activities: ["Panitia bazar makanan tahunan sekolah"] }],
+  skills: ["Mesin espresso", "Latte art", "Mesin kasir (POS)", "Microsoft Excel"],
+  languages: ["Bahasa Indonesia (penutur asli)", "Bahasa Inggris (dasar)"],
+  certifications: ["SIM C", "Pelatihan Barista Dasar"],
 };
 
 // Name and contact come from the form the user filled in, not from the AI.
 function withProfile(r, p) {
   r.name = p.name || r.name || "";
   r.contact = { city: p.city, email: p.email, phone: p.phone, linkedin: p.linkedin };
-  if (!r.headline && p.target) r.headline = p.target;
+  r.headline = p.target || "";
   return r;
 }
 
