@@ -6,7 +6,7 @@ const { isDemo, cleanMessages, callClaude, send, fail, parseJson } = require("./
 const { getBuddy, cleanProfile } = require("./_buddies");
 const { requireUser } = require("./_auth");
 
-const KEYS = ["work", "wins", "history", "school", "extras"];
+const KEYS = ["work", "wins", "history", "school", "soft", "extras"];
 const MOODS = ["happy", "think", "wink", "yay"];
 
 // The form the AI fills in for every chat reply
@@ -22,8 +22,8 @@ const TOOL = {
       suggestions: { type: "array", items: { type: "string" }, description: "Up to 3 very short tap-to-reply answers the user might give, in the chat language" },
       covered: {
         type: "object",
-        properties: { work: { type: "boolean" }, wins: { type: "boolean" }, history: { type: "boolean" }, school: { type: "boolean" }, extras: { type: "boolean" } },
-        required: ["work", "wins", "history", "school", "extras"],
+        properties: { work: { type: "boolean" }, wins: { type: "boolean" }, history: { type: "boolean" }, school: { type: "boolean" }, soft: { type: "boolean" }, extras: { type: "boolean" } },
+        required: ["work", "wins", "history", "school", "soft", "extras"],
       },
       ready: { type: "boolean", description: "True when all areas are covered, or the user wants to finish now" },
     },
@@ -31,7 +31,7 @@ const TOOL = {
   },
 };
 
-function systemPrompt(buddy, p) {
+function systemPrompt(buddy, p, n) {
   const btn = p.lang === "English" ? "Create my CV" : "Bikin CV-ku";
   return `You are ${buddy.name}, a career buddy inside an app called Ceritain ("just tell it").
 Personality: ${buddy.personality}
@@ -63,9 +63,17 @@ WHAT TO COLLECT (your hidden checklist, in a natural order)
 2. wins: for that job, 2 to 3 concrete wins or responsibilities with a number or scale (how many customers/orders/people, how much money, how fast, before vs after). Also promotions or extra trust (trained new staff, held the keys, handled cash).
 3. history: earlier jobs from roughly the last 5 years (up to 3 jobs total): place, city, role, start and end year, 1 to 2 things they did or achieved. If it is their first job, or a fresh graduate, cover internships, part-time work, freelancing, family business or volunteering instead. If they say there is none, that's fine.
 4. school: last school or university, major, start and end year. Ask about activities (committees, organisations, competitions, events, projects), especially for fresh graduates or people with little work history.
-5. extras: tools, machines, equipment and software they can use; driving licences (SIM A/B/C), certificates and trainings (for example K3, barista, food safety); languages they speak and how well.
+5. soft: how they work with people, through a story: what coworkers or the boss rely on them for, how they handle rush hours or difficult customers, how teammates would describe them.
+6. extras: tools, machines, equipment and software they can use; driving licences (SIM A/B/C), certificates and trainings (for example K3, barista, food safety); languages they speak and how well (ask about languages directly, even just Bahasa Indonesia, English or a regional language).
 If "Job they're aiming for" is empty, ask it casually somewhere early.
-Aim for about 15 to 20 short exchanges in total. Only mark an area covered once it really has enough detail for a CV.
+PACING (important, keep the chat moving)
+- This is the user's answer number ${n}. Aim for about 16 to 20 answers in total.
+- Rough budget per topic: current job and its wins together 6 to 7 answers; earlier jobs 2 to 3; school 2; soft skills 1 to 2; extras 2 to 3.
+- Once a topic has used its budget, move on even if you could dig deeper. A small missing detail is fine.
+- Never ask more than 2 follow-ups in a row about the same detail.
+- Move on with a natural bridge, for example: "Oke, cerita kerjaanmu udah mantap! Sekarang mundur dikit ke zaman sekolah ya."
+- Rough guide by answer number: answers 1 to 7 current job and wins, 8 to 10 earlier jobs, 11 to 12 school, 13 to 14 soft skills, 15 to 17 extras. Adjust if a topic is quicker (for example no earlier jobs).
+Only mark an area covered once it has enough detail for a CV.
 If the user says they want to finish early, respect it: tell them they can tap "${btn}" now and set ready true.
 When all 5 areas are covered, cheer them on and tell them they can tap "${btn}" (or keep adding more), and set ready true.
 
@@ -85,6 +93,7 @@ const DEMO = {
     { q: () => "What did you do there, and from what year to what year?", mood: "think", s: [] },
     { q: () => "Got it. Now school: where did you last study, what major, and what year did you finish?", mood: "happy", s: ["High school", "Diploma", "Bachelor's"] },
     { q: () => "Did you join any activities back then? Committees, events, competitions, anything counts.", mood: "wink", s: ["Event committee", "Not really"] },
+    { q: () => "Nice! If I asked your teammates, what would they say you're like? Patient, fast, great with grumpy customers?", mood: "happy", s: ["Patient", "Fast worker", "Good with customers"] },
     { q: () => "Almost done! Which tools, machines or apps are you good with? Cash register, Excel, espresso machine, a delivery motorbike...", mood: "think", s: ["Cash register", "Excel", "Espresso machine"] },
     { q: () => "Last one: any driving licence, certificate or training? And which languages do you speak?", mood: "happy", s: ["Driving licence C", "None yet"] },
     { q: () => "That's everything! Your story is more than enough for a strong CV. Tap “Create my CV” whenever you're ready, or add more first.", mood: "yay", s: [] },
@@ -100,6 +109,7 @@ const DEMO = {
     { q: () => "Di sana kamu ngapain aja, terus dari tahun berapa sampai tahun berapa?", mood: "think", s: [] },
     { q: () => "Sip. Sekarang soal sekolah: terakhir lulus dari mana, jurusan apa, tahun berapa?", mood: "happy", s: ["SMA/SMK", "D3", "S1"] },
     { q: () => "Dulu waktu sekolah ikut kegiatan apa aja? OSIS, panitia acara, lomba, apa aja boleh.", mood: "wink", s: ["Panitia acara", "Nggak ikut apa-apa"] },
+    { q: () => "Sip! Kalau temen kerjamu ditanya, kamu orangnya kayak gimana? Sabar, cekatan, jago ngadepin pelanggan rewel?", mood: "happy", s: ["Sabar", "Cekatan", "Jago ngadepin pelanggan"] },
     { q: () => "Dikit lagi beres! Alat, mesin, atau aplikasi apa yang kamu jago pakai? Mesin kasir, Excel, mesin kopi, motor buat antar barang...", mood: "think", s: ["Mesin kasir", "Excel", "Mesin kopi"] },
     { q: () => "Terakhir nih: punya SIM, sertifikat, atau pernah ikut pelatihan? Terus bisa bahasa apa aja?", mood: "happy", s: ["SIM C", "Belum punya"] },
     { q: () => "Lengkap! Cerita kamu udah lebih dari cukup buat CV yang mantap. Tap “Bikin CV-ku” kapan aja, atau tambahin cerita dulu juga boleh.", mood: "yay", s: [] },
@@ -110,7 +120,7 @@ const DEMO_NOTE = {
   "Bahasa Indonesia": { 4: "Melayani lebih dari 100 pelanggan per hari pada jam sibuk", 6: "Melatih karyawan baru dalam pelayanan dan rutinitas harian toko" },
 };
 // After how many answers each checklist area counts as done in the demo
-const DEMO_DONE = { work: 3, wins: 6, history: 8, school: 10, extras: 12 };
+const DEMO_DONE = { work: 3, wins: 6, history: 8, school: 10, soft: 11, extras: 13 };
 
 module.exports = async (req, res) => {
   res.lang = (req.headers || {})["x-lang"] === "en" ? "en" : "id";
@@ -147,7 +157,7 @@ module.exports = async (req, res) => {
     for (const m of convo) if (m.role === "assistant" && /"reply"\s*:/.test(m.content)) m.content = (parseJson(m.content) || {}).reply || m.content.split("{")[0].trim() || "...";
     if (convo[0].role !== "user") convo.unshift({ role: "user", content: "(Start of chat.)" });
 
-    const d = (await callClaude({ system: systemPrompt(buddy, profile), messages: convo, maxTokens: 2500, tool: TOOL })) || {};
+    const d = (await callClaude({ system: systemPrompt(buddy, profile, messages.filter((m) => m.role === "user").length + 1), messages: convo, maxTokens: 2500, tool: TOOL })) || {};
     // Safety net: never show raw code or notes as a chat bubble
     if (typeof d.reply === "string") d.reply = d.reply.split("{")[0].replace(/```[a-z]*/gi, "").trim();
     if (typeof d.reply !== "string" || !d.reply.trim()) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";

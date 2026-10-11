@@ -44,7 +44,7 @@ STYLE (follow closely)
 - Simple and scannable: work experience first, then education, then a short additional information section.
 - Summary: leave it "" for most people. Only write one (1 to 2 short lines, no pronouns) when the user has under about 1 year of work experience or is switching careers, pointing them at their target job.
 - Group roles under one company when they held several roles there (a promotion), newest role first.
-- Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Soft skills must show through results, never as a list.
+- Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Soft skills must show through results, never as a list: weave what the user said about how they work with people into the bullets (for example \"Trusted to handle complaints...\") and the summary if there is one.
 - Put a number in every bullet where the user gave one: amounts, counts, percentages, time ("within 2 years"), before and after ("from 50 to 120 orders a day"). Never make numbers up.
 - ${id ? "Use standard, professional Indonesian with simple words (this is a CV, no slang). Start bullets with me-/ber- verbs (Melayani, Mengelola, Meningkatkan, Melatih)." : "Past tense for finished work (Served, Trained, Cut). For duties still going on in the current job, the -ing form is fine (Supporting, Managing)."}
 - The current or latest role gets the most bullets (3 to 6). Older roles get 2 to 3.
