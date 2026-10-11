@@ -55,3 +55,9 @@ create index if not exists cvs_user_idx on public.cvs (user_id, updated_at desc)
 
 -- Lock the table: no rules for visitors, so only the server (secret key) can read or change it.
 alter table public.cvs enable row level security;
+
+-- ===== Part 3: let the website's server use these tables =====
+-- Newer Supabase projects don't do this automatically.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on public.cvs, public.chat_usage to service_role;
+notify pgrst, 'reload schema';

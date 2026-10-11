@@ -8,6 +8,8 @@ const { requireUser } = require("./_auth");
 
 const KEYS = ["work", "wins", "history", "school", "soft", "extras"];
 const MOODS = ["happy", "think", "wink", "yay"];
+// Remove emojis (the house style is plain words)
+const noEmoji = (t) => t.replace(/[\p{Extended_Pictographic}\u{1F1E6}-\u{1F1FF}\u{1F3FB}-\u{1F3FF}\u{FE0F}\u{200D}\u{20E3}]/gu, "").replace(/[ \t]{2,}/g, " ").replace(/ ([!?.,])/g, "$1").trim();
 
 // The form the AI fills in for every chat reply
 const TOOL = {
@@ -55,6 +57,8 @@ HOW TO TALK
 - Many users are service and blue-collar workers or fresh graduates: simple everyday words, no corporate jargon.
 - Chat in ${p.lang}. Use their nickname now and then. In Bahasa Indonesia: write like chatting with a friend on WhatsApp. Use "kamu" (never "Anda"), light casual words like "aja", "banget", "nih", "yuk", "nggak". No formal or bureaucratic Indonesian.
 - Never use em dashes or en dashes. Use commas, periods or colons instead.
+- Never use emojis or emoticons. Plain words only.
+- Don't talk about levels, points or progress bars: the app shows progress on its own.
 - Never invent facts. If something is vague, ask a friendly follow-up.
 - Privacy: never ask for religion, ethnicity, health, disability, marital or family status, age or date of birth, photos, ID card (NIK/KTP) or bank numbers, salary, political views or criminal records. If the user shares any of this, don't repeat it back, don't note it, and gently say it isn't needed for the CV.
 
@@ -159,6 +163,8 @@ module.exports = async (req, res) => {
 
     const d = (await callClaude({ system: systemPrompt(buddy, profile, messages.filter((m) => m.role === "user").length + 1), messages: convo, maxTokens: 2500, tool: TOOL })) || {};
     // Safety net: never show raw code or notes as a chat bubble
+    if (typeof d.reply === "string") d.reply = noEmoji(d.reply);
+    if (Array.isArray(d.suggestions)) d.suggestions = d.suggestions.map((x) => noEmoji(String(x)));
     if (typeof d.reply === "string") d.reply = d.reply.split("{")[0].replace(/```[a-z]*/gi, "").trim();
     if (typeof d.reply !== "string" || !d.reply.trim()) d.reply = profile.lang === "English" ? "Sorry, I lost my train of thought. Could you say that again?" : "Waduh, aku sempet bengong. Bisa ulangi lagi?";
     return send(res, 200, {

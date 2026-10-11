@@ -92,6 +92,11 @@
   .m{max-width:82%;padding:13px 16px;font-size:16px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word;animation:pop .25s ease-out}
   .m.bot{align-self:flex-start;background:#fff;border-radius:var(--bub);border:var(--bd);box-shadow:var(--sh)}
   .m.me{align-self:flex-end;background:var(--accent);color:#fff;border-radius:var(--me);border:var(--bd)}
+  #s-chat{position:relative}
+  .toast{position:absolute;top:86px;left:50%;transform:translate(-50%,-16px);opacity:0;transition:opacity .3s,transform .3s;z-index:5;pointer-events:none;
+    display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border-radius:999px;padding:6px 16px 6px 8px;font-weight:800;font-size:14px;white-space:nowrap;box-shadow:0 6px 18px rgba(31,35,64,.18)}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+  .toast .tm{background:#fff;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;overflow:hidden}
   .note{align-self:flex-start;display:flex;gap:8px;align-items:flex-start;background:var(--note-bg);color:var(--note-ink);border-radius:16px;padding:10px 14px;font-size:14px;line-height:1.4;max-width:88%;animation:pop .3s ease-out}
   .note b{display:block;font-size:12px;letter-spacing:.04em}
   .typing{align-self:flex-start;background:#fff;border-radius:22px;padding:14px 18px;display:flex;gap:5px}
@@ -245,6 +250,7 @@
       <button class="pill" id="peek" data-t="a.myCv"></button>
       <button class="link" id="restart" data-t="a.restart" data-t-aria="a.restartAria"></button>
     </div>
+    <div class="toast" id="toast" role="status"></div>
     <div class="msgs" id="msgs" aria-live="polite"></div>
     <div class="ready" id="readyBar"><span id="readyText"></span><button class="btn" id="create" data-t="a.create"></button></div>
     <div class="error" id="chatErr" role="alert" style="padding:0 16px 8px"></div>
@@ -350,7 +356,9 @@ I18N.add({
     "a.added": "MASUK KE CV KAMU", "a.typing": "{name} lagi ngetik", "a.ready": "Mantap, {nick}! Udah siap?", "a.friend": "teman",
     "a.enough": "Udah cukup buat mulai. Tambah lagi atau bikin sekarang.", "a.create": "Bikin CV-ku", "a.writing": "Lagi nulis…",
     "a.confirmRestart": "Mulai dari awal? Obrolan dan CV kamu bakal dihapus.",
-    "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik, atau tekan mikrofon…", "a.mic": "Ngomong pakai suara",
+    "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik di sini…",
+    "a.ar.work": "Kerjaan sekarang", "a.ar.wins": "Prestasi", "a.ar.history": "Kerjaan sebelumnya", "a.ar.school": "Sekolah", "a.ar.soft": "Cara kerjamu", "a.ar.extras": "Keahlian & bahasa",
+    "a.toast.kira": "Yay! {area} beres ({n}/{total})", "a.toast.kopi": "{area} sudah lengkap ({n}/{total})", "a.toast.tobi": "Level {n} beres: {area}!", "a.mic": "Ngomong pakai suara",
     "a.listening": "Lagi dengerin… ngomong aja, terus tekan mikrofon lagi kalau udah.", "a.micDenied": "Mikrofon belum diizinkan. Izinkan di pengaturan browser, atau ketik aja ya.", "a.micFail": "Suaranya nggak kedengeran. Coba lagi, atau ketik aja ya.", "a.send": "Kirim",
     "a.backChat": "← Balik ngobrol", "a.cvReady": "Yeay {nick}! CV kamu udah jadi.", "a.allYours": "Ini dia CV kamu, {nick}!",
     "a.unlockRow": "Buka CV lengkap + PDF", "a.unlock": "Buka & download", "a.payNote": "QRIS · e-wallet · langsung kebuka",
@@ -391,7 +399,9 @@ I18N.add({
     "a.added": "ADDED TO YOUR CV", "a.typing": "{name} is typing", "a.ready": "Nice work, {nick}! Ready?", "a.friend": "friend",
     "a.enough": "Enough to start. Add more or create now.", "a.create": "Create my CV", "a.writing": "Writing…",
     "a.confirmRestart": "Start over? Your chat and CV will be cleared.",
-    "a.yourAnswer": "Your answer", "a.typeHere": "Type, or tap the mic…", "a.mic": "Speak instead of typing",
+    "a.yourAnswer": "Your answer", "a.typeHere": "Type here…",
+    "a.ar.work": "Current job", "a.ar.wins": "Wins", "a.ar.history": "Earlier jobs", "a.ar.school": "School", "a.ar.soft": "How you work", "a.ar.extras": "Skills & languages",
+    "a.toast.kira": "Yay! {area} done ({n}/{total})", "a.toast.kopi": "{area} is complete ({n}/{total})", "a.toast.tobi": "Level {n} cleared: {area}!", "a.mic": "Speak instead of typing",
     "a.listening": "Listening… just talk, then tap the mic again when you're done.", "a.micDenied": "Microphone isn't allowed. Allow it in your browser settings, or just type.", "a.micFail": "Couldn't hear you. Try again, or just type.", "a.send": "Send",
     "a.backChat": "← Back to chat", "a.cvReady": "Yay {nick}! Your CV is ready.", "a.allYours": "All yours, {nick}!",
     "a.unlockRow": "Unlock full CV + PDF", "a.unlock": "Unlock & download", "a.payNote": "QRIS · e-wallet · instant unlock",
@@ -613,7 +623,7 @@ function renderChat(typing){
   const b = BUDDIES[S.buddy];
   $("chatMascot").innerHTML = mascot(S.buddy, typing ? "think" : S.mood, 44);
   $("chatName").textContent = b.name;
-  $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}"></span>`).join("");
+  $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}" title="${esc(T("a.ar." + a))}"></span>`).join("");
   $("dots").setAttribute("aria-label", T("a.progress", { n: AREAS.filter((a)=>S.covered[a]).length, total: AREAS.length }));
   $("peek").textContent = T("a.myCv");
   $("peek").disabled = !S.resume; $("peek").style.opacity = S.resume ? 1 : .5;
@@ -633,6 +643,17 @@ function renderChat(typing){
   // Greet once when the chat opens. If that fails, show the error and wait (never retry in a loop).
   if (!typing && !S.messages.length && !busy && !$("chatErr").textContent) askBuddy();
 }
+// Progress pop-up when a topic is finished (instead of "level up" talk inside the chat)
+const toastQueue = []; let toastBusy = false;
+function toast(area){ toastQueue.push(area); if (!toastBusy) nextToast(); }
+function nextToast(){
+  const area = toastQueue.shift(); if (!area){ toastBusy = false; return; }
+  toastBusy = true;
+  const n = AREAS.filter((a) => S.covered[a]).length;
+  $("toast").innerHTML = `<span class="tm">${mascot(S.buddy, "yay", 28)}</span><span>${esc(T("a.toast." + S.buddy, { area:T("a.ar." + area), n, total:AREAS.length }))}</span>`;
+  $("toast").classList.add("on");
+  setTimeout(() => { $("toast").classList.remove("on"); setTimeout(nextToast, 350); }, 2600);
+}
 let busy = false;
 async function askBuddy(){
   if (busy) return; busy = true; $("chatErr").textContent = "";
@@ -642,7 +663,7 @@ async function askBuddy(){
     // A strong line from the user's last answer is shown right after that answer.
     if (d.cv_note && S.messages.length) S.notes[S.messages.length - 1] = d.cv_note;
     S.messages.push({ role:"assistant", content:d.reply });
-    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; if (d.covered) S.covered = d.covered; S.ready = !!d.ready;
+    S.mood = d.mood || "happy"; S.suggestions = d.suggestions || []; if (d.covered){ const done = AREAS.filter((a) => d.covered[a] && !S.covered[a]); S.covered = d.covered; done.forEach(toast); } S.ready = !!d.ready;
     save();
   } catch(e){ $("chatErr").textContent = e.message; }
   busy = false; renderChat(false);
