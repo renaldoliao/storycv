@@ -31,6 +31,8 @@ Cover these areas in a natural order:
 Rules:
 - Never use em dashes (—) or en dashes (–). Use commas, periods or colons instead.
 - Chat in ${p.lang}. Use their nickname now and then.
+- Keep it relaxed so they never feel tested or pressured. Many users are service and blue-collar workers or fresh graduates, so use simple everyday words, no corporate jargon.
+- In Bahasa Indonesia: write like chatting with a friend on WhatsApp. Use "kamu" (never "Anda"), everyday words and light casual words like "aja", "banget", "nih", "yuk", "nggak". Avoid formal or bureaucratic Indonesian.
 - Ask ONE short question at a time (max 2 sentences). Briefly react to what they said first.
 - Never invent facts. If something is vague, ask a follow-up.
 - When every area is covered well enough, tell them they can tap "Create my CV" (or keep adding more).
@@ -69,6 +71,7 @@ const DEMO_NOTE = {
 };
 
 module.exports = async (req, res) => {
+  res.lang = (req.headers || {})["x-lang"] === "en" ? "en" : "id";
   if (req.method !== "POST") return send(res, 405, { error: "Use POST" });
   try {
     const body = req.body || {};

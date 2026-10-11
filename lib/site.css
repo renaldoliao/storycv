@@ -1,4 +1,4 @@
-/* StoryCV shared page styles (used by Why ATS, Buddies and Pricing pages). Colors change with the chosen buddy. */
+/* Ceritain shared page styles (used by Why ATS, Buddies and Pricing pages). Colors change with the chosen buddy. */
 :root{
   --accent:#3F5EF0; --accent-dark:#2C46C4; --soft:#EEF2FF; --bg:#EAF2FF; --pop:#FFC93C; --pop-ink:#1F2340;
   --head:'Nunito', sans-serif; --bub:22px 22px 22px 8px; --me:22px 22px 8px 22px; --bd:0 solid transparent; --sh:0 2px 6px rgba(31,35,64,.06);
@@ -85,3 +85,10 @@ summary::-webkit-details-marker{display:none}
 summary::after{content:"+";font-size:26px;color:var(--accent);line-height:1}
 details[open] summary::after{content:"−"}
 details p{margin:0 0 20px;color:var(--muted)}
+
+/* ID / EN switch */
+.langToggle{display:inline-flex;align-items:center;gap:2px;border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px;font:inherit;font-size:13px;font-weight:800;min-height:36px;cursor:pointer}
+.langToggle b,.langToggle span{padding:4px 8px;border-radius:999px}
+.langToggle b{background:var(--accent);color:#fff}
+.langToggle span{color:var(--muted)}
+@media (max-width:520px){ .navcta .login{display:none} }

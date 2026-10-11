@@ -1,14 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meet the buddies · StoryCV</title>
-<meta name="description" content="Kira the Cat, Kopi the Owl and Tobi the Dino: three career buddies, three personalities, three looks for the whole app.">
+<title>Kenalan sama Buddy · Ceritain</title>
+<meta name="t-title" content="bd.title">
+<meta name="description" content="Kira si Kucing, Kopi si Burung Hantu, dan Tobi si Dino: tiga buddy, tiga kepribadian, tiga tampilan.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
 <link rel="stylesheet" href="/lib/site.css">
+<script src="/lib/i18n.js"></script>
 <script src="/lib/buddies.js"></script>
 <style>
   .lineup{display:flex;justify-content:center;align-items:flex-end;gap:18px;flex-wrap:wrap}
@@ -48,9 +50,9 @@
   <header class="phero">
     <div class="wrap" style="flex-direction:column;text-align:center">
       <div class="txt" style="flex:none">
-        <span class="eyebrow">Meet the buddies</span>
-        <h1>Three buddies. One great CV.</h1>
-        <p class="lead" style="margin:0 auto">Every buddy writes the same quality, ATS-friendly CV. What changes is the personality, the way they ask questions, and the colors of your whole app.</p>
+        <span class="eyebrow" data-t="nav.buddies"></span>
+        <h1 data-t="bd.h1"></h1>
+        <p class="lead" style="margin:0 auto" data-t="bd.lead"></p>
       </div>
       <div class="lineup" id="lineup"></div>
     </div>
@@ -62,8 +64,8 @@
     <div class="wrap">
       <div class="final-box reveal">
         <div class="wave" id="wave"></div>
-        <h2>Found your buddy?</h2>
-        <p>Start chatting and get your CV in about 10 minutes.</p>
+        <h2 data-t="bd.finalH"></h2>
+        <p data-t="bd.finalP"></p>
         <a class="btn startLink" href="/app" id="finalCta">Start chatting</a>
       </div>
     </div>
@@ -72,27 +74,54 @@
 
 <div id="siteFooter"></div>
 
+<script>
+I18N.add({
+  id: {
+    "bd.title": "Kenalan sama Buddy · Ceritain",
+    "bd.h1": "Tiga buddy. Satu CV keren.",
+    "bd.lead": "Semua buddy nulis CV ramah ATS dengan kualitas yang sama. Bedanya cuma di kepribadian, cara nanya, dan warna seluruh aplikasinya.",
+    "bd.finalH": "Udah nemu buddy-mu?", "bd.finalP": "Mulai ngobrol dan dapetin CV-mu dalam sekitar 10 menit.",
+    "bd.talks": "GAYA NGOBROL {name}", "bd.asking": "CARA NANYA", "bd.best": "COCOK BUAT", "bd.theme": "TEMA APLIKASI", "bd.font": "HURUF",
+    "bd.choose": "Pilih {name}", "bd.chosen": "{name} jadi buddy-mu!", "bd.cta": "Mulai ngobrol sama {name}",
+    "m.happy": "Halo", "m.think": "Mikir", "m.wink": "Mantap", "m.yay": "CV jadi!",
+  },
+  en: {
+    "bd.title": "Meet the buddies · Ceritain",
+    "bd.h1": "Three buddies. One great CV.",
+    "bd.lead": "Every buddy writes the same quality, ATS-friendly CV. What changes is the personality, the way they ask questions, and the colors of your whole app.",
+    "bd.finalH": "Found your buddy?", "bd.finalP": "Start chatting and get your CV in about 10 minutes.",
+    "bd.talks": "HOW {name} TALKS", "bd.asking": "ASKING STYLE", "bd.best": "BEST FOR", "bd.theme": "APP THEME", "bd.font": "FONT",
+    "bd.choose": "Choose {name}", "bd.chosen": "{name} is your buddy!", "bd.cta": "Start chatting with {name}",
+    "m.happy": "Hello", "m.think": "Thinking", "m.wink": "Nice one", "m.yay": "CV ready!",
+  },
+});
+</script>
 <script src="/lib/site.js"></script>
 <script>
   const { BUDDIES, mascot } = window.StoryBuddies;
-  const INFO = {
-    kira: {
-      about: "Kira is a cheerful cat who believes every small win counts. She keeps the chat light and encouraging, so you never feel stuck or judged.",
-      asks: "Easy, open questions. Celebrates every answer.",
-      best: "First-timers who need a confidence boost",
-      chat: ["Hiii! I'm Kira. What do you do right now?", "I'm a cashier at a minimarket.", "+ Added to your CV", "Ooh nice! What's one thing you made better there? Even a tiny win counts!"],
+  const t = I18N.t;
+  const INFO_ALL = {
+    id: {
+      kira: { about: "Kira itu kucing ceria yang percaya tiap pencapaian kecil itu berarti. Ngobrolnya santai dan bikin semangat, jadi kamu nggak bakal ngerasa bingung atau dihakimi.",
+              asks: "Pertanyaan gampang dan santai. Tiap jawabanmu dirayain.", best: "Yang baru pertama kali bikin CV dan butuh dorongan semangat",
+              chat: ["Haii! Aku Kira. Sekarang kamu kerja apa?", "Kasir di minimarket.", "+ Masuk ke CV kamu", "Wah keren! Ada satu hal yang pernah kamu bikin lebih baik di sana? Hal kecil juga dihitung lho!"] },
+      kopi: { about: "Kopi itu burung hantu berkacamata, kayak senior baik hati yang ngajak ngobrol sambil ngopi. Tenang dan sabar, Kopi bantu kamu nemuin cerita di balik kerjaanmu.",
+              asks: "Nanya “kenapa” dan “gimana” dengan santai. Nggak pernah buru-buru.", best: "Yang udah punya pengalaman dan banyak cerita",
+              chat: ["Halo, aku Kopi. Lagi sibuk kerja apa nih belakangan?", "Aku pegang bar di sebuah hotel.", "+ Dicatat buat CV kamu", "Menarik. Menurutmu kenapa tamu lebih suka resep yang baru?"] },
+      tobi: { about: "Tobi itu dino kocak yang bikin bikin CV kayak main game. Pertanyaan singkat, candaan receh, ada level yang bisa dibuka: tau-tau udah selesai.",
+              asks: "Singkat, padat, sering kasih pilihan tebakan.", best: "Fresh graduate yang males ngisi formulir panjang",
+              chat: ["YO! Tobi di sini. Level 1: kamu kerja apa?", "Fresh grad, pernah magang.", "+1 baris CV kebuka!", "Mantap! Pernah bantu bikin sesuatu yang seru? Tebak aja angkanya, bebas."] },
     },
-    kopi: {
-      about: "Kopi is a wise owl with round glasses, like a kind senior over a cup of coffee. Calm and patient, Kopi helps you find the real story behind your work.",
-      asks: "Thoughtful “why” and “how” questions. Never rushes.",
-      best: "Experienced workers with stories to tell",
-      chat: ["Good evening. I'm Kopi. What does your work look like these days?", "I manage the bar at a hotel.", "+ Noted for your CV", "Interesting. Why do you think guests liked the new recipes more?"],
-    },
-    tobi: {
-      about: "Tobi is a playful little dino who turns your CV into a game. Short questions, quick jokes, levels to unlock: done before you know it.",
-      asks: "Short, punchy questions. Offers quick guesses.",
-      best: "Fresh grads who hate long forms",
-      chat: ["YO! Tobi here. Level 1: what's your job?", "Fresh grad, did an internship.", "+1 CV line unlocked!", "Big brain move! Did you help with anything cool? Guess a number, any number."],
+    en: {
+      kira: { about: "Kira is a cheerful cat who believes every small win counts. She keeps the chat light and encouraging, so you never feel stuck or judged.",
+              asks: "Easy, open questions. Celebrates every answer.", best: "First-timers who need a confidence boost",
+              chat: ["Hiii! I'm Kira. What do you do right now?", "I'm a cashier at a minimarket.", "+ Added to your CV", "Ooh nice! What's one thing you made better there? Even a tiny win counts!"] },
+      kopi: { about: "Kopi is a wise owl with round glasses, like a kind senior over a cup of coffee. Calm and patient, Kopi helps you find the real story behind your work.",
+              asks: "Relaxed “why” and “how” questions. Never rushes.", best: "Experienced workers with stories to tell",
+              chat: ["Hi, I'm Kopi. What does your work look like these days?", "I manage the bar at a hotel.", "+ Noted for your CV", "Interesting. Why do you think guests liked the new recipes more?"] },
+      tobi: { about: "Tobi is a playful little dino who turns your CV into a game. Short questions, quick jokes, levels to unlock: done before you know it.",
+              asks: "Short, punchy questions. Offers quick guesses.", best: "Fresh grads who hate long forms",
+              chat: ["YO! Tobi here. Level 1: what's your job?", "Fresh grad, did an internship.", "+1 CV line unlocked!", "Big brain move! Did you help with anything cool? Guess a number, any number."] },
     },
   };
   const ids = Object.keys(BUDDIES);
@@ -102,41 +131,42 @@
   function render(){
     const cur = window.StorySite.current;
     document.getElementById("buddyList").innerHTML = ids.map((id, i) => {
-      const b = BUDDIES[id], t = b.theme, x = INFO[id], on = id === cur;
-      const bot = `background:#fff;border:${t.bd === "0 solid transparent" ? "1.5px solid #E3E6F3" : t.bd};border-radius:${t.bub};box-shadow:${t.sh}`;
-      return `<section class="bsec ${i % 2 ? "flip" : ""}" id="b-${id}" style="background:${t.bg};color:${t.popInk}">
+      const b = BUDDIES[id], th = b.theme, x = INFO_ALL[I18N.lang][id], on = id === cur;
+      const bot = `background:#fff;border:${th.bd === "0 solid transparent" ? "1.5px solid #E3E6F3" : th.bd};border-radius:${th.bub};box-shadow:${th.sh}`;
+      return `<section class="bsec ${i % 2 ? "flip" : ""}" id="b-${id}" style="background:${th.bg};color:${th.popInk}">
         <div class="wrap">
           <div class="bart reveal">
             <div class="stage" style="background:#fff"><span class="bob">${mascot(id, on ? "yay" : "happy", 230)}</span></div>
-            <div class="moods">${[["happy","Hello"],["think","Thinking"],["wink","Nice one"],["yay","CV ready!"]].map(([m, l]) => `<div>${mascot(id, m, 52)}${l}</div>`).join("")}</div>
+            <div class="moods">${["happy","think","wink","yay"].map((m) => `<div>${mascot(id, m, 52)}${t("m." + m)}</div>`).join("")}</div>
           </div>
           <div class="binfo reveal">
-            <div><h2 style="font-family:${t.head}">${b.name}</h2><div class="role">${b.animal} · ${b.role}</div></div>
-            <div class="traits">${b.traits.map((tr) => `<span style="background:${t.accent}">${tr}</span>`).join("")}</div>
+            <div><h2 style="font-family:${th.head}">${b.name}</h2><div class="role">${b.animal} · ${b.role}</div></div>
+            <div class="traits">${b.traits.map((tr) => `<span style="background:${th.accent}">${tr}</span>`).join("")}</div>
             <p style="margin:0;font-size:18px">${x.about}</p>
-            <div class="chat" style="border:${t.bd}">
-              <div class="lbl">HOW ${b.name.toUpperCase()} TALKS</div>
+            <div class="chat" style="border:${th.bd}">
+              <div class="lbl">${t("bd.talks", { name:b.name.toUpperCase() })}</div>
               <div class="b bot" style="${bot}">${x.chat[0]}</div>
-              <div class="b me" style="background:${t.accent};border-radius:${t.me};border:${t.bd}">${x.chat[1]}</div>
-              <div class="b note" style="background:${t.pop};color:${t.popInk}">${x.chat[2]}</div>
+              <div class="b me" style="background:${th.accent};border-radius:${th.me};border:${th.bd}">${x.chat[1]}</div>
+              <div class="b note" style="background:${th.pop};color:${th.popInk}">${x.chat[2]}</div>
               <div class="b bot" style="${bot}">${x.chat[3]}</div>
             </div>
             <div class="facts">
-              <div><b>ASKING STYLE</b>${x.asks}</div>
-              <div><b>BEST FOR</b>${x.best}</div>
-              <div><b>APP THEME</b><span class="sw"><i style="background:${t.accent}"></i><i style="background:${t.pop}"></i><i style="background:${t.bg}"></i></span>${b.themeName}</div>
-              <div><b>FONT</b><span style="font-family:${t.head};font-weight:800;font-size:18px">Aa</span> ${t.head.split(",")[0].replace(/'/g, "")}</div>
+              <div><b>${t("bd.asking")}</b>${x.asks}</div>
+              <div><b>${t("bd.best")}</b>${x.best}</div>
+              <div><b>${t("bd.theme")}</b><span class="sw"><i style="background:${th.accent}"></i><i style="background:${th.pop}"></i><i style="background:${th.bg}"></i></span>${b.themeName}</div>
+              <div><b>${t("bd.font")}</b><span style="font-family:${th.head};font-weight:800;font-size:18px">Aa</span> ${th.head.split(",")[0].replace(/'/g, "")}</div>
             </div>
-            <button class="pick" type="button" data-pick="${id}" aria-pressed="${on}" style="background:${on ? t.accent : "#fff"};color:${on ? "#fff" : t.accent};border:2px solid ${t.accent}">${on ? `${b.name} is your buddy!` : `Choose ${b.name}`}</button>
+            <button class="pick" type="button" data-pick="${id}" aria-pressed="${on}" style="background:${on ? t.accent : "#fff"};color:${on ? "#fff" : t.accent};border:2px solid ${th.accent}">${on ? t("bd.chosen", { name:b.name }) : t("bd.choose", { name:b.name })}</button>
           </div>
         </div>
       </section>`;
     }).join("");
     document.querySelectorAll("[data-pick]").forEach((el) => el.addEventListener("click", () => window.StorySite.applyTheme(el.dataset.pick)));
     document.querySelectorAll("#buddyList .reveal").forEach((el) => el.classList.add("in"));
-    document.getElementById("finalCta").textContent = "Start chatting with " + BUDDIES[cur].name;
+    document.getElementById("finalCta").textContent = t("bd.cta", { name: BUDDIES[cur].name });
   }
   document.addEventListener("buddychange", render);
+  document.addEventListener("langchange", render);
   render();
 </script>
 </body>

@@ -1,14 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Why an ATS-friendly CV matters · StoryCV</title>
-<meta name="description" content="What an ATS (Applicant Tracking System) is, the numbers behind it, and how to make a CV that gets found. Explained by Kira, Kopi and Tobi.">
+<title>Kenapa CV ramah ATS itu penting · Ceritain</title>
+<meta name="t-title" content="w.title">
+<meta name="description" content="What an ATS (Applicant Tracking System) is, the numbers behind it, and how to make a CV that gets found. Dijelasin sama Kira, Kopi, dan Tobi.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&display=swap">
 <link rel="stylesheet" href="/lib/site.css">
+<script src="/lib/i18n.js"></script>
 <script src="/lib/buddies.js"></script>
 <style>
   /* ATS robot */
@@ -110,185 +112,174 @@
 <div id="siteNav"></div>
 
 <main>
-  <!-- HERO -->
   <header class="phero">
     <div class="wrap">
       <div class="txt">
-        <span class="eyebrow">Why ATS-friendly?</span>
-        <h1>Your CV meets a <mark>robot</mark> before it meets a human.</h1>
-        <p class="lead">Most companies sort CVs with software called an <b style="color:var(--ink)">ATS</b> (Applicant Tracking System). Here's what it does, the numbers behind it, and how to make sure your CV gets found.</p>
+        <span class="eyebrow" data-t="w.eye"></span>
+        <h1 data-t="w.h1"></h1>
+        <p class="lead" data-t="w.lead"></p>
         <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
-          <a class="btn startLink" href="/app">Make my ATS-friendly CV</a>
-          <a class="btn ghost" href="#numbers">See the numbers</a>
+          <a class="btn startLink" href="/app" data-t="w.cta"></a>
+          <a class="btn ghost" href="#numbers" data-t="w.cta2"></a>
         </div>
       </div>
       <div class="art" aria-hidden="true">
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div class="say" style="max-width:240px">Let me explain, slowly. It's simpler than it sounds.</div>
+          <div class="say" style="max-width:240px" data-t="w.kopiHi"></div>
           <span class="bob" data-m="kopi happy 190"></span>
         </div>
         <div class="bob" style="animation-delay:-1.5s;margin-bottom:10px">
           <svg class="bot-ill" width="130" height="150" viewBox="0 0 130 150"><path d="M65 8 V24" stroke="#1F2340" stroke-width="5" stroke-linecap="round"/><circle cx="65" cy="8" r="7" fill="#FF8A3D"/><rect x="14" y="24" width="102" height="80" rx="24" fill="#B9C1DA"/><rect x="26" y="36" width="78" height="54" rx="14" fill="#1F2340"/><rect x="40" y="52" width="14" height="14" rx="4" fill="#7CF0B6"/><rect x="76" y="52" width="14" height="14" rx="4" fill="#7CF0B6"/><path d="M54 78 H76" stroke="#7CF0B6" stroke-width="4" stroke-linecap="round"/><rect x="34" y="108" width="62" height="34" rx="12" fill="#9AA4C6"/><rect x="48" y="116" width="34" height="18" rx="4" fill="#fff"/><path d="M53 121 H77 M53 127 H70" stroke="#C9CEDF" stroke-width="3" stroke-linecap="round"/></svg>
-          <div style="text-align:center;font-weight:900;font-size:13px;color:var(--muted)">the ATS</div>
+          <div style="text-align:center;font-weight:900;font-size:13px;color:var(--muted)" data-t="w.theAts"></div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- WHAT IS AN ATS -->
   <section>
     <div class="wrap">
       <div class="center reveal">
-        <span class="eyebrow">What is an ATS?</span>
-        <h2 style="margin-top:14px">A smart filing cabinet for CVs</h2>
-        <p class="lead" style="margin-top:14px">When you apply online, your CV usually lands in an ATS first. It stores and organises every application, then recruiters search through it, a bit like Google.</p>
+        <span class="eyebrow" data-t="w.whatEye"></span>
+        <h2 style="margin-top:14px" data-t="w.whatH"></h2>
+        <p class="lead" style="margin-top:14px" data-t="w.whatP"></p>
       </div>
       <div class="flow">
         <div class="fstep reveal"><span class="n">1</span>
           <div class="pic"><span data-m="kira happy 74"></span><div class="mini-cv"><i></i><i></i><i style="width:80%"></i><i></i><i style="width:70%"></i></div></div>
-          <h3>You apply</h3><p>You send your CV through the company's website or a job portal.</p></div>
+          <h3 data-t="w.f1h"></h3><p data-t="w.f1p"></p></div>
         <div class="fstep reveal"><span class="n">2</span>
           <div class="pic"><svg width="96" height="110" viewBox="0 0 130 150" aria-hidden="true"><path d="M65 8 V24" stroke="#1F2340" stroke-width="5" stroke-linecap="round"/><circle cx="65" cy="8" r="7" fill="#FF8A3D"/><rect x="14" y="24" width="102" height="80" rx="24" fill="#B9C1DA"/><rect x="26" y="36" width="78" height="54" rx="14" fill="#1F2340"/><rect x="40" y="52" width="14" height="14" rx="4" fill="#7CF0B6"/><rect x="76" y="52" width="14" height="14" rx="4" fill="#7CF0B6"/><path d="M54 78 H76" stroke="#7CF0B6" stroke-width="4" stroke-linecap="round"/><rect x="34" y="108" width="62" height="34" rx="12" fill="#9AA4C6"/></svg></div>
-          <h3>The ATS reads it</h3><p>It pulls out the text: your jobs, skills, school and contact details, and files them.</p></div>
+          <h3 data-t="w.f2h"></h3><p data-t="w.f2p"></p></div>
         <div class="fstep reveal"><span class="n">3</span>
           <div class="pic" style="flex-direction:column;align-items:center;gap:8px"><span data-m="kopi think 70"></span><div class="chips"><span>barista</span><span>Excel</span><span>English</span></div></div>
-          <h3>Recruiters search</h3><p>They search for skills and job titles from the job post, and look at the best matches first.</p></div>
+          <h3 data-t="w.f3h"></h3><p data-t="w.f3p"></p></div>
         <div class="fstep reveal"><span class="n">4</span>
           <div class="pic"><span data-m="tobi happy 74"></span><svg width="54" height="62" viewBox="0 0 54 62" aria-hidden="true"><rect x="21" y="2" width="12" height="7" rx="3" fill="#1F2340"/><circle cx="27" cy="36" r="23" fill="#fff" stroke="#1F2340" stroke-width="4"/><path d="M27 36 V22" stroke="#FF8A3D" stroke-width="4" stroke-linecap="round"/><path d="M27 36 L36 41" stroke="#1F2340" stroke-width="3" stroke-linecap="round"/></svg></div>
-          <h3>A person skims</h3><p>A recruiter takes a quick first look, often just a few seconds, to decide who to call.</p></div>
+          <h3 data-t="w.f4h"></h3><p data-t="w.f4p"></p></div>
       </div>
     </div>
   </section>
 
-  <!-- NUMBERS -->
   <section id="numbers" style="padding-top:0">
     <div class="wrap">
       <div class="center reveal">
-        <span class="eyebrow">The numbers</span>
-        <h2 style="margin-top:14px">Why it matters, in numbers</h2>
+        <span class="eyebrow" data-t="w.numEye"></span>
+        <h2 style="margin-top:14px" data-t="w.numH"></h2>
       </div>
       <div class="stats">
         <article class="stat hl reveal">
           <div class="row">
-            <div class="waffle" id="waffle" role="img" aria-label="97.4 out of 100 squares filled"></div>
-            <div style="flex:1;min-width:180px"><div class="num">97.4%</div><div class="what">of Fortune 500 companies use an ATS to manage job applications.</div></div>
+            <div class="waffle" id="waffle" role="img" data-t-aria="w.waffleAria"></div>
+            <div style="flex:1;min-width:180px"><div class="num">97,4%</div><div class="what" data-t="w.s1"></div></div>
           </div>
-          <div class="speaker"><span data-m="kira yay 58"></span><div class="say">Almost every big company uses one!</div></div>
-          <div class="src">Source: <a href="https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/" target="_blank" rel="noopener">Jobscan, Fortune 500 ATS report (2026)</a></div>
+          <div class="speaker"><span data-m="kira yay 58"></span><div class="say" data-t="w.s1say"></div></div>
+          <div class="src"><span data-t="w.src"></span> <a href="https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/" target="_blank" rel="noopener">Jobscan, Fortune 500 ATS report (2026)</a></div>
         </article>
-
         <article class="stat reveal">
-          <div class="num">76.4%</div>
-          <div class="what">of recruiters search and rank candidates by the <mark>skills listed in the job post</mark>.</div>
-          <div><div class="barlbl"><span>Search by skills</span><span>76.4%</span></div><div class="bar"><b style="--w:76.4%"></b></div></div>
-          <div class="speaker"><span data-m="kopi happy 58"></span><div class="say">So use the same words as the job post. Exactly.</div></div>
-          <div class="src">Source: <a href="https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/" target="_blank" rel="noopener">Jobscan recruiter survey (2026)</a></div>
+          <div class="num">76,4%</div>
+          <div class="what" data-t="w.s2"></div>
+          <div><div class="barlbl"><span data-t="w.s2bar"></span><span>76,4%</span></div><div class="bar"><b style="--w:76.4%"></b></div></div>
+          <div class="speaker"><span data-m="kopi happy 58"></span><div class="say" data-t="w.s2say"></div></div>
+          <div class="src"><span data-t="w.src"></span> <a href="https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/" target="_blank" rel="noopener">Jobscan recruiter survey (2026)</a></div>
         </article>
-
         <article class="stat reveal">
           <div class="row">
-            <svg class="watch" width="130" height="130" viewBox="0 0 110 110" role="img" aria-label="Stopwatch showing 7.4 seconds"><circle cx="55" cy="58" r="45" fill="#fff" stroke="#E3E6F3" stroke-width="10"/><circle class="ring" cx="55" cy="58" r="45" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" transform="rotate(-90 55 58)"/><rect x="47" y="2" width="16" height="8" rx="3" fill="#1F2340"/><text x="55" y="66" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="24" fill="#1F2340">7.4s</text></svg>
-            <div style="flex:1;min-width:180px"><div class="num">7.4 sec</div><div class="what">is how long recruiters spend on a CV's first look, on average.</div></div>
+            <svg class="watch" width="130" height="130" viewBox="0 0 110 110" role="img" data-t-aria="w.watchAria"><circle cx="55" cy="58" r="45" fill="#fff" stroke="#E3E6F3" stroke-width="10"/><circle class="ring" cx="55" cy="58" r="45" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" transform="rotate(-90 55 58)"/><rect x="47" y="2" width="16" height="8" rx="3" fill="#1F2340"/><text x="55" y="66" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="24" fill="#1F2340">7,4s</text></svg>
+            <div style="flex:1;min-width:180px"><div class="num" data-t="w.s3num"></div><div class="what" data-t="w.s3"></div></div>
           </div>
-          <div class="speaker"><span data-m="tobi wink 58"></span><div class="say">Speedrun! Your best stuff must be easy to spot.</div></div>
-          <div class="src">Source: <a href="https://www.hrdive.com/news/recruiters-spend-74-seconds-looking-at-your-resume/541582/" target="_blank" rel="noopener">Ladders eye-tracking study (2018), via HR Dive</a></div>
+          <div class="speaker"><span data-m="tobi wink 58"></span><div class="say" data-t="w.s3say"></div></div>
+          <div class="src"><span data-t="w.src"></span> <a href="https://www.hrdive.com/news/recruiters-spend-74-seconds-looking-at-your-resume/541582/" target="_blank" rel="noopener">Ladders eye-tracking study (2018), via HR Dive</a></div>
         </article>
-
         <article class="stat hl reveal">
-          <div class="what">Employers who say <mark>qualified people get screened out</mark> because their CV didn't match the exact criteria:</div>
-          <div><div class="barlbl"><span>High-skill roles</span><span>88%</span></div><div class="bar"><b style="--w:88%"></b></div></div>
-          <div><div class="barlbl"><span>Middle-skill roles</span><span>94%</span></div><div class="bar"><b class="alt" style="--w:94%"></b></div></div>
-          <div class="speaker"><span data-m="kopi think 58"></span><div class="say">Good people get missed when their CV doesn't use the right words.</div></div>
-          <div class="src">Source: <a href="https://www.hbs.edu/managing-the-future-of-work/Documents/research/hiddenworkers09032021.pdf" target="_blank" rel="noopener">Harvard Business School &amp; Accenture, “Hidden Workers” (2021)</a></div>
+          <div class="what" data-t="w.s4"></div>
+          <div><div class="barlbl"><span data-t="w.s4a"></span><span>88%</span></div><div class="bar"><b style="--w:88%"></b></div></div>
+          <div><div class="barlbl"><span data-t="w.s4b"></span><span>94%</span></div><div class="bar"><b class="alt" style="--w:94%"></b></div></div>
+          <div class="speaker"><span data-m="kopi think 58"></span><div class="say" data-t="w.s4say"></div></div>
+          <div class="src"><span data-t="w.src"></span> <a href="https://www.hbs.edu/managing-the-future-of-work/Documents/research/hiddenworkers09032021.pdf" target="_blank" rel="noopener">Harvard Business School &amp; Accenture, “Hidden Workers” (2021)</a></div>
         </article>
       </div>
 
       <div class="crowd-box reveal">
-        <div class="crowd" id="crowd" role="img" aria-label="A crowd of 200 dots with one highlighted"></div>
+        <div class="crowd" id="crowd" role="img" data-t-aria="w.crowdAria"></div>
         <div class="crowd-txt">
           <div class="stat" style="border:none;background:none;padding:0;gap:10px">
-            <div class="num" style="font-size:clamp(44px,6vw,64px)">7.24 million</div>
-            <div class="what">people in Indonesia were looking for work in February 2026.</div>
-            <div class="speaker"><span data-m="kira happy 58"></span><div class="say pop">That's a lot of CVs. Let's make yours the easy one to find!</div></div>
-            <div class="src">Source: <a href="https://www.cnnindonesia.com/ekonomi/20260506140952-537-1355743/bps-tingkat-pengangguran-terbuka-per-februari-2026-468-persen" target="_blank" rel="noopener">BPS (Statistics Indonesia), via CNN Indonesia</a></div>
+            <div class="num" style="font-size:clamp(44px,6vw,64px)" data-t="w.s5num"></div>
+            <div class="what" data-t="w.s5"></div>
+            <div class="speaker"><span data-m="kira happy 58"></span><div class="say pop" data-t="w.s5say"></div></div>
+            <div class="src"><span data-t="w.src"></span> <a href="https://www.cnnindonesia.com/ekonomi/20260506140952-537-1355743/bps-tingkat-pengangguran-terbuka-per-februari-2026-468-persen" target="_blank" rel="noopener">BPS, via CNN Indonesia</a></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- READS VS STRUGGLES -->
   <section style="background:#FFFBF2">
     <div class="wrap">
       <div class="center reveal">
-        <span class="eyebrow">ATS-friendly, explained</span>
-        <h2 style="margin-top:14px">What the robot reads easily, and what trips it up</h2>
-        <p class="lead" style="margin-top:14px">Fancy designs can look nice to people, but software reads text, top to bottom. Tobi tried both.</p>
+        <span class="eyebrow" data-t="w.vsEye"></span>
+        <h2 style="margin-top:14px" data-t="w.vsH"></h2>
+        <p class="lead" style="margin-top:14px" data-t="w.vsP"></p>
       </div>
       <div class="vs">
         <div class="vcol good reveal">
-          <h3><span data-m="tobi yay 54"></span>Easy to read</h3>
+          <h3><span data-m="tobi yay 54"></span><span data-t="w.goodH"></span></h3>
           <div class="cvpic" aria-hidden="true"><div class="sheet"><i class="t"></i><i style="width:50%"></i><i class="h"></i><i></i><i style="width:85%"></i><i></i><i class="h"></i><i style="width:75%"></i><i></i><i class="h"></i><i style="width:60%"></i></div></div>
           <ul>
-            <li><span class="ic">✓</span>One simple column, top to bottom</li>
-            <li><span class="ic">✓</span>Clear headings: Experience, Education, Skills</li>
-            <li><span class="ic">✓</span>The same skill words used in the job post</li>
-            <li><span class="ic">✓</span>Common fonts and real, selectable text</li>
-            <li><span class="ic">✓</span>Dates and job titles written plainly</li>
+            <li><span class="ic">✓</span><span data-t="w.g1"></span></li>
+            <li><span class="ic">✓</span><span data-t="w.g2"></span></li>
+            <li><span class="ic">✓</span><span data-t="w.g3"></span></li>
+            <li><span class="ic">✓</span><span data-t="w.g4"></span></li>
+            <li><span class="ic">✓</span><span data-t="w.g5"></span></li>
           </ul>
         </div>
         <div class="vcol bad reveal">
-          <h3><span data-m="tobi think 54"></span>Hard to read</h3>
+          <h3><span data-m="tobi think 54"></span><span data-t="w.badH"></span></h3>
           <div class="cvpic" aria-hidden="true"><div class="sheet messy"><div class="side"><span class="ph"></span><span class="dots"><b></b><b></b><b></b></span><span class="dots"><b></b><b></b></span></div><div class="main"><i class="t" style="width:80%"></i><div class="tbl"><i></i><i></i><i></i><i></i></div><span class="chart"></span><i style="width:70%"></i></div></div></div>
           <ul>
-            <li><span class="ic">✕</span>Two or three columns side by side</li>
-            <li><span class="ic">✕</span>Tables, text boxes and icons</li>
-            <li><span class="ic">✕</span>Skill bars and charts (“Excel: ●●●○○”)</li>
-            <li><span class="ic">✕</span>Text hidden inside images or a photo-only CV</li>
-            <li><span class="ic">✕</span>Creative headings like “My Journey”</li>
+            <li><span class="ic">✕</span><span data-t="w.b1"></span></li>
+            <li><span class="ic">✕</span><span data-t="w.b2"></span></li>
+            <li><span class="ic">✕</span><span data-t="w.b3"></span></li>
+            <li><span class="ic">✕</span><span data-t="w.b4"></span></li>
+            <li><span class="ic">✕</span><span data-t="w.b5"></span></li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MYTH VS FACT -->
   <section>
     <div class="wrap">
       <div class="center reveal">
-        <span class="eyebrow">Myth buster</span>
-        <h2 style="margin-top:14px">Tobi busts a famous myth</h2>
+        <span class="eyebrow" data-t="w.mythEye"></span>
+        <h2 style="margin-top:14px" data-t="w.mythH"></h2>
       </div>
       <div class="myth">
         <div class="myth-art reveal" aria-hidden="true">
-          <div class="say" style="max-width:260px">Hold up! Let's check the facts before we panic.</div>
+          <div class="say" style="max-width:260px" data-t="w.tobiHold"></div>
           <span class="bob" data-m="tobi wink 170"></span>
         </div>
         <div class="myth-card reveal">
-          <div class="mcard m"><span class="stamp">MYTH</span><br><q>75% of CVs are automatically rejected by robots.</q></div>
-          <div class="mcard f"><span class="stamp">FACT</span>
-            <p>There's no solid study behind that famous number. In a 2025 survey of 25 recruiters by Enhancv, <b>92% said their ATS doesn't auto-reject CVs</b> for formatting or missing keywords. People still make the decisions.</p></div>
-          <div class="mcard f" style="transform:rotate(-.4deg)"><span class="stamp" style="background:var(--accent)">SO WHAT'S THE REAL PROBLEM?</span>
-            <p>Recruiters <b>search</b> the ATS for skills and <b>skim fast</b>. If your CV uses different words or a messy layout, you're not rejected by a robot. You're just <b>never found</b>, or skipped in seconds.</p></div>
-          <div class="src" style="font-size:13px;color:var(--muted)">Source: <a href="https://itbrief.co.uk/story/study-reveals-ats-rarely-auto-rejects-cvs-debunks-75-myth" target="_blank" rel="noopener" style="color:var(--muted)">Enhancv recruiter survey (2025), via IT Brief</a>. Small sample of US recruiters.</div>
+          <div class="mcard m"><span class="stamp" data-t="w.myth"></span><br><q data-t="w.mythQ"></q></div>
+          <div class="mcard f"><span class="stamp" data-t="w.fact"></span><p data-t="w.factP"></p></div>
+          <div class="mcard f" style="transform:rotate(-.4deg)"><span class="stamp" style="background:var(--accent)" data-t="w.realH"></span><p data-t="w.realP"></p></div>
+          <div class="src" style="font-size:13px;color:var(--muted)"><span data-t="w.src"></span> <a href="https://itbrief.co.uk/story/study-reveals-ats-rarely-auto-rejects-cvs-debunks-75-myth" target="_blank" rel="noopener" style="color:var(--muted)">Enhancv recruiter survey (2025), via IT Brief</a>. <span data-t="w.small"></span></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- HOW STORYCV HELPS -->
   <section style="padding-top:0">
     <div class="wrap">
       <div class="center reveal">
-        <span class="eyebrow">How StoryCV helps</span>
-        <h2 style="margin-top:14px">We handle the robot part for you</h2>
-        <p class="lead" style="margin-top:14px">You just chat. Your buddy writes everything in a format both software and people can read.</p>
+        <span class="eyebrow" data-t="w.helpEye"></span>
+        <h2 style="margin-top:14px" data-t="w.helpH"></h2>
+        <p class="lead" style="margin-top:14px" data-t="w.helpP"></p>
       </div>
       <div class="help">
-        <div class="tile reveal"><span data-m="kira happy 70"></span><h3>One clean column</h3><p>A simple layout the ATS reads from top to bottom.</p></div>
-        <div class="tile reveal"><span data-m="kopi happy 70"></span><h3>Standard headings</h3><p>Summary, Experience, Education, Skills. Exactly what recruiters expect.</p></div>
-        <div class="tile reveal"><span data-m="tobi yay 70"></span><h3>The right words</h3><p>Your everyday words turned into clear skills and results recruiters search for.</p></div>
-        <div class="tile reveal"><span data-m="kira wink 70"></span><h3>Real-text PDF</h3><p>Never an image, so every line can be read and searched.</p></div>
+        <div class="tile reveal"><span data-m="kira happy 70"></span><h3 data-t="w.h1h"></h3><p data-t="w.h1p"></p></div>
+        <div class="tile reveal"><span data-m="kopi happy 70"></span><h3 data-t="w.h2h"></h3><p data-t="w.h2p"></p></div>
+        <div class="tile reveal"><span data-m="tobi yay 70"></span><h3 data-t="w.h3h"></h3><p data-t="w.h3p"></p></div>
+        <div class="tile reveal"><span data-m="kira wink 70"></span><h3 data-t="w.h4h"></h3><p data-t="w.h4p"></p></div>
       </div>
     </div>
   </section>
@@ -297,22 +288,22 @@
     <div class="wrap">
       <div class="final-box reveal">
         <div class="wave" id="wave"></div>
-        <h2>Get found, not filtered.</h2>
-        <p>Chat with your buddy for about 10 minutes and get an ATS-friendly CV.</p>
-        <a class="btn startLink" href="/app">Make my CV, free to start</a>
+        <h2 data-t="w.finalH"></h2>
+        <p data-t="w.finalP"></p>
+        <a class="btn startLink" href="/app" data-t="w.finalCta"></a>
       </div>
     </div>
   </section>
 
   <section class="sources" style="padding:0 0 64px">
     <div class="wrap">
-      <b style="color:var(--ink)">Sources</b>
+      <b style="color:var(--ink)" data-t="w.sources"></b>
       <ol>
         <li><a href="https://www.jobscan.co/blog/fortune-500-use-applicant-tracking-systems/" target="_blank" rel="noopener">Jobscan: ATS usage among Fortune 500 companies, and recruiter survey (2026)</a></li>
         <li><a href="https://www.hrdive.com/news/recruiters-spend-74-seconds-looking-at-your-resume/541582/" target="_blank" rel="noopener">HR Dive: Ladders eye-tracking study, recruiters spend 7.4 seconds on a resume (2018)</a></li>
         <li><a href="https://www.hbs.edu/managing-the-future-of-work/Documents/research/hiddenworkers09032021.pdf" target="_blank" rel="noopener">Harvard Business School &amp; Accenture: Hidden Workers, Untapped Talent (2021)</a></li>
         <li><a href="https://itbrief.co.uk/story/study-reveals-ats-rarely-auto-rejects-cvs-debunks-75-myth" target="_blank" rel="noopener">IT Brief: Enhancv study, ATS rarely auto-rejects CVs (2025)</a></li>
-        <li><a href="https://www.cnnindonesia.com/ekonomi/20260506140952-537-1355743/bps-tingkat-pengangguran-terbuka-per-februari-2026-468-persen" target="_blank" rel="noopener">CNN Indonesia: BPS, open unemployment February 2026</a></li>
+        <li><a href="https://www.cnnindonesia.com/ekonomi/20260506140952-537-1355743/bps-tingkat-pengangguran-terbuka-per-februari-2026-468-persen" target="_blank" rel="noopener">CNN Indonesia: BPS, Tingkat Pengangguran Terbuka Februari 2026</a></li>
       </ol>
     </div>
   </section>
@@ -320,13 +311,115 @@
 
 <div id="siteFooter"></div>
 
+<script>
+I18N.add({
+  id: {
+    "w.title": "Kenapa CV ramah ATS itu penting · Ceritain",
+    "w.eye": "Kenapa CV ATS?",
+    "w.h1": "CV kamu ketemu <mark>robot</mark> dulu, baru ketemu manusia.",
+    "w.lead": "Banyak perusahaan nyortir CV pakai software namanya <b style=\"color:var(--ink)\">ATS</b> (Applicant Tracking System). Yuk, lihat cara kerjanya, angka-angkanya, dan gimana caranya biar CV kamu gampang ketemu.",
+    "w.cta": "Bikin CV ramah ATS", "w.cta2": "Lihat angkanya",
+    "w.kopiHi": "Santai, aku jelasin pelan-pelan. Nggak serumit kedengerannya kok.", "w.theAts": "si ATS",
+    "w.whatEye": "ATS itu apa?", "w.whatH": "Lemari arsip pintar buat CV",
+    "w.whatP": "Pas kamu ngelamar online, CV-mu biasanya masuk ke ATS dulu. Semua lamaran disimpan dan dirapikan di situ, terus HRD tinggal nyari, mirip kayak pakai Google.",
+    "w.f1h": "Kamu ngelamar", "w.f1p": "Kirim CV lewat website perusahaan atau situs lowongan kerja.",
+    "w.f2h": "ATS bacain CV-mu", "w.f2p": "Isinya dibaca dan disimpan: kerjaan, keahlian, sekolah, sama kontak kamu.",
+    "w.f3h": "HRD nyari kandidat", "w.f3p": "Mereka cari pakai kata keahlian dan posisi dari lowongan, terus lihat yang paling cocok duluan.",
+    "w.f4h": "Manusia ngelirik sekilas", "w.f4p": "HRD lihat CV-mu sebentar banget, cuma beberapa detik, buat mutusin siapa yang dipanggil.",
+    "w.numEye": "Angka-angkanya", "w.numH": "Kenapa ini penting, lihat angkanya",
+    "w.waffleAria": "97,4 dari 100 kotak terisi",
+    "w.s1": "perusahaan Fortune 500 pakai ATS buat ngurus lamaran kerja.", "w.s1say": "Hampir semua perusahaan besar pakai!",
+    "w.src": "Sumber:",
+    "w.s2": "rekruter nyari dan ngurutin kandidat pakai <mark>keahlian yang ditulis di lowongan</mark>.",
+    "w.s2bar": "Nyari pakai keahlian", "w.s2say": "Jadi, pakai kata-kata yang sama kayak di lowongan ya.",
+    "w.watchAria": "Stopwatch 7,4 detik", "w.s3num": "7,4 detik",
+    "w.s3": "rata-rata waktu HRD ngelirik sebuah CV untuk pertama kali.", "w.s3say": "Speedrun! Hal paling kerenmu harus langsung kelihatan.",
+    "w.s4": "Pemberi kerja yang bilang <mark>orang yang sebenarnya mampu malah kesaring</mark> karena CV-nya nggak cocok sama kriteria:",
+    "w.s4a": "Posisi keahlian tinggi", "w.s4b": "Posisi keahlian menengah",
+    "w.s4say": "Orang bagus bisa kelewat kalau CV-nya nggak pakai kata yang pas.",
+    "w.crowdAria": "Kerumunan 200 titik, satu di antaranya disorot", "w.s5num": "7,24 juta",
+    "w.s5": "orang di Indonesia lagi nyari kerja per Februari 2026.", "w.s5say": "Banyak banget saingannya. Yuk bikin CV kamu yang paling gampang ditemuin!",
+    "w.vsEye": "Biar ramah ATS", "w.vsH": "Yang gampang dibaca robot, dan yang bikin dia bingung",
+    "w.vsP": "Desain heboh mungkin cakep buat manusia, tapi software bacanya teks, dari atas ke bawah. Tobi udah nyobain dua-duanya.",
+    "w.goodH": "Gampang dibaca", "w.badH": "Susah dibaca",
+    "w.g1": "Satu kolom, rapi dari atas ke bawah", "w.g2": "Judul jelas: Pengalaman, Pendidikan, Keahlian", "w.g3": "Pakai kata keahlian yang sama kayak di lowongan",
+    "w.g4": "Font umum dan teks asli (bisa diblok)", "w.g5": "Tanggal dan nama posisi ditulis jelas",
+    "w.b1": "Dua atau tiga kolom berdampingan", "w.b2": "Tabel, kotak teks, dan ikon-ikon", "w.b3": "Grafik dan bar keahlian (“Excel: ●●●○○”)",
+    "w.b4": "Teks di dalam gambar, atau CV berupa foto", "w.b5": "Judul nyeleneh kayak “Perjalananku”",
+    "w.mythEye": "Pembasmi mitos", "w.mythH": "Tobi bongkar mitos terkenal",
+    "w.tobiHold": "Eits, tunggu dulu! Cek faktanya sebelum panik.",
+    "w.myth": "MITOS", "w.mythQ": "75% CV langsung ditolak otomatis sama robot.",
+    "w.fact": "FAKTA", "w.factP": "Angka terkenal itu nggak ada penelitian kuat yang dukung. Di survei Enhancv tahun 2025 ke 25 rekruter, <b>92% bilang ATS mereka nggak nolak CV otomatis</b> cuma karena format atau kata kunci. Yang mutusin tetap manusia.",
+    "w.realH": "TERUS MASALAH SEBENARNYA APA?", "w.realP": "HRD <b>nyari</b> kandidat di ATS pakai kata keahlian, dan <b>ngeliriknya cepet banget</b>. Kalau CV kamu pakai kata yang beda atau berantakan, kamu bukan ditolak robot. Kamu cuma <b>nggak ketemu</b>, atau kelewat dalam hitungan detik.",
+    "w.small": "Sampelnya kecil, rekruter di Amerika.",
+    "w.helpEye": "Gimana Ceritain bantu", "w.helpH": "Urusan robot, biar kami yang beresin",
+    "w.helpP": "Kamu tinggal ngobrol. Buddy-mu nulis semuanya dalam format yang gampang dibaca software dan manusia.",
+    "w.h1h": "Satu kolom rapi", "w.h1p": "Tata letak simpel yang dibaca ATS dari atas ke bawah.",
+    "w.h2h": "Judul standar", "w.h2p": "Ringkasan, Pengalaman, Pendidikan, Keahlian. Persis yang dicari HRD.",
+    "w.h3h": "Kata yang pas", "w.h3p": "Bahasa sehari-harimu diubah jadi keahlian dan hasil kerja yang dicari HRD.",
+    "w.h4h": "PDF berisi teks asli", "w.h4p": "Bukan gambar, jadi tiap baris bisa dibaca dan dicari.",
+    "w.finalH": "Biar ketemu, bukan kesaring.", "w.finalP": "Ngobrol sama buddy-mu sekitar 10 menit, dapet CV yang ramah ATS.",
+    "w.finalCta": "Bikin CV-ku, gratis dulu", "w.sources": "Sumber",
+  },
+  en: {
+    "w.title": "Why an ATS-friendly CV matters · Ceritain",
+    "w.eye": "Why ATS-friendly?",
+    "w.h1": "Your CV meets a <mark>robot</mark> before it meets a human.",
+    "w.lead": "Most companies sort CVs with software called an <b style=\"color:var(--ink)\">ATS</b> (Applicant Tracking System). Here's what it does, the numbers behind it, and how to make sure your CV gets found.",
+    "w.cta": "Make my ATS-friendly CV", "w.cta2": "See the numbers",
+    "w.kopiHi": "Let me explain, slowly. It's simpler than it sounds.", "w.theAts": "the ATS",
+    "w.whatEye": "What is an ATS?", "w.whatH": "A smart filing cabinet for CVs",
+    "w.whatP": "When you apply online, your CV usually lands in an ATS first. It stores and organises every application, then recruiters search through it, a bit like Google.",
+    "w.f1h": "You apply", "w.f1p": "You send your CV through the company's website or a job portal.",
+    "w.f2h": "The ATS reads it", "w.f2p": "It pulls out the text: your jobs, skills, school and contact details, and files them.",
+    "w.f3h": "Recruiters search", "w.f3p": "They search for skills and job titles from the job post, and look at the best matches first.",
+    "w.f4h": "A person skims", "w.f4p": "A recruiter takes a quick first look, often just a few seconds, to decide who to call.",
+    "w.numEye": "The numbers", "w.numH": "Why it matters, in numbers",
+    "w.waffleAria": "97.4 out of 100 squares filled",
+    "w.s1": "of Fortune 500 companies use an ATS to manage job applications.", "w.s1say": "Almost every big company uses one!",
+    "w.src": "Source:",
+    "w.s2": "of recruiters search and rank candidates by the <mark>skills listed in the job post</mark>.",
+    "w.s2bar": "Search by skills", "w.s2say": "So use the same words as the job post. Exactly.",
+    "w.watchAria": "Stopwatch showing 7.4 seconds", "w.s3num": "7.4 sec",
+    "w.s3": "is how long recruiters spend on a CV's first look, on average.", "w.s3say": "Speedrun! Your best stuff must be easy to spot.",
+    "w.s4": "Employers who say <mark>qualified people get screened out</mark> because their CV didn't match the exact criteria:",
+    "w.s4a": "High-skill roles", "w.s4b": "Middle-skill roles",
+    "w.s4say": "Good people get missed when their CV doesn't use the right words.",
+    "w.crowdAria": "A crowd of 200 dots with one highlighted", "w.s5num": "7.24 million",
+    "w.s5": "people in Indonesia were looking for work in February 2026.", "w.s5say": "That's a lot of CVs. Let's make yours the easy one to find!",
+    "w.vsEye": "ATS-friendly, explained", "w.vsH": "What the robot reads easily, and what trips it up",
+    "w.vsP": "Fancy designs can look nice to people, but software reads text, top to bottom. Tobi tried both.",
+    "w.goodH": "Easy to read", "w.badH": "Hard to read",
+    "w.g1": "One simple column, top to bottom", "w.g2": "Clear headings: Experience, Education, Skills", "w.g3": "The same skill words used in the job post",
+    "w.g4": "Common fonts and real, selectable text", "w.g5": "Dates and job titles written plainly",
+    "w.b1": "Two or three columns side by side", "w.b2": "Tables, text boxes and icons", "w.b3": "Skill bars and charts (“Excel: ●●●○○”)",
+    "w.b4": "Text hidden inside images or a photo-only CV", "w.b5": "Creative headings like “My Journey”",
+    "w.mythEye": "Myth buster", "w.mythH": "Tobi busts a famous myth",
+    "w.tobiHold": "Hold up! Let's check the facts before we panic.",
+    "w.myth": "MYTH", "w.mythQ": "75% of CVs are automatically rejected by robots.",
+    "w.fact": "FACT", "w.factP": "There's no solid study behind that famous number. In a 2025 survey of 25 recruiters by Enhancv, <b>92% said their ATS doesn't auto-reject CVs</b> for formatting or missing keywords. People still make the decisions.",
+    "w.realH": "SO WHAT'S THE REAL PROBLEM?", "w.realP": "Recruiters <b>search</b> the ATS for skills and <b>skim fast</b>. If your CV uses different words or a messy layout, you're not rejected by a robot. You're just <b>never found</b>, or skipped in seconds.",
+    "w.small": "Small sample of US recruiters.",
+    "w.helpEye": "How Ceritain helps", "w.helpH": "We handle the robot part for you",
+    "w.helpP": "You just chat. Your buddy writes everything in a format both software and people can read.",
+    "w.h1h": "One clean column", "w.h1p": "A simple layout the ATS reads from top to bottom.",
+    "w.h2h": "Standard headings", "w.h2p": "Summary, Experience, Education, Skills. Exactly what recruiters expect.",
+    "w.h3h": "The right words", "w.h3p": "Your everyday words turned into clear skills and results recruiters search for.",
+    "w.h4h": "Real-text PDF", "w.h4p": "Never an image, so every line can be read and searched.",
+    "w.finalH": "Get found, not filtered.", "w.finalP": "Chat with your buddy for about 10 minutes and get an ATS-friendly CV.",
+    "w.finalCta": "Make my CV, free to start", "w.sources": "Sources",
+  },
+});
+</script>
 <script src="/lib/site.js"></script>
 <script>
-  // 100-square chart: 97 full squares + one partly filled (97.4%)
   document.getElementById("waffle").innerHTML = Array.from({ length:100 }, (_, i) =>
     `<i class="${i < 97 ? "on" : ""}" style="transition-delay:${i * 8}ms${i === 97 ? ";background:linear-gradient(90deg,var(--accent) 40%,#DDE1EE 40%)" : ""}"></i>`).join("");
-  // Crowd of 200 dots, one of them is you
   document.getElementById("crowd").innerHTML = Array.from({ length:200 }, (_, i) => `<i class="${i === 127 ? "me" : ""}"></i>`).join("");
+  // Numbers use a comma in Bahasa (97,4%) and a dot in English (97.4%)
+  function fixNums(){ document.querySelectorAll(".num, .barlbl span:last-child, .watch text").forEach((el) => {
+    el.textContent = I18N.lang === "en" ? el.textContent.replace(/(\d),(\d)/g, "$1.$2") : el.textContent.replace(/(\d)\.(\d)/g, "$1,$2"); }); }
+  document.addEventListener("langchange", fixNums); fixNums();
 </script>
 </body>
 </html>

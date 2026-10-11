@@ -1,12 +1,12 @@
-# StoryCV
+# Ceritain
 
-A website that introduces StoryCV and its three career buddies (Kira the Cat, Kopi the Owl, Tobi the Dino), plus the tool itself: people sign up, pick a buddy, chat about their work life, and get an ATS-friendly CV they can unlock and download as a PDF. Payment is in **test mode** for now.
+A website (Bahasa Indonesia first, with an ID/EN switch, casual tone) that introduces Ceritain and its three career buddies (Kira the Cat, Kopi the Owl, Tobi the Dino), plus the tool itself: people sign up, pick a buddy, chat about their work life, and get an ATS-friendly CV they can unlock and download as a PDF. Payment is in **test mode** for now.
 
 ## Pages
 
 | Address | What it is |
 |---|---|
-| `/` | Home: what StoryCV is, 3 steps, buddies, price. |
+| `/` | Home: what Ceritain is, 3 steps, buddies, price. |
 | `/why-ats` | Why an ATS-friendly CV matters, with sourced statistics. |
 | `/buddies` | Meet Kira, Kopi and Tobi in detail. |
 | `/pricing` | Pricing and all FAQs. |
@@ -20,6 +20,7 @@ A website that introduces StoryCV and its three career buddies (Kira the Cat, Ko
 | `why-ats.html`, `buddies.html`, `pricing.html` | The other pages. |
 | `lib/site.css`, `lib/site.js` | Shared look, menu and footer for the other pages. |
 | `app.html` | The tool (sign up, chat, CV, payment popup, PDF). |
+| `lib/i18n.js` | The language switch. All Bahasa and English words for the site live here and in each page. |
 | `lib/buddies.js` | The buddies' drawings, colors and fonts (used by both pages). |
 | `lib/jspdf.umd.min.js` | A free tool that creates the PDF file. |
 | `api/chat.js` | Talks to the AI during the chat. |

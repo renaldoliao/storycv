@@ -20,6 +20,7 @@ Writing rules:
 - Use only facts the user actually said. NEVER invent companies, dates, numbers or skills. Leave a field as "" if unknown.
 - Turn casual skill mentions into standard names (e.g. "excel" -> "Microsoft Excel").
 - Order jobs and education newest first.
+- If writing in Bahasa Indonesia, use clear, standard and professional Indonesian (this is a CV, so no slang), with simple words a recruiter reads quickly.
 
 Respond ONLY with this JSON (no other text):
 {"name":"","headline":"","contact":{"city":"","email":"","phone":"","linkedin":""},"summary":"","experience":[{"role":"","company":"","location":"","start":"","end":"","bullets":[""]}],"education":[{"degree":"","school":"","year":"","notes":""}],"hard_skills":[""],"soft_skills":[""],"certifications":[""],"languages":[""]}`;
@@ -45,6 +46,26 @@ const DEMO_RESUME = {
   languages: ["Bahasa Indonesia (native)", "English (professional)"],
 };
 
+const DEMO_RESUME_ID = {
+  name: "Rina Pratama",
+  headline: "Customer Service Lead",
+  contact: {},
+  summary: "Customer service lead dengan 3 tahun pengalaman di e-commerce, dikenal mampu mengubah layanan yang lambat menjadi cepat dan tenang. Memangkas waktu respons hingga 92% sambil membimbing tim berisi 8 orang.",
+  experience: [{
+    role: "Customer Service Lead", company: "PT Sinar Niaga", location: "Jakarta", start: "2023", end: "Sekarang",
+    bullets: [
+      "Memangkas rata-rata waktu respons pelanggan dari 24 jam menjadi 2 jam (-92%) dengan template balasan dan jadwal shift baru",
+      "Memimpin dan membimbing tim berisi 8 agen layanan pelanggan",
+      "Melatih setiap karyawan baru sehingga proses orientasi tim lebih singkat",
+    ],
+  }],
+  education: [{ degree: "S1 Manajemen Bisnis", school: "Universitas Nusa Bangsa", year: "2019", notes: "" }],
+  hard_skills: ["Zendesk", "Microsoft Excel", "Google Sheets", "Canva"],
+  soft_skills: ["Penyelesaian konflik", "Melatih dan membimbing tim", "Tenang di bawah tekanan"],
+  certifications: [],
+  languages: ["Bahasa Indonesia (penutur asli)", "Bahasa Inggris (profesional)"],
+};
+
 // Name and contact come from the form the user filled in, not from the AI.
 function withProfile(r, p) {
   r.name = p.name || r.name || "";
@@ -54,6 +75,7 @@ function withProfile(r, p) {
 }
 
 module.exports = async (req, res) => {
+  res.lang = (req.headers || {})["x-lang"] === "en" ? "en" : "id";
   if (req.method !== "POST") return send(res, 405, { error: "Use POST" });
   try {
     const body = req.body || {};
@@ -64,7 +86,7 @@ module.exports = async (req, res) => {
     if (messages.filter((m) => m.role === "user").length < 2) {
       return send(res, 400, { error: "Tell your buddy a bit more about yourself first." });
     }
-    if (isDemo()) return send(res, 200, { resume: withProfile(JSON.parse(JSON.stringify(DEMO_RESUME)), profile), demo: true });
+    if (isDemo()) return send(res, 200, { resume: withProfile(JSON.parse(JSON.stringify(language === "English" ? DEMO_RESUME : DEMO_RESUME_ID)), profile), demo: true });
 
     await requireUser(req, "resume");
 

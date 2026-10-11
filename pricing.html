@@ -1,14 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pricing &amp; FAQ · StoryCV</title>
-<meta name="description" content="Free to chat. Pay once per CV to download your ATS-friendly PDF. No subscription.">
+<title>Harga &amp; FAQ · Ceritain</title>
+<meta name="t-title" content="p.title">
+<meta name="description" content="Ngobrol gratis. Bayar sekali per CV buat download PDF ramah ATS. Tanpa langganan.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&display=swap">
 <link rel="stylesheet" href="/lib/site.css">
+<script src="/lib/i18n.js"></script>
 <script src="/lib/buddies.js"></script>
 <style>
   .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:900px;margin:44px auto 0}
@@ -41,13 +43,13 @@
   <header class="phero">
     <div class="wrap">
       <div class="txt">
-        <span class="eyebrow">Pricing</span>
-        <h1>Free to chat.<br><mark>Pay when you love it.</mark></h1>
-        <p class="lead">Chat with your buddy and preview your CV for free. When it's ready, pay once to unlock the full CV and download the PDF. No subscription, no hidden fees.</p>
+        <span class="eyebrow" data-t="p.eye"></span>
+        <h1 data-t="p.h1"></h1>
+        <p class="lead" data-t="p.lead"></p>
       </div>
       <div class="art" aria-hidden="true">
         <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-          <div class="say pop" style="max-width:220px">One CV, one small price. That's it!</div>
+          <div class="say pop" style="max-width:220px" data-t="p.kira"></div>
           <span class="bob" data-m="kira yay 180"></span>
         </div>
       </div>
@@ -59,46 +61,46 @@
       <div class="plans">
         <div class="plan reveal">
           <span class="peek" data-m="tobi happy 70" aria-hidden="true"></span>
-          <div style="font-weight:800">Chat &amp; preview</div>
-          <div class="amt">Free</div>
-          <div class="muted">Try it with zero risk</div>
+          <div style="font-weight:800" data-t="p.freeName"></div>
+          <div class="amt" data-t="price.free"></div>
+          <div class="muted" data-t="p.freeSub"></div>
           <ul>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Chat with any buddy</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Watch your CV lines being written</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Preview the top of your CV</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>English or Bahasa Indonesia</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.f1"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.f2"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.f3"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.f4"></span></li>
           </ul>
-          <a class="btn ghost startLink" href="/app">Start free</a>
+          <a class="btn ghost startLink" href="/app" data-t="nav.start"></a>
         </div>
         <div class="plan main reveal">
           <span class="peek" data-m="kopi wink 70" aria-hidden="true"></span>
-          <div style="font-weight:800">Your full CV</div>
+          <div style="font-weight:800" data-t="p.fullName"></div>
           <div class="amt priceText"></div>
-          <div class="muted">One-time payment, per CV</div>
+          <div class="muted" data-t="p.fullSub"></div>
           <ul>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Full CV unlocked</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Clean, ATS-friendly PDF</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Add more details and re-download</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Instant unlock, no waiting for an admin</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.p1"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.p2"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.p3"></span></li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span data-t="p.p4"></span></li>
           </ul>
-          <a class="btn startLink" href="/app">Make my CV</a>
+          <a class="btn startLink" href="/app" data-t="p.make"></a>
         </div>
       </div>
 
       <div class="compare reveal">
         <span data-m="kopi think 110" aria-hidden="true"></span>
         <div class="cbox">
-          <h3>Why is it so affordable?</h3>
-          <p class="muted" style="margin:8px 0 0">Your buddy does the heavy lifting, so you don't pay for hours of someone's time. You get a professional CV for about the price of a coffee.</p>
+          <h3 data-t="p.whyH"></h3>
+          <p class="muted" style="margin:8px 0 0" data-t="p.whyP"></p>
           <div class="vsrow">
-            <div><b>~10 min</b>to finish your chat</div>
-            <div><b>1×</b>payment, no subscription</div>
-            <div><b>PDF</b>ready to send</div>
+            <div data-t="p.v1"></div>
+            <div data-t="p.v2"></div>
+            <div data-t="p.v3"></div>
           </div>
         </div>
       </div>
       <div class="center reveal" style="margin-top:22px">
-        <div class="muted" style="font-weight:800">Pay with</div>
+        <div class="muted" style="font-weight:800" data-t="p.payWith"></div>
         <div class="pay"><span>QRIS</span><span>GoPay</span><span>OVO</span><span>DANA</span><span>ShopeePay</span></div>
       </div>
     </div>
@@ -106,21 +108,21 @@
 
   <section style="background:#FAFAFD" id="faq">
     <div class="wrap">
-      <div class="center reveal" style="margin-bottom:36px"><span class="eyebrow">FAQ</span><h2 style="margin-top:14px">Questions? We got you.</h2></div>
+      <div class="center reveal" style="margin-bottom:36px"><span class="eyebrow">FAQ</span><h2 style="margin-top:14px" data-t="p.faqH"></h2></div>
       <div class="faqwrap">
         <div class="faqside reveal" aria-hidden="true">
-          <div class="say" style="max-width:240px">Ask away! No question is too small.</div>
+          <div class="say" style="max-width:240px" data-t="p.faqKira"></div>
           <span class="bob" data-m="kira happy 150"></span>
         </div>
         <div class="faq-list">
-          <details class="reveal"><summary>What does “ATS-friendly” mean?</summary><p>Most companies use software (an ATS) to store and search CVs. An ATS-friendly CV uses a clean layout and real text, so the software can read every line and recruiters can find you. <a href="/why-ats">Learn more about ATS</a>.</p></details>
-          <details class="reveal"><summary>Is chatting really free?</summary><p>Yes. You can chat, see your CV lines appear, and preview the top of your CV for free. You only pay when you want the full CV and the PDF.</p></details>
-          <details class="reveal"><summary>How do I pay?</summary><p>With QRIS or an e-wallet. Your CV unlocks right away, with no waiting for an admin to check your payment.</p></details>
-          <details class="reveal"><summary>Can I use Bahasa Indonesia?</summary><p>Yes. Choose English or Bahasa Indonesia, and your buddy chats and writes your CV in that language.</p></details>
-          <details class="reveal"><summary>Will it make things up about me?</summary><p>No. Your buddy only uses what you tell it. If something is unclear, it asks a follow-up question instead of guessing.</p></details>
-          <details class="reveal"><summary>Which buddy should I pick?</summary><p>Whoever feels right! Kira for a confidence boost, Kopi if you like taking your time, Tobi if you want it quick and fun. They all build the same quality CV. <a href="/buddies">Meet the buddies</a>.</p></details>
-          <details class="reveal"><summary>How long does it take?</summary><p>Most people finish the chat in about 10 minutes. You can stop anytime and come back later.</p></details>
-          <details class="reveal"><summary>Why do I need an account?</summary><p>So your chat and CV are saved, you can come back later, and the service stays fair for everyone.</p></details>
+          <details class="reveal"><summary data-t="p.q1"></summary><p data-t="p.a1"></p></details>
+          <details class="reveal"><summary data-t="p.q2"></summary><p data-t="p.a2"></p></details>
+          <details class="reveal"><summary data-t="p.q3"></summary><p data-t="p.a3"></p></details>
+          <details class="reveal"><summary data-t="p.q4"></summary><p data-t="p.a4"></p></details>
+          <details class="reveal"><summary data-t="p.q5"></summary><p data-t="p.a5"></p></details>
+          <details class="reveal"><summary data-t="p.q6"></summary><p data-t="p.a6"></p></details>
+          <details class="reveal"><summary data-t="p.q7"></summary><p data-t="p.a7"></p></details>
+          <details class="reveal"><summary data-t="p.q8"></summary><p data-t="p.a8"></p></details>
         </div>
       </div>
     </div>
@@ -130,15 +132,67 @@
     <div class="wrap">
       <div class="final-box reveal">
         <div class="wave" id="wave"></div>
-        <h2>Ready to make your CV?</h2>
-        <p>Free to start. About 10 minutes. One small price when you love it.</p>
-        <a class="btn startLink" href="/app">Start chatting</a>
+        <h2 data-t="p.finalH"></h2>
+        <p data-t="p.finalP"></p>
+        <a class="btn startLink" href="/app" data-t="p.finalCta"></a>
       </div>
     </div>
   </section>
 </main>
 
 <div id="siteFooter"></div>
+<script>
+I18N.add({
+  id: {
+    "p.title": "Harga & FAQ · Ceritain",
+    "p.eye": "Harga", "p.h1": "Ngobrol gratis.<br><mark>Bayar kalau udah suka.</mark>",
+    "p.lead": "Ngobrol sama buddy dan intip CV-mu gratis. Kalau udah jadi, bayar sekali buat buka CV lengkap dan download PDF-nya. Nggak ada langganan, nggak ada biaya tersembunyi.",
+    "p.kira": "Satu CV, satu harga kecil. Udah, gitu aja!",
+    "p.freeName": "Ngobrol &amp; intip", "p.freeSub": "Coba dulu, tanpa risiko",
+    "p.f1": "Ngobrol sama buddy mana aja", "p.f2": "Lihat baris CV-mu ditulis langsung", "p.f3": "Intip bagian atas CV-mu", "p.f4": "Bahasa Indonesia atau English",
+    "p.fullName": "CV lengkap kamu", "p.fullSub": "Bayar sekali, per CV",
+    "p.p1": "CV lengkap kebuka", "p.p2": "PDF rapi, ramah ATS", "p.p3": "Bisa tambah info dan download ulang", "p.p4": "Langsung kebuka, nggak nunggu admin",
+    "p.make": "Bikin CV-ku",
+    "p.whyH": "Kok bisa semurah ini?", "p.whyP": "Buddy-mu yang ngerjain bagian beratnya, jadi kamu nggak perlu bayar jasa orang berjam-jam. CV profesional, harganya kira-kira segelas kopi.",
+    "p.v1": "<b>±10 menit</b>buat selesai ngobrol", "p.v2": "<b>1×</b>bayar, tanpa langganan", "p.v3": "<b>PDF</b>siap kirim",
+    "p.payWith": "Bayar pakai",
+    "p.faqH": "Ada pertanyaan? Tenang, kita jawab.", "p.faqKira": "Tanya aja! Nggak ada pertanyaan yang terlalu receh.",
+    "p.q1": "“Ramah ATS” itu maksudnya apa?", "p.a1": "Banyak perusahaan pakai software (ATS) buat nyimpen dan nyari CV. CV ramah ATS pakai tata letak rapi dan teks asli, jadi software-nya bisa baca tiap baris dan HRD bisa nemuin kamu. <a href=\"/why-ats\">Baca soal ATS</a>.",
+    "p.q2": "Ngobrolnya beneran gratis?", "p.a2": "Beneran. Kamu bisa ngobrol, lihat baris CV-mu muncul, dan intip bagian atas CV-mu gratis. Bayarnya cuma kalau mau CV lengkap dan PDF-nya.",
+    "p.q3": "Bayarnya gimana?", "p.a3": "Pakai QRIS atau e-wallet. CV-mu langsung kebuka, nggak perlu nunggu admin ngecek pembayaran.",
+    "p.q4": "Bisa pakai bahasa Inggris?", "p.a4": "Bisa. Pilih Bahasa Indonesia atau English, nanti buddy-mu ngobrol dan nulis CV pakai bahasa itu.",
+    "p.q5": "Bakal ngarang-ngarang soal aku nggak?", "p.a5": "Nggak. Buddy-mu cuma pakai apa yang kamu ceritain. Kalau ada yang kurang jelas, dia bakal nanya, bukan nebak.",
+    "p.q6": "Pilih buddy yang mana?", "p.a6": "Yang paling klik aja! Kira buat yang butuh semangat, Kopi buat yang suka pelan-pelan, Tobi buat yang mau cepet dan seru. Kualitas CV-nya sama aja. <a href=\"/buddies\">Kenalan sama buddy</a>.",
+    "p.q7": "Berapa lama?", "p.a7": "Kebanyakan orang selesai ngobrol sekitar 10 menit. Bisa berhenti kapan aja dan lanjut lagi nanti.",
+    "p.q8": "Kenapa harus bikin akun?", "p.a8": "Biar obrolan dan CV-mu tersimpan, kamu bisa balik lagi nanti, dan layanannya tetap adil buat semua orang.",
+    "p.finalH": "Siap bikin CV?", "p.finalP": "Gratis buat mulai. Sekitar 10 menit. Bayar dikit kalau udah suka.", "p.finalCta": "Mulai ngobrol",
+  },
+  en: {
+    "p.title": "Pricing & FAQ · Ceritain",
+    "p.eye": "Pricing", "p.h1": "Free to chat.<br><mark>Pay when you love it.</mark>",
+    "p.lead": "Chat with your buddy and preview your CV for free. When it's ready, pay once to unlock the full CV and download the PDF. No subscription, no hidden fees.",
+    "p.kira": "One CV, one small price. That's it!",
+    "p.freeName": "Chat &amp; preview", "p.freeSub": "Try it with zero risk",
+    "p.f1": "Chat with any buddy", "p.f2": "Watch your CV lines being written", "p.f3": "Preview the top of your CV", "p.f4": "English or Bahasa Indonesia",
+    "p.fullName": "Your full CV", "p.fullSub": "One-time payment, per CV",
+    "p.p1": "Full CV unlocked", "p.p2": "Clean, ATS-friendly PDF", "p.p3": "Add more details and re-download", "p.p4": "Instant unlock, no waiting for an admin",
+    "p.make": "Make my CV",
+    "p.whyH": "Why is it so affordable?", "p.whyP": "Your buddy does the heavy lifting, so you don't pay for hours of someone's time. You get a professional CV for about the price of a coffee.",
+    "p.v1": "<b>~10 min</b>to finish your chat", "p.v2": "<b>1×</b>payment, no subscription", "p.v3": "<b>PDF</b>ready to send",
+    "p.payWith": "Pay with",
+    "p.faqH": "Questions? We got you.", "p.faqKira": "Ask away! No question is too small.",
+    "p.q1": "What does “ATS-friendly” mean?", "p.a1": "Most companies use software (an ATS) to store and search CVs. An ATS-friendly CV uses a clean layout and real text, so the software can read every line and recruiters can find you. <a href=\"/why-ats\">Learn more about ATS</a>.",
+    "p.q2": "Is chatting really free?", "p.a2": "Yes. You can chat, see your CV lines appear, and preview the top of your CV for free. You only pay when you want the full CV and the PDF.",
+    "p.q3": "How do I pay?", "p.a3": "With QRIS or an e-wallet. Your CV unlocks right away, with no waiting for an admin to check your payment.",
+    "p.q4": "Can I use English?", "p.a4": "Yes. Choose Bahasa Indonesia or English, and your buddy chats and writes your CV in that language.",
+    "p.q5": "Will it make things up about me?", "p.a5": "No. Your buddy only uses what you tell it. If something is unclear, it asks a follow-up question instead of guessing.",
+    "p.q6": "Which buddy should I pick?", "p.a6": "Whoever feels right! Kira for a confidence boost, Kopi if you like taking your time, Tobi if you want it quick and fun. They all build the same quality CV. <a href=\"/buddies\">Meet the buddies</a>.",
+    "p.q7": "How long does it take?", "p.a7": "Most people finish the chat in about 10 minutes. You can stop anytime and come back later.",
+    "p.q8": "Why do I need an account?", "p.a8": "So your chat and CV are saved, you can come back later, and the service stays fair for everyone.",
+    "p.finalH": "Ready to make your CV?", "p.finalP": "Free to start. About 10 minutes. One small price when you love it.", "p.finalCta": "Start chatting",
+  },
+});
+</script>
 <script src="/lib/site.js"></script>
 </body>
 </html>

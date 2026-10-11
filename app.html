@@ -1,13 +1,15 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>StoryCV · Your career buddy</title>
+<title>Ceritain · Buddy karier kamu</title>
+<meta name="t-title" content="a.title">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M22 54 L28 12 L56 34 Z M98 54 L92 12 L64 34 Z' fill='%23FFC93C'/%3E%3Cellipse cx='60' cy='70' rx='47' ry='40' fill='%23FFC93C'/%3E%3Ccircle cx='43' cy='64' r='7' fill='%231F2340'/%3E%3Ccircle cx='77' cy='64' r='7' fill='%231F2340'/%3E%3Cpath d='M55 74 H65 L60 80 Z' fill='%23F07A8E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&display=swap">
 <script src="/lib/jspdf.umd.min.js"></script>
+<script src="/lib/i18n.js"></script>
 <script src="/lib/buddies.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -47,6 +49,10 @@
   .tabs button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(31,35,64,.1)}
   a.brand{color:inherit;text-decoration:none}
   a.link{display:inline-flex;align-items:center}
+  .langToggle{display:inline-flex;align-items:center;gap:2px;border:2px solid var(--line);background:#fff;border-radius:999px;padding:3px;font:inherit;font-size:13px;font-weight:800;min-height:36px;cursor:pointer}
+  .langToggle b,.langToggle span{padding:4px 8px;border-radius:999px}
+  .langToggle b{background:var(--accent);color:#fff}
+  .langToggle span{color:var(--muted)}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
   /* 1. Pick a buddy */
@@ -138,22 +144,22 @@
 </head>
 <body>
 <div class="app">
-  <div class="banner" id="demoBanner">Demo mode: the AI isn't connected yet, so answers are scripted.</div>
+  <div class="banner" id="demoBanner" data-t="a.demo"></div>
 
   <!-- 0. SIGN UP / LOG IN (only when accounts are switched on) -->
   <section class="screen" id="s-auth" aria-labelledby="authTitle">
-    <div class="top"><a class="link" href="/" style="text-decoration:none">← Back to home</a><a class="brand" href="/">storycv</a></div>
+    <div class="top"><a class="link" href="/" style="text-decoration:none" data-t="a.backHome"></a><button class="langToggle" type="button"></button></div>
     <div class="pad" style="flex:1;display:flex;flex-direction:column">
       <div class="trio" id="authTrio"></div>
       <h1 id="authTitle" style="text-align:center"></h1>
       <p class="sub" id="authSub" style="text-align:center"></p>
       <div class="tabs" id="authTabs" role="tablist">
-        <button type="button" role="tab" id="tabUp">Sign up</button>
-        <button type="button" role="tab" id="tabIn">Log in</button>
+        <button type="button" role="tab" id="tabUp" data-t="a.tabUp"></button>
+        <button type="button" role="tab" id="tabIn" data-t="a.tabIn"></button>
       </div>
       <form class="fields" id="authForm" novalidate>
         <div class="field" id="emailField"><label for="a-email">Email</label><input id="a-email" type="email" autocomplete="email" inputmode="email" required></div>
-        <div class="field" id="pwField"><label for="a-pass">Password <small>(at least 8 characters)</small></label><input id="a-pass" type="password" autocomplete="new-password" minlength="8" required></div>
+        <div class="field" id="pwField"><label for="a-pass" data-t="a.pass"></label><input id="a-pass" type="password" autocomplete="new-password" minlength="8" required></div>
         <div class="error" id="authErr" role="alert"></div>
         <div class="ok" id="authOk" role="status"></div>
         <button class="btn" type="submit" id="authBtn"></button>
@@ -164,36 +170,36 @@
 
   <!-- 1. PICK A BUDDY -->
   <section class="screen" id="s-pick" aria-labelledby="pickTitle">
-    <div class="top"><a class="link" href="/" style="text-decoration:none">← Home</a><a class="brand" href="/">storycv</a><button class="link" id="logout" hidden>Log out</button></div>
+    <div class="top"><a class="link" href="/" style="text-decoration:none" data-t="a.home"></a><button class="langToggle" type="button"></button><button class="link" id="logout" hidden data-t="a.logout"></button></div>
     <div class="pad" style="flex:1;display:flex;flex-direction:column">
-      <h1 id="pickTitle">Pick your career buddy</h1>
-      <p class="sub">They'll chat with you, dig out your best stories and write your CV.</p>
+      <h1 id="pickTitle" data-t="a.pickH"></h1>
+      <p class="sub" data-t="a.pickP"></p>
       <div class="buddies" id="buddyList"></div>
       <div style="flex:1"></div>
-      <button class="btn" id="pickNext">Continue</button>
+      <button class="btn" id="pickNext"></button>
     </div>
   </section>
 
   <!-- 2. PROFILE -->
   <section class="screen" id="s-profile" aria-labelledby="profTitle">
-    <div class="top"><button class="link" data-go="pick">← Change buddy</button></div>
+    <div class="top"><button class="link" data-go="pick" data-t="a.change"></button><button class="langToggle" type="button"></button></div>
     <div class="pad">
       <div class="hello"><span id="profMascot"></span><div class="bubble" id="profHello"></div></div>
-      <h1 id="profTitle" class="sr">Your details</h1>
+      <h1 id="profTitle" class="sr" data-t="a.details"></h1>
       <form class="fields" id="profileForm" novalidate>
-        <div class="field"><label for="f-name">Full name</label><input id="f-name" autocomplete="name" required></div>
-        <div class="field"><label for="f-nick" id="nickLabel">What should I call you?</label><input id="f-nick" autocomplete="nickname" required></div>
-        <div class="field"><label for="f-target">Job you're aiming for <small>(optional)</small></label><input id="f-target" placeholder="e.g. Barista, Admin, Sales"></div>
+        <div class="field"><label for="f-name" data-t="a.fname"></label><input id="f-name" autocomplete="name" required></div>
+        <div class="field"><label for="f-nick" id="nickLabel"></label><input id="f-nick" autocomplete="nickname" required></div>
+        <div class="field"><label for="f-target" data-t="a.target"></label><input id="f-target" data-t-ph="a.targetPh"></div>
         <div class="row2">
-          <div class="field"><label for="f-city">City</label><input id="f-city" autocomplete="address-level2"></div>
-          <div class="field"><label for="f-lang">Language</label><select id="f-lang"><option>English</option><option>Bahasa Indonesia</option></select></div>
+          <div class="field"><label for="f-city" data-t="a.city"></label><input id="f-city" autocomplete="address-level2"></div>
+          <div class="field"><label for="f-lang" data-t="a.cvlang"></label><select id="f-lang"><option>Bahasa Indonesia</option><option>English</option></select></div>
         </div>
         <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" autocomplete="email" inputmode="email"></div>
-        <div class="field"><label for="f-phone">Phone / WhatsApp <small>(optional)</small></label><input id="f-phone" type="tel" autocomplete="tel" inputmode="tel"></div>
-        <div class="field"><label for="f-linkedin">LinkedIn <small>(optional)</small></label><input id="f-linkedin" placeholder="linkedin.com/in/…"></div>
+        <div class="field"><label for="f-phone" data-t="a.phone"></label><input id="f-phone" type="tel" autocomplete="tel" inputmode="tel"></div>
+        <div class="field"><label for="f-linkedin" data-t="a.linkedin"></label><input id="f-linkedin" placeholder="linkedin.com/in/…"></div>
         <div class="error" id="profErr" role="alert"></div>
-        <button class="btn" type="submit" id="profNext">Start chatting</button>
-        <p class="small" style="margin:0">Free to chat · pay only to download your CV</p>
+        <button class="btn" type="submit" id="profNext" data-t="a.startChat"></button>
+        <p class="small" style="margin:0" data-t="a.freeNote"></p>
       </form>
     </div>
   </section>
@@ -202,34 +208,34 @@
   <section class="screen" id="s-chat" aria-label="Chat">
     <div class="chat-head">
       <span id="chatMascot"></span>
-      <div class="who"><b id="chatName"></b><div class="dots" id="dots" aria-label="Progress"></div></div>
-      <button class="pill" id="peek">My CV</button>
-      <button class="link" id="restart" aria-label="Start over">Restart</button>
+      <div class="who"><b id="chatName"></b><div class="dots" id="dots"></div></div>
+      <button class="pill" id="peek" data-t="a.myCv"></button>
+      <button class="link" id="restart" data-t="a.restart" data-t-aria="a.restartAria"></button>
     </div>
     <div class="msgs" id="msgs" aria-live="polite"></div>
-    <div class="ready" id="readyBar"><span id="readyText">Ready when you are!</span><button class="btn" id="create">Create my CV</button></div>
+    <div class="ready" id="readyBar"><span id="readyText"></span><button class="btn" id="create" data-t="a.create"></button></div>
     <div class="error" id="chatErr" role="alert" style="padding:0 16px 8px"></div>
     <form class="composer" id="composer">
-      <label for="input" class="sr">Your answer</label>
-      <textarea id="input" rows="1" placeholder="Type here…"></textarea>
-      <button class="send" type="submit" aria-label="Send"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
+      <label for="input" class="sr" data-t="a.yourAnswer"></label>
+      <textarea id="input" rows="1" data-t-ph="a.typeHere"></textarea>
+      <button class="send" type="submit" data-t-aria="a.send"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></button>
     </form>
   </section>
 
   <!-- 4. RESUME -->
   <section class="screen" id="s-cv" aria-labelledby="cvTitle">
-    <div class="top"><button class="link" data-go="chat">← Back to chat</button><div class="brand">storycv</div></div>
+    <div class="top"><button class="link" data-go="chat" data-t="a.backChat"></button><div class="brand" data-t="brand"></div></div>
     <div class="pad">
       <div class="done-head"><span id="cvMascot"></span><h1 id="cvTitle"></h1></div>
       <div class="paper-wrap" id="paperWrap"><div class="paper" id="paper"></div><div class="fade"></div></div>
       <div id="payBox">
-        <div class="price-row"><span style="font-weight:800">Unlock full CV + PDF</span><b class="priceText"></b></div>
-        <button class="btn" id="unlock">Unlock & download</button>
-        <p class="small">QRIS · e-wallet · instant unlock</p>
+        <div class="price-row"><span style="font-weight:800" data-t="a.unlockRow"></span><b class="priceText"></b></div>
+        <button class="btn" id="unlock" data-t="a.unlock"></button>
+        <p class="small" data-t="a.payNote"></p>
       </div>
       <div id="paidBox" class="actions" style="display:none;margin-top:18px">
-        <button class="btn" id="download">Download PDF</button>
-        <button class="btn ghost" id="redo">Add more & rewrite</button>
+        <button class="btn" id="download" data-t="a.download"></button>
+        <button class="btn ghost" id="redo" data-t="a.redo"></button>
       </div>
       <div class="error" id="cvErr" role="alert"></div>
     </div>
@@ -238,22 +244,96 @@
 
 <div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="payTitle">
   <div class="modal">
-    <span class="tag-test">TEST MODE</span>
-    <h2 id="payTitle">Download your CV</h2>
+    <span class="tag-test" data-t="a.testMode"></span>
+    <h2 id="payTitle" data-t="a.payTitle"></h2>
     <div class="big priceText"></div>
-    <p class="sub" style="font-size:14px;margin-bottom:16px">Payment isn't connected yet. Tap below to pretend it went through.</p>
+    <p class="sub" style="font-size:14px;margin-bottom:16px" data-t="a.payNot"></p>
     <div class="actions">
-      <button class="btn" id="fakePay">Simulate successful payment</button>
-      <button class="btn ghost" id="cancelPay">Cancel</button>
+      <button class="btn" id="fakePay" data-t="a.fakePay"></button>
+      <button class="btn ghost" id="cancelPay" data-t="a.cancel"></button>
     </div>
   </div>
 </div>
 
 <script>
 /* ================= Easy-to-change settings ================= */
-const PRICE_IDR = 19000;
+const PRICE_IDR = I18N.PRICE_IDR;
 
 const { BUDDIES, mascot } = window.StoryBuddies;
+const T = I18N.t;
+// CV section headings follow the CV's language (chosen in the details form), not the site language
+const CV_ID = { "Summary":"Ringkasan", "Experience":"Pengalaman", "Education":"Pendidikan", "Skills":"Keahlian", "Hard skills":"Keahlian teknis",
+  "Soft skills":"Keahlian non-teknis", "Certifications":"Sertifikasi", "Languages":"Bahasa", "Your Name":"Nama Kamu" };
+const CVH = (w) => (S.profile.lang === "English" ? w : (CV_ID[w] || w));
+I18N.add({
+  id: {
+    "a.title": "Ceritain · Buddy karier kamu", "a.theme": "Tema",
+    "a.demo": "Mode demo: AI-nya belum nyambung, jadi jawabannya masih pakai skrip.",
+    "a.backHome": "← Balik ke beranda", "a.home": "← Beranda", "a.logout": "Keluar", "a.tabUp": "Daftar", "a.tabIn": "Masuk",
+    "a.pass": "Kata sandi <small>(minimal 8 karakter)</small>",
+    "a.upH": "Bikin akun gratis", "a.upP": "Ngobrol gratis. Bayar cuma pas mau download CV.", "a.upBtn": "Bikin akun",
+    "a.inH": "Halo lagi!", "a.inP": "Masuk buat lanjutin ceritamu.", "a.inBtn": "Masuk",
+    "a.fgH": "Lupa kata sandi?", "a.fgP": "Kami kirim link ke email kamu buat bikin kata sandi baru.", "a.fgBtn": "Kirim link",
+    "a.npH": "Bikin kata sandi baru", "a.npP": "Pilih kata sandi baru buat akunmu.", "a.npBtn": "Simpan kata sandi",
+    "a.backLogin": "← Balik ke masuk", "a.forgot": "Lupa kata sandi?",
+    "a.eWrong": "Email atau kata sandinya salah.", "a.eConfirm": "Konfirmasi email kamu dulu ya. Cek kotak masuk (dan folder spam).",
+    "a.eExists": "Email ini udah punya akun. Coba masuk aja.", "a.eTooMany": "Kebanyakan nyoba. Tunggu semenit, terus coba lagi ya.",
+    "a.eEmail": "Email-nya kayaknya belum bener.", "a.ePass": "Kata sandinya minimal 8 karakter ya.", "a.wait": "Bentar ya…",
+    "a.sent": "Dikit lagi! Kami udah kirim link konfirmasi ke {email}. Buka link-nya, nanti kamu langsung balik ke sini.",
+    "a.resetSent": "Kalau {email} punya akun, link reset-nya lagi dikirim.",
+    "a.oops": "Waduh, ada yang error. Coba lagi ya.", "a.loginAgain": "Masuk lagi ya.", "a.noLogin": "Layanan login nggak bisa dimuat. Cek koneksi kamu, terus refresh halamannya.",
+    "a.pickH": "Pilih buddy kamu", "a.pickP": "Mereka bakal ngajak kamu ngobrol, gali cerita terbaikmu, terus nulisin CV-nya.", "a.continue": "Lanjut sama {name}",
+    "a.change": "← Ganti buddy", "a.details": "Data kamu", "a.fname": "Nama lengkap", "a.nick": "Mau dipanggil apa sama {name}?",
+    "a.target": "Kerjaan yang kamu incar <small>(opsional)</small>", "a.targetPh": "mis. Barista, Admin, Sales",
+    "a.city": "Kota", "a.cvlang": "Bahasa CV", "a.phone": "No. HP / WhatsApp <small>(opsional)</small>", "a.linkedin": "LinkedIn <small>(opsional)</small>",
+    "a.startChat": "Mulai ngobrol", "a.freeNote": "Ngobrol gratis · bayar cuma pas download CV",
+    "a.eName": "Isi nama lengkap dan nama panggilanmu dulu ya.",
+    "a.myCv": "CV-ku", "a.restart": "Ulang", "a.restartAria": "Mulai dari awal", "a.progress": "Progres: {n} dari {total}",
+    "a.added": "MASUK KE CV KAMU", "a.typing": "{name} lagi ngetik", "a.ready": "Mantap, {nick}! Udah siap?", "a.friend": "teman",
+    "a.enough": "Udah cukup buat mulai. Tambah lagi atau bikin sekarang.", "a.create": "Bikin CV-ku", "a.writing": "Lagi nulis…",
+    "a.confirmRestart": "Mulai dari awal? Obrolan dan CV kamu bakal dihapus.",
+    "a.yourAnswer": "Jawaban kamu", "a.typeHere": "Ketik di sini…", "a.send": "Kirim",
+    "a.backChat": "← Balik ngobrol", "a.cvReady": "Yeay {nick}! CV kamu udah jadi.", "a.allYours": "Ini dia CV kamu, {nick}!",
+    "a.unlockRow": "Buka CV lengkap + PDF", "a.unlock": "Buka & download", "a.payNote": "QRIS · e-wallet · langsung kebuka",
+    "a.download": "Download PDF", "a.redo": "Tambah info & tulis ulang",
+    "a.testMode": "MODE TES", "a.payTitle": "Download CV kamu", "a.payNot": "Pembayaran belum nyambung. Klik di bawah buat pura-pura udah bayar.",
+    "a.fakePay": "Simulasi bayar berhasil", "a.cancel": "Batal",
+  },
+  en: {
+    "a.title": "Ceritain · Your career buddy", "a.theme": "Theme",
+    "a.demo": "Demo mode: the AI isn't connected yet, so answers are scripted.",
+    "a.backHome": "← Back to home", "a.home": "← Home", "a.logout": "Log out", "a.tabUp": "Sign up", "a.tabIn": "Log in",
+    "a.pass": "Password <small>(at least 8 characters)</small>",
+    "a.upH": "Make your free account", "a.upP": "Chatting is free. You only pay when you download your CV.", "a.upBtn": "Create account",
+    "a.inH": "Welcome back!", "a.inP": "Log in to continue your story.", "a.inBtn": "Log in",
+    "a.fgH": "Forgot your password?", "a.fgP": "We'll email you a link to set a new one.", "a.fgBtn": "Send reset link",
+    "a.npH": "Set a new password", "a.npP": "Choose a new password for your account.", "a.npBtn": "Save new password",
+    "a.backLogin": "← Back to log in", "a.forgot": "Forgot password?",
+    "a.eWrong": "Wrong email or password.", "a.eConfirm": "Please confirm your email first. Check your inbox (and spam folder).",
+    "a.eExists": "That email already has an account. Try logging in.", "a.eTooMany": "Too many tries. Please wait a minute and try again.",
+    "a.eEmail": "That email doesn't look right.", "a.ePass": "Your password needs at least 8 characters.", "a.wait": "Please wait…",
+    "a.sent": "Almost there! We sent a confirmation link to {email}. Open it, and you'll come right back here.",
+    "a.resetSent": "If {email} has an account, a reset link is on its way.",
+    "a.oops": "Something went wrong. Please try again.", "a.loginAgain": "Please log in again.", "a.noLogin": "Couldn't load the login service. Please check your connection and refresh.",
+    "a.pickH": "Pick your career buddy", "a.pickP": "They'll chat with you, dig out your best stories and write your CV.", "a.continue": "Continue with {name}",
+    "a.change": "← Change buddy", "a.details": "Your details", "a.fname": "Full name", "a.nick": "What should {name} call you?",
+    "a.target": "Job you're aiming for <small>(optional)</small>", "a.targetPh": "e.g. Barista, Admin, Sales",
+    "a.city": "City", "a.cvlang": "CV language", "a.phone": "Phone / WhatsApp <small>(optional)</small>", "a.linkedin": "LinkedIn <small>(optional)</small>",
+    "a.startChat": "Start chatting", "a.freeNote": "Free to chat · pay only to download your CV",
+    "a.eName": "Please fill in your full name and nickname.",
+    "a.myCv": "My CV", "a.restart": "Restart", "a.restartAria": "Start over", "a.progress": "Progress: {n} of {total}",
+    "a.added": "ADDED TO YOUR CV", "a.typing": "{name} is typing", "a.ready": "Nice work, {nick}! Ready?", "a.friend": "friend",
+    "a.enough": "Enough to start. Add more or create now.", "a.create": "Create my CV", "a.writing": "Writing…",
+    "a.confirmRestart": "Start over? Your chat and CV will be cleared.",
+    "a.yourAnswer": "Your answer", "a.typeHere": "Type here…", "a.send": "Send",
+    "a.backChat": "← Back to chat", "a.cvReady": "Yay {nick}! Your CV is ready.", "a.allYours": "All yours, {nick}!",
+    "a.unlockRow": "Unlock full CV + PDF", "a.unlock": "Unlock & download", "a.payNote": "QRIS · e-wallet · instant unlock",
+    "a.download": "Download PDF", "a.redo": "Add more & rewrite",
+    "a.testMode": "TEST MODE", "a.payTitle": "Download your CV", "a.payNot": "Payment isn't connected yet. Tap below to pretend it went through.",
+    "a.fakePay": "Simulate successful payment", "a.cancel": "Cancel",
+  },
+});
+I18N.apply();
 const AREAS = ["experience","achievements","education","hard_skills","soft_skills"];
 
 /* ================= State (saved on this device) ================= */
@@ -285,12 +365,12 @@ function go(screen){
 document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => go(b.dataset.go)));
 
 async function post(url, body){
-  const headers = { "content-type":"application/json" };
+  const headers = { "content-type":"application/json", "x-lang": I18N.lang };
   if (sb){ const { data } = await sb.auth.getSession(); if (data.session) headers.Authorization = "Bearer " + data.session.access_token; }
   const res = await fetch(url, { method:"POST", headers, body:JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
-  if (res.status === 401 && sb){ session = null; authMode = "in"; go("auth"); $("authErr").textContent = data.error || "Please log in again."; }
-  if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+  if (res.status === 401 && sb){ session = null; authMode = "in"; go("auth"); $("authErr").textContent = data.error || T("a.loginAgain"); }
+  if (!res.ok) throw new Error(data.error || T("a.oops"));
   if (data.demo) $("demoBanner").style.display = "block";
   return data;
 }
@@ -298,23 +378,23 @@ async function post(url, body){
 /* ================= 0. Sign up / Log in ================= */
 let authMode = new URLSearchParams(location.search).get("mode") === "login" ? "in" : "up";
 const AUTH_TEXT = {
-  up:      ["Make your free account", "Chatting is free. You only pay when you download your CV.", "Create account"],
-  in:      ["Welcome back!", "Log in to continue your story.", "Log in"],
-  forgot:  ["Forgot your password?", "We'll email you a link to set a new one.", "Send reset link"],
-  newpass: ["Set a new password", "Choose a new password for your account.", "Save new password"],
+  up:      ["a.upH", "a.upP", "a.upBtn"],
+  in:      ["a.inH", "a.inP", "a.inBtn"],
+  forgot:  ["a.fgH", "a.fgP", "a.fgBtn"],
+  newpass: ["a.npH", "a.npP", "a.npBtn"],
 };
 function renderAuth(){
   applyTheme();
   const mood = { up:"happy", in:"wink", forgot:"think", newpass:"think" }[authMode];
   $("authTrio").innerHTML = ["kira","kopi","tobi"].map((id) => mascot(id, mood, 64)).join("");
-  const [t, sub, btn] = AUTH_TEXT[authMode];
+  const [t, sub, btn] = AUTH_TEXT[authMode].map((k) => T(k));
   $("authTitle").textContent = t; $("authSub").textContent = sub; $("authBtn").textContent = btn;
   $("tabUp").setAttribute("aria-selected", authMode === "up"); $("tabIn").setAttribute("aria-selected", authMode === "in");
   $("authTabs").style.display = (authMode === "up" || authMode === "in") ? "flex" : "none";
   $("emailField").style.display = authMode === "newpass" ? "none" : "block";
   $("pwField").style.display = authMode === "forgot" ? "none" : "block";
   $("a-pass").setAttribute("autocomplete", authMode === "in" ? "current-password" : "new-password");
-  $("forgot").textContent = authMode === "forgot" ? "← Back to log in" : "Forgot password?";
+  $("forgot").textContent = authMode === "forgot" ? T("a.backLogin") : T("a.forgot");
   $("forgot").style.display = authMode === "newpass" ? "none" : "";
 }
 function setAuthMode(m){ authMode = m; $("authErr").textContent = ""; $("authOk").textContent = ""; renderAuth(); }
@@ -323,26 +403,26 @@ $("tabIn").addEventListener("click", () => setAuthMode("in"));
 $("forgot").addEventListener("click", () => setAuthMode(authMode === "forgot" ? "in" : "forgot"));
 function friendly(msg){
   msg = String(msg || "");
-  if (/invalid login/i.test(msg)) return "Wrong email or password.";
-  if (/not confirmed/i.test(msg)) return "Please confirm your email first. Check your inbox (and spam folder).";
-  if (/already registered|already been registered/i.test(msg)) return "That email already has an account. Try logging in.";
-  if (/rate limit|too many/i.test(msg)) return "Too many tries. Please wait a minute and try again.";
-  return msg || "Something went wrong. Please try again.";
+  if (/invalid login/i.test(msg)) return T("a.eWrong");
+  if (/not confirmed/i.test(msg)) return T("a.eConfirm");
+  if (/already registered|already been registered/i.test(msg)) return T("a.eExists");
+  if (/rate limit|too many/i.test(msg)) return T("a.eTooMany");
+  return msg || T("a.oops");
 }
 $("authForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   $("authErr").textContent = ""; $("authOk").textContent = "";
   const email = $("a-email").value.trim(), pass = $("a-pass").value;
-  if (authMode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("authErr").textContent = "Please enter a valid email."; return $("a-email").focus(); }
-  if (authMode !== "forgot" && pass.length < 8){ $("authErr").textContent = "Your password needs at least 8 characters."; return $("a-pass").focus(); }
-  const btn = $("authBtn"), label = btn.textContent; btn.disabled = true; btn.textContent = "Please wait…";
+  if (authMode !== "newpass" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $("authErr").textContent = T("a.eEmail"); return $("a-email").focus(); }
+  if (authMode !== "forgot" && pass.length < 8){ $("authErr").textContent = T("a.ePass"); return $("a-pass").focus(); }
+  const btn = $("authBtn"), label = btn.textContent; btn.disabled = true; btn.textContent = T("a.wait");
   const back = location.origin + "/app";
   try {
     if (authMode === "up"){
       const { data, error } = await sb.auth.signUp({ email, password:pass, options:{ emailRedirectTo:back } });
       if (error) throw error;
       if (data.session){ session = data.session; start(); }
-      else { $("authOk").textContent = `Almost there! We sent a confirmation link to ${email}. Open it, and you'll come right back here.`; }
+      else { $("authOk").textContent = T("a.sent", { email }); }
     } else if (authMode === "in"){
       const { data, error } = await sb.auth.signInWithPassword({ email, password:pass });
       if (error) throw error;
@@ -350,7 +430,7 @@ $("authForm").addEventListener("submit", async (e) => {
     } else if (authMode === "forgot"){
       const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo:back });
       if (error) throw error;
-      $("authOk").textContent = `If ${email} has an account, a reset link is on its way.`;
+      $("authOk").textContent = T("a.resetSent", { email });
     } else {
       const { error } = await sb.auth.updateUser({ password:pass });
       if (error) throw error;
@@ -375,11 +455,11 @@ function renderPick(){
         <div class="tag">${b.animal} · ${b.role}</div>
         <div class="traits">${b.traits.map((t) => `<span>${t}</span>`).join("")}</div>
         <div class="say">${b.say}</div>
-        <div class="theme-line"><i style="background:${b.theme.accent}"></i><i style="background:${b.theme.pop}"></i>Theme: ${b.themeName}</div>
+        <div class="theme-line"><i style="background:${b.theme.accent}"></i><i style="background:${b.theme.pop}"></i>${T("a.theme")}: ${b.themeName}</div>
       </span>
     </button>`).join("");
   $("buddyList").querySelectorAll(".buddy").forEach((el) => el.addEventListener("click", () => { S.buddy = el.dataset.id; save(); renderPick(); }));
-  $("pickNext").textContent = "Continue with " + BUDDIES[S.buddy].name;
+  $("pickNext").textContent = T("a.continue", { name: BUDDIES[S.buddy].name });
 }
 $("pickNext").addEventListener("click", () => go("profile"));
 
@@ -390,14 +470,15 @@ function renderProfile(){
   const b = BUDDIES[S.buddy];
   $("profMascot").innerHTML = mascot(S.buddy, "happy", 64);
   $("profHello").textContent = b.hello();
-  $("nickLabel").textContent = `What should ${b.name} call you?`;
+  $("nickLabel").textContent = T("a.nick", { name: b.name });
+  if (!S.profile.lang) $("f-lang").value = I18N.lang === "en" ? "English" : "Bahasa Indonesia";
   for (const [k,id] of Object.entries(F)) if (S.profile[k]) $(id).value = S.profile[k];
 }
 $("profileForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const p = {}; for (const [k,id] of Object.entries(F)) p[k] = $(id).value.trim();
-  if (!p.name || !p.nickname){ $("profErr").textContent = "Please fill in your full name and nickname."; (p.name ? $("f-nick") : $("f-name")).focus(); return; }
-  if (p.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)){ $("profErr").textContent = "That email doesn't look right."; $("f-email").focus(); return; }
+  if (!p.name || !p.nickname){ $("profErr").textContent = T("a.eName"); (p.name ? $("f-nick") : $("f-name")).focus(); return; }
+  if (p.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email)){ $("profErr").textContent = T("a.eEmail"); $("f-email").focus(); return; }
   $("profErr").textContent = "";
   const changedBuddy = S.profile._buddy && S.profile._buddy !== S.buddy;
   S.profile = { ...p, _buddy:S.buddy };
@@ -412,22 +493,22 @@ function renderChat(typing){
   $("chatMascot").innerHTML = mascot(S.buddy, typing ? "think" : S.mood, 44);
   $("chatName").textContent = b.name;
   $("dots").innerHTML = AREAS.map((a) => `<span class="${S.covered[a] ? "on" : ""}"></span>`).join("");
-  $("dots").setAttribute("aria-label", `Progress: ${AREAS.filter((a)=>S.covered[a]).length} of ${AREAS.length}`);
+  $("dots").setAttribute("aria-label", T("a.progress", { n: AREAS.filter((a)=>S.covered[a]).length, total: AREAS.length }));
   $("peek").textContent = S.resume ? "My CV" : "My CV";
   $("peek").disabled = !S.resume; $("peek").style.opacity = S.resume ? 1 : .5;
   let h = "";
   S.messages.forEach((m, i) => {
     h += `<div class="m ${m.role === "user" ? "me" : "bot"}">${esc(m.content)}</div>`;
-    if (S.notes[i]) h += `<div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"/></svg><span><b>ADDED TO YOUR CV</b>${esc(S.notes[i])}</span></div>`;
+    if (S.notes[i]) h += `<div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"/></svg><span><b>${T("a.added")}</b>${esc(S.notes[i])}</span></div>`;
   });
-  if (typing) h += `<div class="typing" aria-label="${b.name} is typing"><i></i><i></i><i></i></div>`;
+  if (typing) h += `<div class="typing" aria-label="${T("a.typing", { name: b.name })}"><i></i><i></i><i></i></div>`;
   else if (S.suggestions.length) h += `<div class="chips">${S.suggestions.map((s) => `<button type="button" data-say="${esc(s)}">${esc(s)}</button>`).join("")}</div>`;
   $("msgs").innerHTML = h;
   $("msgs").querySelectorAll("[data-say]").forEach((el) => el.addEventListener("click", () => sendText(el.dataset.say)));
   $("msgs").scrollTop = $("msgs").scrollHeight;
   const answers = S.messages.filter((m) => m.role === "user").length;
   $("readyBar").classList.toggle("on", !typing && (S.ready || answers >= 4));
-  $("readyText").textContent = S.ready ? `Nice work, ${S.profile.nickname || "friend"}! Ready?` : "Enough to start. Add more or create now.";
+  $("readyText").textContent = S.ready ? T("a.ready", { nick: S.profile.nickname || T("a.friend") }) : T("a.enough");
   // Greet once when the chat opens. If that fails, show the error and wait (never retry in a loop).
   if (!typing && !S.messages.length && !busy && !$("chatErr").textContent) askBuddy();
 }
@@ -456,17 +537,17 @@ $("input").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shif
 $("input").addEventListener("input", (e) => { e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; });
 $("peek").addEventListener("click", () => S.resume && go("cv"));
 $("restart").addEventListener("click", () => {
-  if (!confirm("Start over? Your chat and CV will be cleared.")) return;
+  if (!confirm(T("a.confirmRestart"))) return;
   S = fresh(); S.owner = session ? session.user.id : null; save(); go("pick");
 });
 $("create").addEventListener("click", async () => {
-  $("chatErr").textContent = ""; $("create").disabled = true; $("create").textContent = "Writing…";
+  $("chatErr").textContent = ""; $("create").disabled = true; $("create").textContent = T("a.writing");
   $("chatMascot").innerHTML = mascot(S.buddy, "think", 44);
   try {
     const d = await post("/api/resume", { messages:S.messages, profile:S.profile });
     S.resume = d.resume; save(); go("cv");
   } catch(e){ $("chatErr").textContent = e.message; }
-  $("create").disabled = false; $("create").textContent = "Create my CV";
+  $("create").disabled = false; $("create").textContent = T("a.create");
 });
 
 /* ================= 4. CV ================= */
@@ -476,23 +557,23 @@ function renderCV(){
   if (!S.resume) return go("chat");
   const r = S.resume, c = r.contact || {};
   $("cvMascot").innerHTML = mascot(S.buddy, "yay", 60);
-  $("cvTitle").textContent = S.paid ? `All yours, ${S.profile.nickname}!` : `Yay ${S.profile.nickname}! Your CV is ready.`;
+  $("cvTitle").textContent = S.paid ? T("a.allYours", { nick: S.profile.nickname }) : T("a.cvReady", { nick: S.profile.nickname });
   const contact = [c.city, c.email, c.phone, c.linkedin].filter(Boolean).map(esc).join(" · ");
   let top = `<div class="r-name">${esc(r.name)}</div>`;
   if (r.headline) top += `<div class="r-head">${esc(r.headline)}</div>`;
   if (contact) top += `<div class="r-contact">${contact}</div>`;
-  if (r.summary) top += `<div class="r-sec">Summary</div><p>${esc(r.summary)}</p>`;
+  if (r.summary) top += `<div class="r-sec">${CVH("Summary")}</div><p>${esc(r.summary)}</p>`;
   let rest = "";
   if (list(r.experience).length){
-    rest += `<div class="r-sec">Experience</div>`;
+    rest += `<div class="r-sec">${CVH("Experience")}</div>`;
     r.experience.forEach((j) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(j.role)}</span><span class="r-date">${esc([j.start,j.end].filter(Boolean).join(" - "))}</span></div><div class="r-org">${esc([j.company,j.location].filter(Boolean).join(", "))}</div><ul>${list(j.bullets).map((x)=>`<li>${esc(x)}</li>`).join("")}</ul></div>`; });
   }
   if (list(r.education).length){
-    rest += `<div class="r-sec">Education</div>`;
+    rest += `<div class="r-sec">${CVH("Education")}</div>`;
     r.education.forEach((ed) => { rest += `<div class="r-item"><div class="r-top"><span class="r-role">${esc(ed.degree)}</span><span class="r-date">${esc(ed.year)}</span></div><div class="r-org">${esc(ed.school)}</div>${ed.notes ? `<p>${esc(ed.notes)}</p>` : ""}</div>`; });
   }
-  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
-  if (skills.length) rest += `<div class="r-sec">Skills</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
+  const skills = [[CVH("Hard skills"),r.hard_skills],[CVH("Soft skills"),r.soft_skills],[CVH("Certifications"),r.certifications],[CVH("Languages"),r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length) rest += `<div class="r-sec">${CVH("Skills")}</div>` + skills.map(([k,v]) => `<p style="margin-top:6px"><b>${k}:</b> ${list(v).map(esc).join(", ")}</p>`).join("");
   $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
   $("paperWrap").classList.toggle("locked", !S.paid);
   $("payBox").style.display = S.paid ? "none" : "block";
@@ -527,23 +608,26 @@ $("download").addEventListener("click", () => {
   const section = (t) => { y += 8; need(30); doc.setFont("helvetica","bold"); doc.setFontSize(10.5); doc.setTextColor(...rgb); doc.text(t.toUpperCase(), M, y); y += 5; doc.setDrawColor(210); doc.line(M, y, M+W, y); y += 14; doc.setTextColor(20); };
   const lr = (l, rt, size) => { need(size*1.4); doc.setFont("helvetica","bold"); doc.setFontSize(size); doc.text(String(l||""), M, y); if (rt){ doc.setFont("helvetica","normal"); doc.setFontSize(size-1.5); doc.text(String(rt), M+W, y, {align:"right"}); } y += size*1.35; };
   doc.setTextColor(20);
-  text(r.name || "Your Name", 20, "bold", 2);
+  text(r.name || CVH("Your Name"), 20, "bold", 2);
   if (r.headline) text(r.headline, 12, "normal", 2);
   const c = r.contact || {}; const contact = [c.city,c.email,c.phone,c.linkedin].filter(Boolean).join("  |  ");
   if (contact) text(contact, 9.5, "normal", 4);
-  if (r.summary){ section("Summary"); text(r.summary, 10.5); }
-  if (list(r.experience).length){ section("Experience"); r.experience.forEach((j) => {
+  if (r.summary){ section(CVH("Summary")); text(r.summary, 10.5); }
+  if (list(r.experience).length){ section(CVH("Experience")); r.experience.forEach((j) => {
     lr(j.role, [j.start,j.end].filter(Boolean).join(" - "), 11);
     const org = [j.company,j.location].filter(Boolean).join(", "); if (org) text(org, 10.5, "italic");
     list(j.bullets).forEach((b) => { need(14); doc.setFont("helvetica","normal"); doc.setFontSize(10.5); doc.text("•", M+4, y); text(b, 10.5, "normal", 1, 16); });
     y += 6; }); }
-  if (list(r.education).length){ section("Education"); r.education.forEach((ed) => { lr(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; }); }
-  const skills = [["Hard skills",r.hard_skills],["Soft skills",r.soft_skills],["Certifications",r.certifications],["Languages",r.languages]].filter(([,v]) => list(v).length);
-  if (skills.length){ section("Skills"); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
+  if (list(r.education).length){ section(CVH("Education")); r.education.forEach((ed) => { lr(ed.degree, ed.year, 11); if (ed.school) text(ed.school, 10.5, "italic"); if (ed.notes) text(ed.notes, 10.5); y += 4; }); }
+  const skills = [[CVH("Hard skills"),r.hard_skills],[CVH("Soft skills"),r.soft_skills],[CVH("Certifications"),r.certifications],[CVH("Languages"),r.languages]].filter(([,v]) => list(v).length);
+  if (skills.length){ section(CVH("Skills")); skills.forEach(([k,v]) => text(k + ": " + list(v).join(", "), 10.5, "normal", 2)); }
   doc.save((r.name || "CV").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"_") + "_CV.pdf");
 });
 
 /* ================= Start ================= */
+// Switching language redraws the screen you're on
+document.addEventListener("langchange", () => { const on = document.querySelector(".screen.on"); if (on) go(on.id.slice(2)); });
+
 // Start: switch on accounts if the server has them set up, then open the right screen.
 function start(){
   if (session && S.owner !== session.user.id){ S = fresh(); S.owner = session.user.id; save(); }
@@ -558,7 +642,7 @@ function start(){
   try { cfg = await (await fetch("/api/config")).json(); } catch(e){}
   if (cfg.demo) $("demoBanner").style.display = "block";
   if (cfg.auth){
-    if (!window.supabase){ document.body.insertAdjacentHTML("afterbegin", '<p class="error" style="padding:12px;text-align:center">Couldn\'t load the login service. Please check your connection and refresh.</p>'); return; }
+    if (!window.supabase){ document.body.insertAdjacentHTML("afterbegin", '<p class="error" style="padding:12px;text-align:center">' + T("a.noLogin") + '</p>'); return; }
     sb = window.supabase.createClient(cfg.auth.url, cfg.auth.anonKey);
     session = (await sb.auth.getSession()).data.session;
     sb.auth.onAuthStateChange((event, s) => {

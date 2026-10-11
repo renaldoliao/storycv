@@ -71,7 +71,27 @@ function noDashes(v) {
   return v;
 }
 
+// Error messages in Bahasa (the site's main language). Keys are the English messages.
+const ERR_ID = {
+  "Use POST": "Gunakan POST",
+  "Bad request": "Permintaan tidak valid",
+  "Something went wrong": "Waduh, ada yang error. Coba lagi ya.",
+  "This chat is too long. Please create your resume now or start over.": "Obrolannya udah panjang banget. Bikin CV-nya sekarang, atau mulai dari awal ya.",
+  "The AI is busy right now. Please try again in a moment.": "AI-nya lagi sibuk. Coba lagi sebentar ya.",
+  "Tell your buddy a bit more about yourself first.": "Ceritain sedikit lagi soal kamu ke buddy-mu dulu ya.",
+  "Couldn't build the resume. Please try again.": "CV-nya gagal dibuat. Coba lagi ya.",
+  "Accounts aren't switched on yet. Please try again later.": "Fitur akun belum aktif. Coba lagi nanti ya.",
+  "Please log in first.": "Masuk dulu ya.",
+  "Your session has ended. Please log in again.": "Sesi kamu udah habis. Masuk lagi ya.",
+  "Please log in again.": "Masuk lagi ya.",
+  "Please confirm your email first (check your inbox).": "Konfirmasi email kamu dulu ya (cek kotak masuk).",
+  "Couldn't check your usage. Please try again.": "Nggak bisa ngecek pemakaianmu. Coba lagi ya.",
+  "You've reached today's CV limit. Please try again tomorrow.": "Jatah bikin CV hari ini udah habis. Coba lagi besok ya.",
+  "You've reached today's chat limit. Come back tomorrow!": "Jatah ngobrol hari ini udah habis. Balik lagi besok ya!",
+};
+
 function send(res, status, body) {
+  if (res.lang !== "en" && body && typeof body.error === "string" && ERR_ID[body.error]) body = { ...body, error: ERR_ID[body.error] };
   body = noDashes(body);
   res.status(status).setHeader("content-type", "application/json");
   res.end(JSON.stringify(body));
