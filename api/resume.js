@@ -58,7 +58,7 @@ STYLE (follow closely)
 - Use ONLY facts the user said. NEVER invent companies, dates, numbers, cities or skills. Use "" or [] when unknown.
 - Never use em dashes or en dashes. Use commas, periods or colons. A plain hyphen is only for date ranges.
 
-Always answer by filling in the "write_cv" form.`;
+Always reply in the required JSON format.`;
 }
 
 const DEMO_RESUME = {

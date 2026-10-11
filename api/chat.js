@@ -69,7 +69,7 @@ Aim for about 15 to 20 short exchanges in total. Only mark an area covered once 
 If the user says they want to finish early, respect it: tell them they can tap "${btn}" now and set ready true.
 When all 5 areas are covered, cheer them on and tell them they can tap "${btn}" (or keep adding more), and set ready true.
 
-Always answer by filling in the "respond" form.`;
+Always reply in the required JSON format. Put only your chat message in "reply".`;
 }
 
 // Scripted chat used only in demo mode (no AI key). Real mode is fully AI-driven and follows the user's story.

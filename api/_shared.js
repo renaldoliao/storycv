@@ -38,12 +38,23 @@ function withCache(messages) {
     : m));
 }
 
-// With "tool", the AI must answer by filling in a fixed form (a JSON shape we define),
-// so it can never reply with loose text, notes to itself, or broken JSON.
+// Structured output: the API itself guarantees the reply matches our fixed shape (JSON schema),
+// so the AI can never answer with loose text, notes to itself, or broken JSON.
+// The API needs every object closed ("additionalProperties: false") and every field listed as required.
+function strict(schema) {
+  if (Array.isArray(schema)) return schema.map(strict);
+  if (!schema || typeof schema !== "object") return schema;
+  const out = {};
+  for (const k in schema) if (k !== "maxItems") out[k] = k === "properties" ? Object.fromEntries(Object.entries(schema.properties).map(([n, v]) => [n, strict(v)])) : strict(schema[k]);
+  if (out.type === "object" && out.properties) { out.additionalProperties = false; out.required = Object.keys(out.properties); }
+  return out;
+}
+
 async function callClaude({ system, messages, maxTokens, tool }) {
-  const ask = async (useTool) => {
-    const sys = useTool || !tool ? system
-      : system + "\n\nReply with ONE JSON object only, matching this shape, with no other text before or after it and no notes to yourself:\n" + JSON.stringify(tool.input_schema);
+  const ask = (mode) => {
+    const sys = mode === "plain"
+      ? system + "\n\nReply with ONE JSON object only, matching this shape, with no other text before or after it and no notes to yourself:\n" + JSON.stringify(tool.input_schema)
+      : system;
     return fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: { "content-type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
@@ -51,15 +62,15 @@ async function callClaude({ system, messages, maxTokens, tool }) {
         model: MODEL, max_tokens: maxTokens,
         system: [{ type: "text", text: sys, cache_control: { type: "ephemeral" } }],
         messages: withCache(messages),
-        ...(useTool ? { tools: [tool], tool_choice: { type: "tool", name: tool.name } } : {}),
+        ...(mode === "schema" ? { output_config: { format: { type: "json_schema", schema: strict(tool.input_schema) } } } : {}),
       }),
     });
   };
-  let res = await ask(!!tool);
-  // If this AI model won't accept the form, ask again in plain JSON (we clean it up below)
+  let res = await ask(tool ? "schema" : "none");
+  // If this AI model won't accept the fixed shape, ask again in plain JSON (we clean it up below)
   if (!res.ok && tool && res.status === 400) {
-    console.error("Claude API refused the form, retrying without it:", await res.text());
-    res = await ask(false);
+    console.error("Claude API refused structured output, retrying without it:", await res.text());
+    res = await ask("plain");
   }
   if (!res.ok) {
     const text = await res.text();
@@ -69,10 +80,6 @@ async function callClaude({ system, messages, maxTokens, tool }) {
     throw err;
   }
   const data = await res.json();
-  if (tool) {
-    const used = (data.content || []).find((b) => b.type === "tool_use" && b.input && typeof b.input === "object");
-    if (used) return used.input;
-  }
   const text = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
   if (!tool) return text;
   const parsed = parseJson(text);
