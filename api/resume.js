@@ -29,9 +29,12 @@ const TOOL = {
       education: { type: "array", items: { type: "object", properties: {
         school: str, location: str, start: str, end: str, degree: str, activities: strs,
       }, required: ["school"] } },
-      skills: strs, languages: strs, certifications: strs,
+      organizations: { type: "array", items: { type: "object", properties: {
+        name: str, role: str, start: str, end: str, bullets: strs,
+      }, required: ["name", "role", "start", "end", "bullets"] } },
+      skills: strs, soft_skills: strs, languages: strs, certifications: strs,
     },
-    required: ["summary", "experience", "education", "skills", "languages", "certifications"],
+    required: ["summary", "experience", "education", "organizations", "skills", "soft_skills", "languages", "certifications"],
   },
 };
 
@@ -46,24 +49,32 @@ TARGET JOB (tailor everything to it when given)
 - Within each job, put the bullets most relevant to the target job first.
 - Use the normal words of the target job's field where they truthfully describe what the user did (this helps hiring software match keywords).
 - In skills, list the most relevant ones first.
-- If the target job is different from their past jobs, write a 1 to 2 line summary that connects their real experience to it (transferable skills). Otherwise the summary stays "" unless they have under about 1 year of experience.
+- Aim the profile summary at the target job. If it differs from their past jobs, connect their real experience to it (transferable skills).
+- Put soft skills that match common job ad wording first when true (for example ${id ? '"Bertanggung jawab", "Mampu bekerja dalam tim", "Teliti", "Mampu bekerja di bawah tekanan"' : '"Responsible", "Team player", "Detail-oriented", "Works well under pressure"'}).
 - Never claim experience or skills they didn't mention.
 
 STYLE (follow closely)
-- Simple and scannable: work experience first, then education, then a short additional information section.
-- Summary: leave it "" for most people. Only write one (1 to 2 short lines, no pronouns) when the user has under about 1 year of work experience, or their target job differs from their past jobs (see TARGET JOB).
+- Simple and scannable, like a modern Indonesian CV for this level: short profile, work experience, education, organisation experience (if any), then additional information.
+- Summary (profile, ${id ? '"Profil"' : '"Profile"'}): ALWAYS write one, 2 to 3 short sentences, no pronouns: who they are (role and years of experience, or school and major for fresh graduates), their strongest proof (a number or achievement they gave), and what they bring to the target job.
 - Group roles under one company when they held several roles there (a promotion), newest role first.
 - Each bullet shows action, what, and result or scale ("Melayani 150+ pelanggan per hari..."). Prefer achievements over plain duties.
-- Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Soft skills must show through results, never as a list: weave what the user said about how they work with people into the bullets (for example \"Trusted to handle complaints...\") and the summary if there is one.
+- Bullets: start with a strong action verb, one line each (max about 20 words), no "I", no filler adjectives like "hardworking" or "passionate". Also weave how they work with people into the bullets where it fits (for example \"Trusted to handle complaints...\").
 - Put a number in every bullet where the user gave one: amounts, counts, percentages, time ("within 2 years"), before and after ("from 50 to 120 orders a day"). Never make numbers up.
 - ${id ? "Use standard, professional Indonesian with simple words (this is a CV, no slang). Start bullets with me-/ber- verbs (Melayani, Mengelola, Meningkatkan, Melatih)." : "Past tense for finished work (Served, Trained, Cut). For duties still going on in the current job, the -ing form is fine (Supporting, Managing)."}
 - The current or latest role gets the most bullets (3 to 6). Older roles get 2 to 3.
 - When one big win has supporting details, put up to 3 short details in "sub" under it.
 - Only if the latest role has 6 or more bullets that split naturally, group them with short labels in "groups" (for example ${id ? '"Tanggung jawab utama" and "Pencapaian"' : '"Key responsibilities" and "Key results"'}); otherwise use a single group with label "".
 - Dates as "Mon YYYY" (${id ? "Jan, Feb, Mar, Apr, Mei, Jun, Jul, Agu, Sep, Okt, Nov, Des; current job ends with 'Sekarang'" : "Jan to Dec; current job ends with 'Present'"}). Use just the year if the month is unknown, "" if unknown.
-- Education: school, city, years, degree or major (for high school, e.g. ${id ? '"SMK, Tata Boga"' : '"Vocational High School, Culinary"'}). Activities (committees, organisations, competitions, events, projects) as short bullets.
-- Additional information: technical skills (tools, machines, equipment, software, using standard names, e.g. "excel" to "Microsoft Excel"), languages with level, certifications (include driving licences like SIM C and trainings like K3).
+- Experience also includes internships, PKL (Praktik Kerja Lapangan for SMK students), part-time, freelance and family business work. For fresh graduates these are the main experience.
+- Education: the 1 or 2 highest levels only. School, city, years, degree or major (for high school, e.g. ${id ? '"SMK, Tata Boga"' : '"Vocational High School, Culinary"'}). Put academic achievements or competitions as short "activities" bullets.
+- Organisations: OSIS, campus organisations, committees, clubs, volunteering or community groups, with role, years and 1 to 2 bullets. Leave [] if none.
+- Additional information:
+  - skills: technical skills (tools, machines, equipment, software, using standard names, e.g. "excel" to "Microsoft Excel"), most relevant first, max 8.
+  - soft_skills: 3 to 4 short soft skills supported by what the user said, max 4.
+  - languages with level.
+  - certifications: name, issuer and year when known (e.g. ${id ? '"Pelatihan Barista Dasar, LSP Pariwisata (2023)"' : '"Basic Barista Training, LSP Pariwisata (2023)"'}), plus driving licences like SIM C.
 - Order everything newest first.
+- Personal data: only name, city, phone, email and LinkedIn (already added by the app). Never a full street address.
 - Privacy: never include religion, ethnicity, health, disability, marital or family status, age or date of birth, ID card or bank numbers, salary, political views or criminal records, even if the user mentioned them.
 - Use ONLY facts the user said. NEVER invent companies, dates, numbers, cities or skills. Use "" or [] when unknown.
 - Never use em dashes or en dashes. Use commas, periods or colons. A plain hyphen is only for date ranges.
@@ -72,7 +83,7 @@ Always reply in the required JSON format.`;
 }
 
 const DEMO_RESUME = {
-  summary: "",
+  summary: "Head Barista with 4 years of coffee bar experience, serving 150+ customers a day during weekend peaks. Promoted within 2 years and trusted to train new baristas. Ready to bring fast, consistent service to a growing coffee team.",
   experience: [
     { company: "Kopi Senja", location: "Jakarta", roles: [
       { title: "Head Barista", start: "Mar 2024", end: "Present", groups: [{ label: "", bullets: [
@@ -93,14 +104,16 @@ const DEMO_RESUME = {
       ] }] },
     ] },
   ],
-  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "Vocational High School, Culinary", activities: ["Event committee for the school's yearly food bazaar"] }],
+  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "Vocational High School, Culinary", activities: [] }],
+  organizations: [{ name: "OSIS SMK Negeri 3 Bekasi", role: "Event Division Member", start: "2019", end: "2020", bullets: ["Organised the school's yearly food bazaar with 30+ stands"] }],
   skills: ["Espresso machine", "Latte art", "Cash register (POS)", "Microsoft Excel"],
+  soft_skills: ["Responsible", "Team player", "Works well under pressure", "Customer service"],
   languages: ["Bahasa Indonesia (native)", "English (basic)"],
-  certifications: ["Driving licence C (SIM C)", "Basic Barista Training"],
+  certifications: ["Basic Barista Training, LSP Pariwisata (2023)", "Driving licence C (SIM C)"],
 };
 
 const DEMO_RESUME_ID = {
-  summary: "",
+  summary: "Head Barista dengan 4 tahun pengalaman di kedai kopi, melayani 150+ pelanggan per hari saat akhir pekan. Dipromosikan dalam 2 tahun dan dipercaya melatih barista baru. Siap menghadirkan pelayanan cepat dan konsisten untuk tim kopi yang sedang berkembang.",
   experience: [
     { company: "Kopi Senja", location: "Jakarta", roles: [
       { title: "Head Barista", start: "Mar 2024", end: "Sekarang", groups: [{ label: "", bullets: [
@@ -121,10 +134,12 @@ const DEMO_RESUME_ID = {
       ] }] },
     ] },
   ],
-  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "SMK, Tata Boga", activities: ["Panitia bazar makanan tahunan sekolah"] }],
+  education: [{ school: "SMK Negeri 3", location: "Bekasi", start: "2018", end: "2021", degree: "SMK, Tata Boga", activities: [] }],
+  organizations: [{ name: "OSIS SMK Negeri 3 Bekasi", role: "Anggota Divisi Acara", start: "2019", end: "2020", bullets: ["Menyelenggarakan bazar makanan tahunan sekolah dengan 30+ stan"] }],
   skills: ["Mesin espresso", "Latte art", "Mesin kasir (POS)", "Microsoft Excel"],
+  soft_skills: ["Bertanggung jawab", "Mampu bekerja dalam tim", "Mampu bekerja di bawah tekanan", "Pelayanan pelanggan"],
   languages: ["Bahasa Indonesia (penutur asli)", "Bahasa Inggris (dasar)"],
-  certifications: ["SIM C", "Pelatihan Barista Dasar"],
+  certifications: ["Pelatihan Barista Dasar, LSP Pariwisata (2023)", "SIM C"],
 };
 
 // Name and contact come from the form the user filled in, not from the AI.

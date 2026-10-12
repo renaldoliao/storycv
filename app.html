@@ -333,7 +333,7 @@ const PRICE_IDR = I18N.PRICE_IDR;
 const { BUDDIES, mascot } = window.StoryBuddies;
 const T = I18N.t;
 // CV section headings follow the CV's language (chosen in the details form), not the site language
-const CV_ID = { "Summary":"Ringkasan", "Work Experience":"Pengalaman Kerja", "Education":"Pendidikan", "Additional Information":"Informasi Tambahan",
+const CV_ID = { "Profile":"Profil", "Organizations":"Pengalaman Organisasi", "Soft Skills":"Keahlian Non-Teknis", "Summary":"Ringkasan", "Work Experience":"Pengalaman Kerja", "Education":"Pendidikan", "Additional Information":"Informasi Tambahan",
   "Technical Skills":"Keahlian Teknis", "Languages":"Bahasa", "Certifications":"Sertifikasi & Lisensi", "Activities":"Kegiatan", "Your Name":"Nama Kamu" };
 const CVH = (w) => (S.profile.lang === "English" ? w : (CV_ID[w] || w));
 I18N.add({
@@ -818,12 +818,14 @@ function normCV(r){
   const edu = list(r.education).map((e) => ({ school:e.school || "", location:e.location || "", start:e.start || "", end:e.end || e.year || "",
     degree:e.degree || "", activities:list(e.activities).length ? list(e.activities) : (e.notes ? [e.notes] : []) }));
   return { name:r.name || "", contact:r.contact || {}, summary:r.summary || "", experience:exp, education:edu,
-    skills:list(r.skills).length ? list(r.skills) : list(r.hard_skills), languages:list(r.languages), certifications:list(r.certifications) };
+    organizations:list(r.organizations).map((o) => ({ name:o.name || "", role:o.role || "", start:o.start || "", end:o.end || "", bullets:list(o.bullets).map(String) })),
+    skills:list(r.skills).length ? list(r.skills) : list(r.hard_skills), soft_skills:list(r.soft_skills),
+    languages:list(r.languages), certifications:list(r.certifications) };
 }
 const span = (a, b) => [a, b].filter(Boolean).join(" - ");
 const whenLine = (when, what) => [when, what].filter(Boolean).join(" | ");
 function cvExtras(r){
-  return [[CVH("Technical Skills"), r.skills], [CVH("Languages"), r.languages], [CVH("Certifications"), r.certifications]].filter(([,v]) => v.length);
+  return [[CVH("Technical Skills"), r.skills], [CVH("Soft Skills"), r.soft_skills], [CVH("Languages"), r.languages], [CVH("Certifications"), r.certifications]].filter(([,v]) => v.length);
 }
 function renderCV(){
   applyTheme();
@@ -835,7 +837,7 @@ function renderCV(){
   let top = `<div class="r-name">${esc(r.name)}</div>`;
   if (head) top += `<div class="r-head">${esc(head)}</div>`;
   if (contact) top += `<div class="r-contact">${contact}</div>`;
-  if (r.summary) top += `<div class="r-sec">${CVH("Summary")}</div><p>${esc(r.summary)}</p>`;
+  if (r.summary) top += `<div class="r-sec">${CVH("Profile")}</div><p>${esc(r.summary)}</p>`;
   const ul = (bs) => `<ul>${bs.map((b) => `<li>${esc(b.text)}${b.sub.length ? `<ul>${b.sub.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ul>`;
   let rest = "";
   if (r.experience.length){
@@ -855,6 +857,14 @@ function renderCV(){
       rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(e.school)}</b><span class="r-date">${esc(e.location)}</span></div>
         <div class="r-row r-sub"><span>${esc(e.degree)}</span><span class="r-date">${esc(span(e.start, e.end))}</span></div>
         ${e.activities.length ? `<ul>${e.activities.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`;
+    });
+  }
+  if (r.organizations.length){
+    rest += `<div class="r-sec">${CVH("Organizations")}</div>`;
+    r.organizations.forEach((o) => {
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(o.name)}</b><span class="r-date">${esc(span(o.start, o.end))}</span></div>
+        ${o.role ? `<div class="r-row r-sub"><span>${esc(o.role)}</span></div>` : ""}
+        ${o.bullets.length ? `<ul>${o.bullets.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`;
     });
   }
   const ex = cvExtras(r);
@@ -913,7 +923,7 @@ $("download").addEventListener("click", async () => {
 
   const INK = [17,24,39], BODY = [31,41,55], GREY = [107,114,128], RULE = [209,213,219];
   const M = 50, W = doc.internal.pageSize.getWidth() - M*2, H = doc.internal.pageSize.getHeight();
-  const FS = 9.8, LH = 1.45;
+  const FS = 10.2, LH = 1.42;
   let y = 54;
   const need = (h) => { if (y + h > H - 46){ doc.addPage(); y = 50; } };
   const font = (style, size, color) => { doc.setFont(F, style === "semibold" ? SEMI : style); doc.setFontSize(size); doc.setTextColor(...color); };
@@ -953,7 +963,7 @@ $("download").addEventListener("click", async () => {
   if (contact.length){ para(contact.join("   •   "), 9.2, "normal", GREY); }
   y += 2;
 
-  if (r.summary){ section(CVH("Summary")); para(r.summary, FS + .2, "normal", BODY); }
+  if (r.summary){ section(CVH("Profile")); para(r.summary, FS + .2, "normal", BODY); }
 
   if (r.experience.length){ section(CVH("Work Experience")); r.experience.forEach((j, i) => {
     if (i) y += 9;
@@ -975,6 +985,14 @@ $("download").addEventListener("click", async () => {
     if (e.degree || e.start || e.end) row(e.degree, span(e.start, e.end), "semibold", 10, [55,65,81]);
     y += 2;
     e.activities.forEach((x) => bullet(x, 0));
+  }); }
+
+  if (r.organizations.length){ section(CVH("Organizations")); r.organizations.forEach((o, i) => {
+    if (i) y += 9;
+    need(34); row(o.name, span(o.start, o.end), "bold", 10.6, INK);
+    if (o.role) row(o.role, "", "semibold", 10, [55,65,81]);
+    y += 2;
+    o.bullets.forEach((x) => bullet(x, 0));
   }); }
 
   const ex = cvExtras(r);
