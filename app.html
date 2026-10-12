@@ -157,6 +157,9 @@
   .r-glabel{font-weight:600;font-size:12px;color:#6B7280;margin-top:6px}
   .r-extra{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin-top:10px}
   .r-extra b{font-weight:600;color:#111827;white-space:nowrap}
+  .paper.editing [data-path]{outline:1.5px dashed var(--accent);outline-offset:1px;border-radius:3px;background:var(--soft);cursor:text;padding:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .paper.editing [data-path]:empty::before{content:"\2026";color:var(--muted)}
+  .paper.editing [data-path]:focus{outline-style:solid;background:#fff}
   .price-row{display:flex;justify-content:space-between;align-items:baseline;margin:18px 4px 12px}
   .price-row b{font-size:24px;font-weight:900}
   .small{font-size:13px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
@@ -290,7 +293,13 @@
       </div>
       <div id="paidBox" class="actions" style="display:none;margin-top:18px">
         <button class="btn" id="download" data-t="a.download"></button>
+        <button class="btn ghost" id="editCv" data-t="a.editCv"></button>
         <button class="btn ghost" id="redo" data-t="a.redo"></button>
+      </div>
+      <div id="editBox" class="actions" style="display:none;margin-top:18px;flex-direction:column">
+        <p class="sub" id="editHint" style="font-size:14px;margin:0 0 4px" data-t="a.editHint"></p>
+        <button class="btn" id="saveEdit" data-t="a.saveEdit"></button>
+        <button class="btn ghost" id="cancelEdit" data-t="a.cancel"></button>
       </div>
       <div class="error" id="cvErr" role="alert"></div>
     </div>
@@ -386,6 +395,7 @@ I18N.add({
     "a.backChat": "← Balik ngobrol", "a.cvReady": "Yeay {nick}! CV kamu udah jadi.", "a.allYours": "Ini dia CV kamu, {nick}!",
     "a.unlockRow": "Buka CV lengkap + PDF", "a.unlock": "Buka & download", "a.payNote": "QRIS · e-wallet · langsung kebuka",
     "a.download": "Download PDF", "a.redo": "Tambah info & tulis ulang",
+    "a.editCv": "Ubah isi CV", "a.saveEdit": "Simpan perubahan", "a.editHint": "Ketuk tulisan mana aja di CV buat ngubahnya. Kosongkan satu poin buat menghapusnya. Keahlian dipisah pakai koma.",
     "a.testMode": "MODE TES", "a.payTitle": "Download CV kamu", "a.payNot": "Pembayaran belum nyambung. Klik di bawah buat pura-pura udah bayar.",
     "a.fakePay": "Simulasi bayar berhasil", "a.cancel": "Batal",
   },
@@ -438,6 +448,7 @@ I18N.add({
     "a.backChat": "← Back to chat", "a.cvReady": "Yay {nick}! Your CV is ready.", "a.allYours": "All yours, {nick}!",
     "a.unlockRow": "Unlock full CV + PDF", "a.unlock": "Unlock & download", "a.payNote": "QRIS · e-wallet · instant unlock",
     "a.download": "Download PDF", "a.redo": "Add more & rewrite",
+    "a.editCv": "Edit CV text", "a.saveEdit": "Save changes", "a.editHint": "Tap any text on the CV to change it. Empty a bullet to remove it. Separate skills with commas.",
     "a.testMode": "TEST MODE", "a.payTitle": "Download your CV", "a.payNot": "Payment isn't connected yet. Tap below to pretend it went through.",
     "a.fakePay": "Simulate successful payment", "a.cancel": "Cancel",
   },
@@ -827,6 +838,9 @@ const whenLine = (when, what) => [when, what].filter(Boolean).join(" | ");
 function cvExtras(r){
   return [[CVH("Technical Skills"), r.skills], [CVH("Soft Skills"), r.soft_skills], [CVH("Languages"), r.languages], [CVH("Certifications"), r.certifications]].filter(([,v]) => v.length);
 }
+// e(path, text): a piece of CV text that can be edited after paying (path says where it lives in the CV data)
+const e_ = (path, text, cls) => `<span data-path="${path}"${cls ? ` class="${cls}"` : ""}>${esc(text)}</span>`;
+const dates_ = (p, a, b) => (a || b ? `${a ? e_(p + ".start", a) : ""}${a && b ? " - " : ""}${b ? e_(p + ".end", b) : ""}` : "");
 function renderCV(){
   applyTheme();
   if (!S.resume) return go("chat");
@@ -837,43 +851,81 @@ function renderCV(){
   let top = `<div class="r-name">${esc(r.name)}</div>`;
   if (head) top += `<div class="r-head">${esc(head)}</div>`;
   if (contact) top += `<div class="r-contact">${contact}</div>`;
-  if (r.summary) top += `<div class="r-sec">${CVH("Profile")}</div><p>${esc(r.summary)}</p>`;
-  const ul = (bs) => `<ul>${bs.map((b) => `<li>${esc(b.text)}${b.sub.length ? `<ul>${b.sub.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ul>`;
+  if (r.summary) top += `<div class="r-sec">${CVH("Profile")}</div><p>${e_("summary", r.summary)}</p>`;
+  const ul = (p, bs) => `<ul>${bs.map((b, i) => `<li>${e_(`${p}.${i}.text`, b.text)}${b.sub.length ? `<ul>${b.sub.map((x, k) => `<li>${e_(`${p}.${i}.sub.${k}`, x)}</li>`).join("")}</ul>` : ""}</li>`).join("")}</ul>`;
+  const ulS = (p, xs) => `<ul>${xs.map((x, i) => `<li>${e_(`${p}.${i}`, x)}</li>`).join("")}</ul>`;
   let rest = "";
   if (r.experience.length){
     rest += `<div class="r-sec">${CVH("Work Experience")}</div>`;
-    r.experience.forEach((j) => {
-      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(j.company)}</b><span class="r-date">${esc(j.location)}</span></div>`;
-      j.roles.forEach((ro) => {
-        rest += `<div class="r-row r-sub"><span>${esc(ro.title)}</span><span class="r-date">${esc(span(ro.start, ro.end))}</span></div>`;
-        ro.groups.forEach((g) => { if (g.label) rest += `<div class="r-glabel">${esc(g.label)}</div>`; rest += ul(g.bullets); });
+    r.experience.forEach((j, ji) => {
+      const jp = `experience.${ji}`;
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${e_(jp + ".company", j.company)}</b><span class="r-date">${e_(jp + ".location", j.location)}</span></div>`;
+      j.roles.forEach((ro, ri) => {
+        const rp = `${jp}.roles.${ri}`;
+        rest += `<div class="r-row r-sub"><span>${e_(rp + ".title", ro.title)}</span><span class="r-date">${dates_(rp, ro.start, ro.end)}</span></div>`;
+        ro.groups.forEach((g, gi) => { if (g.label) rest += `<div class="r-glabel">${e_(`${rp}.groups.${gi}.label`, g.label)}</div>`; rest += ul(`${rp}.groups.${gi}.bullets`, g.bullets); });
       });
       rest += `</div>`;
     });
   }
   if (r.education.length){
     rest += `<div class="r-sec">${CVH("Education")}</div>`;
-    r.education.forEach((e) => {
-      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(e.school)}</b><span class="r-date">${esc(e.location)}</span></div>
-        <div class="r-row r-sub"><span>${esc(e.degree)}</span><span class="r-date">${esc(span(e.start, e.end))}</span></div>
-        ${e.activities.length ? `<ul>${e.activities.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`;
+    r.education.forEach((ed, i) => {
+      const p = `education.${i}`;
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${e_(p + ".school", ed.school)}</b><span class="r-date">${e_(p + ".location", ed.location)}</span></div>
+        <div class="r-row r-sub"><span>${e_(p + ".degree", ed.degree)}</span><span class="r-date">${dates_(p, ed.start, ed.end)}</span></div>
+        ${ed.activities.length ? ulS(p + ".activities", ed.activities) : ""}</div>`;
     });
   }
   if (r.organizations.length){
     rest += `<div class="r-sec">${CVH("Organizations")}</div>`;
-    r.organizations.forEach((o) => {
-      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${esc(o.name)}</b><span class="r-date">${esc(span(o.start, o.end))}</span></div>
-        ${o.role ? `<div class="r-row r-sub"><span>${esc(o.role)}</span></div>` : ""}
-        ${o.bullets.length ? `<ul>${o.bullets.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>`;
+    r.organizations.forEach((o, i) => {
+      const p = `organizations.${i}`;
+      rest += `<div class="r-item"><div class="r-row"><b class="r-org">${e_(p + ".name", o.name)}</b><span class="r-date">${dates_(p, o.start, o.end)}</span></div>
+        ${o.role ? `<div class="r-row r-sub">${e_(p + ".role", o.role)}</div>` : ""}
+        ${o.bullets.length ? ulS(p + ".bullets", o.bullets) : ""}</div>`;
     });
   }
-  const ex = cvExtras(r);
-  if (ex.length) rest += `<div class="r-sec">${CVH("Additional Information")}</div><div class="r-extra">${ex.map(([k,v]) => `<b>${k}</b><span>${v.map(esc).join(", ")}</span>`).join("")}</div>`;
+  const ex = [["skills", CVH("Technical Skills")], ["soft_skills", CVH("Soft Skills")], ["languages", CVH("Languages")], ["certifications", CVH("Certifications")]].filter(([k]) => r[k].length);
+  if (ex.length) rest += `<div class="r-sec">${CVH("Additional Information")}</div><div class="r-extra">${ex.map(([k, label]) => `<b>${label}</b>${e_("list:" + k, r[k].join(", "))}`).join("")}</div>`;
   $("paper").innerHTML = top + `<div class="blurme">${rest}</div>`;
   $("paperWrap").classList.toggle("locked", !S.paid);
   $("payBox").style.display = S.paid ? "none" : "block";
-  $("paidBox").style.display = S.paid ? "flex" : "none";
+  $("paidBox").style.display = S.paid && !editing ? "flex" : "none";
+  $("editBox").style.display = editing ? "flex" : "none";
+  $("paper").classList.toggle("editing", editing);
+  $("paper").querySelectorAll("[data-path]").forEach((el) => {
+    if (!editing) return el.removeAttribute("contenteditable");
+    try { el.contentEditable = "plaintext-only"; } catch(e){ el.contentEditable = "true"; }   // older browsers
+  });
 }
+
+/* ---------- Edit the CV after paying: tap any text, change it, save ---------- */
+let editing = false;
+$("editCv").addEventListener("click", () => { editing = true; $("cvErr").textContent = ""; renderCV(); $("editHint").scrollIntoView({ block:"nearest" }); });
+$("cancelEdit").addEventListener("click", () => { editing = false; renderCV(); });
+$("saveEdit").addEventListener("click", async () => {
+  const data = JSON.parse(JSON.stringify(normCV(S.resume)));
+  $("paper").querySelectorAll("[data-path]").forEach((el) => {
+    const path = el.dataset.path, val = el.innerText.replace(/\s+/g, " ").trim();
+    if (path.startsWith("list:")){ data[path.slice(5)] = val.split(",").map((x) => x.trim()).filter(Boolean); return; }
+    const keys = path.split("."), last = keys.pop();
+    let o = data; for (const k of keys) o = o[k];
+    o[last] = val;
+  });
+  // An emptied bullet means "remove it"
+  data.experience.forEach((j) => j.roles.forEach((ro) => ro.groups.forEach((g) => { g.bullets = g.bullets.filter((b) => b.text).map((b) => ({ ...b, sub:b.sub.filter(Boolean) })); })));
+  data.education.forEach((ed) => { ed.activities = ed.activities.filter(Boolean); });
+  data.organizations.forEach((o) => { o.bullets = o.bullets.filter(Boolean); });
+  Object.assign(data, { headline:S.resume.headline || "" });
+  $("saveEdit").disabled = true; $("cvErr").textContent = "";
+  try {
+    if (S.cvId){ const d = await post("/api/cv", { cvId:S.cvId, resume:data }); S.resume = d.resume; }
+    else S.resume = data;   // demo mode: only on this device
+    save(); editing = false; renderCV();
+  } catch(e){ $("cvErr").textContent = e.message; }
+  $("saveEdit").disabled = false;
+});
 $("redo").addEventListener("click", () => go("chat"));
 
 /* ---------- Payment (TEST MODE) ----------

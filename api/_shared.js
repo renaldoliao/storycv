@@ -123,6 +123,7 @@ function noDashes(v) {
 const ERR_ID = {
   "Use POST": "Gunakan POST",
   "Use GET": "Gunakan GET",
+  "Unlock the CV first to edit it.": "Buka CV-nya dulu ya sebelum diubah.",
   "Bad request": "Permintaan tidak valid",
   "Something went wrong": "Waduh, ada yang error. Coba lagi ya.",
   "This chat is too long. Please create your resume now or start over.": "Obrolannya udah panjang banget. Bikin CV-nya sekarang, atau mulai dari awal ya.",
